@@ -98,7 +98,10 @@ export default async function HomeCliente() {
                 />
               </div>
               <p className="text-xs text-white/90">
-                Te faltan {estadoNivel.puntosParaSiguiente} puntos para ser{" "}
+                {estadoNivel.puntosParaSiguiente === 1
+                  ? "Te falta 1 punto"
+                  : `Te faltan ${estadoNivel.puntosParaSiguiente} puntos`}{" "}
+                para ser{" "}
                 <span className="font-semibold">{estadoNivel.nivelSiguiente.nombre}</span>
               </p>
             </div>
