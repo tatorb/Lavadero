@@ -6,7 +6,10 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "db:seed": "prisma db seed",
+    "db:migrate": "prisma migrate dev",
+    "test": "vitest run"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.7.1",
@@ -50,5 +53,8 @@
     "tsx": "^4.23.4",
     "typescript": "^5",
     "vitest": "^4.1.10"
+  },
+  "prisma": {
+    "seed": "tsx prisma/seed.ts"
   }
 }

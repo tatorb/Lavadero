@@ -1,0 +1,336 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// ===== ENUMS =====
+
+enum RolStaff {
+  SUPER_ADMIN
+  ADMIN
+  OPERATIVO
+}
+
+enum EstadoTurno {
+  PENDIENTE // pedido por el cliente, espera confirmación manual
+  CONFIRMADO
+  CANCELADO
+  COMPLETADO
+}
+
+enum OrigenTurno {
+  CLIENTE
+  ADMIN
+}
+
+enum TipoServicio {
+  PRINCIPAL // lavado básico, avanzado…
+  ADDON // encerado, chasis, motor…
+}
+
+enum TipoMovimientoPuntos {
+  LAVADO
+  BONUS_RACHA
+  AJUSTE_MANUAL
+}
+
+enum TipoDescuento {
+  PORCENTAJE
+  MONTO_FIJO
+}
+
+// ===== TENANT =====
+
+model Lavadero {
+  id        String  @id @default(cuid())
+  nombre    String
+  slug      String  @unique
+  direccion String?
+  telefono  String?
+  timezone  String  @default("America/Argentina/Buenos_Aires")
+  activo    Boolean @default(true)
+
+  // días máximos entre visitas para mantener la racha
+  rachaVentanaDias Int @default(14)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  usuarios     Usuario[]
+  clientes     Cliente[]
+  autos        Auto[]
+  servicios    Servicio[]
+  turnos       Turno[]
+  lavados      Lavado[]
+  reglasFranja ReglaFranja[]
+  niveles      Nivel[]
+  descuentos   Descuento[]
+  movimientos  PuntosMovimiento[]
+}
+
+// ===== STAFF =====
+
+model Usuario {
+  id           String    @id @default(cuid())
+  email        String    @unique
+  passwordHash String
+  nombre       String
+  rol          RolStaff
+  lavaderoId   String? // null para SUPER_ADMIN
+  lavadero     Lavadero? @relation(fields: [lavaderoId], references: [id])
+  activo       Boolean   @default(true)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  @@index([lavaderoId])
+}
+
+// ===== CLIENTES =====
+
+model Cliente {
+  id           String  @id @default(cuid())
+  lavaderoId   String
+  lavadero     Lavadero @relation(fields: [lavaderoId], references: [id])
+  nombre       String
+  apellido     String?
+  telefono     String?
+  email        String? // nullable: el admin puede cargar clientes sin cuenta
+  passwordHash String? // null hasta que el cliente active su cuenta
+  detalles     String?
+
+  // Vínculo pareja/familiar (1 a 1 simétrico, mantenido en ambas filas por transacción)
+  vinculadoConId String?  @unique
+  vinculadoCon   Cliente? @relation("Vinculo", fields: [vinculadoConId], references: [id])
+  vinculadoDe    Cliente? @relation("Vinculo")
+
+  // Gamificación: caché derivada del ledger PuntosMovimiento
+  puntosTotal  Int       @default(0)
+  rachaActual  Int       @default(0)
+  mejorRacha   Int       @default(0)
+  ultimaVisita DateTime?
+
+  activo    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  autos       Auto[]
+  turnos      Turno[]
+  lavados     Lavado[]
+  movimientos PuntosMovimiento[]
+
+  @@unique([lavaderoId, email])
+  @@index([lavaderoId, nombre])
+}
+
+model Auto {
+  id         String   @id @default(cuid())
+  lavaderoId String
+  lavadero   Lavadero @relation(fields: [lavaderoId], references: [id])
+  clienteId  String
+  cliente    Cliente  @relation(fields: [clienteId], references: [id])
+  marca      String
+  modelo     String
+  patente    String
+  color      String?
+  detalles   String?
+  activo     Boolean  @default(true)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  turnos  Turno[]
+  lavados Lavado[]
+
+  @@unique([lavaderoId, patente])
+  @@index([clienteId])
+}
+
+// ===== SERVICIOS =====
+
+model Servicio {
+  id          String       @id @default(cuid())
+  lavaderoId  String
+  lavadero    Lavadero     @relation(fields: [lavaderoId], references: [id])
+  nombre      String
+  descripcion String?
+  precio      Decimal      @db.Decimal(12, 2)
+  tipo        TipoServicio @default(PRINCIPAL)
+  duracionMin Int          @default(30) // para el calendario
+  puntos      Int          @default(10) // puntos que otorga al finalizar el lavado
+  orden       Int          @default(0)
+  activo      Boolean      @default(true)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  turnos       Turno[]
+  lavados      Lavado[]
+  turnoAddons  TurnoAddon[]
+  lavadoAddons LavadoAddon[]
+
+  @@index([lavaderoId, activo])
+}
+
+// ===== TURNOS =====
+
+model Turno {
+  id              String      @id @default(cuid())
+  lavaderoId      String
+  lavadero        Lavadero    @relation(fields: [lavaderoId], references: [id])
+  clienteId       String
+  cliente         Cliente     @relation(fields: [clienteId], references: [id])
+  autoId          String?
+  auto            Auto?       @relation(fields: [autoId], references: [id])
+  servicioId      String
+  servicio        Servicio    @relation(fields: [servicioId], references: [id])
+  fechaReserva    DateTime    @default(now()) // cuándo se reservó
+  fechaTurno      DateTime // inicio del slot (UTC)
+  duracionMin     Int         @default(30) // copiada del servicio al crear
+  estado          EstadoTurno @default(PENDIENTE)
+  origen          OrigenTurno @default(CLIENTE)
+  detalle         String?
+  canceladoMotivo String?
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+
+  addons TurnoAddon[]
+  lavado Lavado?
+
+  @@index([lavaderoId, fechaTurno])
+  @@index([lavaderoId, estado])
+  @@index([clienteId])
+}
+
+model TurnoAddon {
+  turnoId    String
+  turno      Turno    @relation(fields: [turnoId], references: [id], onDelete: Cascade)
+  servicioId String
+  servicio   Servicio @relation(fields: [servicioId], references: [id])
+
+  @@id([turnoId, servicioId])
+}
+
+// ===== LAVADOS =====
+
+model Lavado {
+  id         String   @id @default(cuid())
+  lavaderoId String
+  lavadero   Lavadero @relation(fields: [lavaderoId], references: [id])
+  clienteId  String
+  cliente    Cliente  @relation(fields: [clienteId], references: [id])
+  autoId     String
+  auto       Auto     @relation(fields: [autoId], references: [id])
+  servicioId String
+  servicio   Servicio @relation(fields: [servicioId], references: [id])
+  turnoId    String?  @unique // si nació de un turno
+  turno      Turno?   @relation(fields: [turnoId], references: [id])
+
+  llegadaAt DateTime // llegada al lavadero
+  inicioAt  DateTime? // inicio del lavado
+  finAt     DateTime? // fin del lavado → dispara gamificación
+
+  detalles        String?
+  precioFinal     Decimal? @db.Decimal(12, 2) // snapshot servicio + addons
+  puntosOtorgados Int      @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  addons LavadoAddon[]
+
+  @@index([lavaderoId, llegadaAt])
+  @@index([clienteId])
+}
+
+model LavadoAddon {
+  lavadoId   String
+  lavado     Lavado   @relation(fields: [lavadoId], references: [id], onDelete: Cascade)
+  servicioId String
+  servicio   Servicio @relation(fields: [servicioId], references: [id])
+  precio     Decimal  @db.Decimal(12, 2) // snapshot al momento del lavado
+
+  @@id([lavadoId, servicioId])
+}
+
+// ===== REGLAS DE TURNOS POR FRANJA =====
+
+model ReglaFranja {
+  id         String   @id @default(cuid())
+  lavaderoId String
+  lavadero   Lavadero @relation(fields: [lavaderoId], references: [id])
+
+  diaSemana  Int // 0=domingo … 6=sábado (convención getDay de date-fns)
+  horaInicio Int // minutos desde las 00:00 en la TZ del lavadero (540 = 09:00)
+  horaFin    Int // exclusivo (720 = 12:00)
+  slotMin    Int @default(30) // granularidad de los slots de la franja
+
+  capacidadPorSlot     Int     @default(1)
+  confirmacionAuto     Boolean @default(false) // true = el turno nace CONFIRMADO
+  anticipacionMinHoras Int? // ej 24 = "con 1 día de anticipación"
+  anticipacionMaxDias  Int? // ej 14 = no reservar a más de 2 semanas
+  prioridad            Int     @default(0) // desempate si dos reglas solapan (gana mayor)
+
+  activo    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([lavaderoId, diaSemana, activo])
+}
+
+// ===== GAMIFICACIÓN =====
+
+model Nivel {
+  id          String   @id @default(cuid())
+  lavaderoId  String
+  lavadero    Lavadero @relation(fields: [lavaderoId], references: [id])
+  nombre      String // Bronce / Plata / Oro
+  orden       Int // 1, 2, 3…
+  puntosMin   Int // umbral de entrada
+  color       String? // hex para la UI
+  descripcion String?
+  activo      Boolean  @default(true)
+
+  descuentos Descuento[]
+
+  @@unique([lavaderoId, orden])
+  @@index([lavaderoId, puntosMin])
+}
+
+model PuntosMovimiento {
+  id          String               @id @default(cuid())
+  lavaderoId  String
+  lavadero    Lavadero             @relation(fields: [lavaderoId], references: [id])
+  clienteId   String
+  cliente     Cliente              @relation(fields: [clienteId], references: [id])
+  lavadoId    String?
+  tipo        TipoMovimientoPuntos
+  puntos      Int // puede ser negativo (AJUSTE_MANUAL)
+  descripcion String?
+  createdAt   DateTime             @default(now())
+
+  @@index([clienteId, createdAt])
+  @@index([lavaderoId])
+}
+
+// Base de descuentos ligada a niveles (canje real: próxima etapa)
+model Descuento {
+  id          String        @id @default(cuid())
+  lavaderoId  String
+  lavadero    Lavadero      @relation(fields: [lavaderoId], references: [id])
+  nombre      String
+  descripcion String?
+  tipo        TipoDescuento
+  valor       Decimal       @db.Decimal(12, 2) // % o monto ARS según tipo
+  nivelId     String? // requiere nivel >= este
+  nivel       Nivel?        @relation(fields: [nivelId], references: [id])
+  validoDesde DateTime?
+  validoHasta DateTime?
+  activo      Boolean       @default(true)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  @@index([lavaderoId, activo])
+}
