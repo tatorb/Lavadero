@@ -155,6 +155,27 @@ export async function crearTurnoCliente(
   return { error: "No se pudo crear el turno, probá de nuevo" };
 }
 
+export interface SlotCliente {
+  fechaISO: string;
+  hora: string;
+  estado: "disponible" | "lleno" | "fuera_de_anticipacion" | "pasado";
+  confirmacionAuto: boolean;
+}
+
+/** Slots de un día (yyyy-MM-dd) para el picker de turnos del cliente. */
+export async function obtenerSlotsDia(dia: string): Promise<SlotCliente[]> {
+  const user = await requireCliente();
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(dia)) return [];
+  const { getSlotsDia } = await import("@/lib/turnos/disponibilidad");
+  const slots = await getSlotsDia(user.lavaderoId, dia);
+  return slots.map((s) => ({
+    fechaISO: s.fecha.toISOString(),
+    hora: s.hora,
+    estado: s.estado,
+    confirmacionAuto: s.confirmacionAuto,
+  }));
+}
+
 export async function cancelarTurnoCliente(id: string): Promise<EstadoAccion> {
   const user = await requireCliente();
   const { count } = await prisma.turno.updateMany({
