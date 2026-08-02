@@ -354,11 +354,6 @@ function TurnoDialog({
   const [nuevaFecha, setNuevaFecha] = React.useState("");
   const [pending, setPending] = React.useState(false);
 
-  React.useEffect(() => {
-    setModo("ver");
-    setNuevaFecha("");
-  }, [turno?.id]);
-
   if (!turno) return null;
   const badge = ESTADO_TURNO_BADGE[turno.estado];
   const local = toZonedTime(new Date(turno.fecha), tz);
@@ -800,6 +795,7 @@ export function CalendarioTurnos({
       </div>
 
       <TurnoDialog
+        key={seleccionado?.id ?? "ninguno"}
         turno={seleccionado}
         tz={timezone}
         clientes={clientes}

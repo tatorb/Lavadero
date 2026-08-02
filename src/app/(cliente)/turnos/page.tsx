@@ -24,6 +24,8 @@ export default async function TurnosClientePage() {
     }),
   ]);
 
+  // Server component: el "ahora" se captura al momento del request
+  // eslint-disable-next-line react-hooks/purity
   const ahora = Date.now();
 
   return (

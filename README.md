@@ -1,36 +1,93 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Lavadero
 
-## Getting Started
+Aplicación de gestión para lavaderos de autos con experiencia gamificada para el cliente.
 
-First, run the development server:
+## Superficies
+
+| Superficie | Ruta | Quién la usa |
+|---|---|---|
+| Panel de gestión | `/admin` | Admin y operativos del lavadero |
+| Panel super-admin | `/super` | Gestión de múltiples lavaderos y usuarios |
+| App del cliente (mobile-first) | `/` | Clientes finales |
+
+### Funcionalidades
+
+- **Gestión**: clientes (con autos y vínculo pareja/familiar que comparte autos y beneficios), calendario de turnos con vistas día/semana/mes estilo Google Calendar, lavados con timeline llegada → inicio → fin, servicios y adicionales, reglas de turnos por franja horaria.
+- **Reglas de turnos por franja**: por día de semana y rango horario se configura confirmación automática o manual, anticipación mínima/máxima y capacidad por slot. Ej.: "sábados de 9 a 12 solo con 24 h de anticipación", "lunes reserva directa".
+- **Gamificación**: cada lavado finalizado suma puntos (ledger en `PuntosMovimiento`); niveles Bronce/Plata/Oro con progreso, racha de visitas y descuentos ligados al nivel. Los clientes vinculados comparten el mejor nivel de los dos.
+- **App del cliente**: home con nivel/progreso/racha, descuentos, historial de lavados, pedir turno con wizard (los horarios salen de las reglas de franja) y perfil.
+- **Multi-tenant**: toda la base está asociada a un lavadero (`lavaderoId`); el tenant sale siempre de la sesión, nunca del input.
+
+## Stack
+
+Next.js 16 (App Router) · TypeScript · PostgreSQL + Prisma 6 · Auth.js v5 (credentials, JWT) · Tailwind CSS 4 + componentes estilo shadcn/ui (Radix) · TanStack Table · date-fns(-tz) · Vitest.
+
+## Desarrollo local
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+# 1. Base de datos
+docker compose up -d          # Postgres 16 en :5432
+
+# 2. Variables de entorno
+cp .env.example .env          # ajustar AUTH_SECRET
+
+# 3. Dependencias, migraciones y datos demo
+npm install
+npx prisma migrate dev
+npx prisma db seed
+
+# 4. Levantar
+npm run dev                   # http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Usuarios demo (contraseña `demo1234`)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+| Email | Rol |
+|---|---|
+| `super@demo.com` | Super admin (`/super`) |
+| `admin@demo.com` | Admin del lavadero (`/admin`) |
+| `operativo@demo.com` | Operativo (`/admin`, sin edición de servicios/reglas) |
+| `cliente@demo.com` | Cliente (app mobile en `/`) |
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### Tests
 
-## Learn More
+```bash
+npm test        # motor de reglas de franja + gamificación (Vitest)
+```
 
-To learn more about Next.js, take a look at the following resources:
+## Deploy (Vercel + Neon)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1. Crear una base en [Neon](https://neon.tech) y copiar las dos cadenas de conexión.
+2. En Vercel, configurar las variables:
+   - `DATABASE_URL`: cadena **pooled** de Neon (runtime).
+   - `DIRECT_URL`: cadena **directa** de Neon (migraciones).
+   - `AUTH_SECRET`: `npx auth secret` o `openssl rand -base64 32`.
+3. Aplicar migraciones y seed contra Neon:
+   ```bash
+   DATABASE_URL=... DIRECT_URL=... npx prisma migrate deploy
+   DATABASE_URL=... DIRECT_URL=... npx prisma db seed   # opcional, datos demo
+   ```
+4. Deploy normal — `postinstall` corre `prisma generate` automáticamente.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Estructura
 
-## Deploy on Vercel
+```
+prisma/               schema multi-tenant + seed demo
+src/
+├── proxy.ts          protección de rutas por rol (edge)
+├── app/
+│   ├── (cliente)/    app mobile-first del cliente
+│   ├── admin/        panel de gestión (sidebar)
+│   ├── super/        panel super-admin
+│   └── login|registro/
+├── components/       ui/ (kit base), admin/, calendario/, cliente/, turnos/
+├── lib/
+│   ├── auth*.ts      Auth.js + helpers requireStaff/requireCliente
+│   ├── turnos/       motor puro de reglas de franja (+ tests)
+│   └── gamificacion/ puntos, niveles y racha (+ tests)
+└── server/actions/   server actions por dominio (validan sesión + tenant)
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Fuera de esta etapa
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Pagos, notificaciones (email/SMS/WhatsApp), OTP por teléfono, recuperación de contraseña, canje real de descuentos en el cobro, bonus por racha, drag & drop del calendario, reportes y RLS de Postgres.

@@ -5,6 +5,7 @@ import { prisma } from "@/lib/db";
 import { RegistroForm } from "./registro-form";
 
 export const metadata = { title: "Crear cuenta — Lavadero" };
+export const dynamic = "force-dynamic";
 
 export default async function RegistroPage() {
   const lavaderos = await prisma.lavadero.findMany({
