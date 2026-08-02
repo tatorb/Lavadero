@@ -57,17 +57,16 @@ npm test        # motor de reglas de franja + gamificación (Vitest)
 
 ## Deploy (Vercel + Neon)
 
-1. Crear una base en [Neon](https://neon.tech) y copiar las dos cadenas de conexión.
-2. En Vercel, configurar las variables:
-   - `DATABASE_URL`: cadena **pooled** de Neon (runtime).
-   - `DIRECT_URL`: cadena **directa** de Neon (migraciones).
-   - `AUTH_SECRET`: `npx auth secret` o `openssl rand -base64 32`.
-3. Aplicar migraciones y seed contra Neon:
+1. En [vercel.com/new](https://vercel.com/new), **importar este repo** desde GitHub (elegir la rama a deployar).
+2. En el proyecto de Vercel → **Storage → Create Database → Neon** (o crear la base en [neon.tech](https://neon.tech) a mano). La integración crea `DATABASE_URL` (pooled) y `DATABASE_URL_UNPOOLED` automáticamente.
+3. En **Settings → Environment Variables** agregar:
+   - `DIRECT_URL`: el valor de `DATABASE_URL_UNPOOLED` (conexión directa, para migraciones).
+   - `AUTH_SECRET`: generar con `npx auth secret` o `openssl rand -base64 32`.
+4. **Deploy.** Las migraciones corren solas en cada build (`vercel.json` ejecuta `prisma migrate deploy` antes de `next build`).
+5. Cargar los datos demo (opcional, una sola vez, desde tu máquina):
    ```bash
-   DATABASE_URL=... DIRECT_URL=... npx prisma migrate deploy
-   DATABASE_URL=... DIRECT_URL=... npx prisma db seed   # opcional, datos demo
+   DATABASE_URL="<cadena directa de Neon>" DIRECT_URL="<la misma>" npx prisma db seed
    ```
-4. Deploy normal — `postinstall` corre `prisma generate` automáticamente.
 
 ## Estructura
 
