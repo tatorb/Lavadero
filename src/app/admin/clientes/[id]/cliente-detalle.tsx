@@ -182,13 +182,13 @@ export function ClienteDetalle({
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center gap-3">
+      <div className="flex flex-wrap items-center gap-3">
         <Button variant="ghost" size="icon" asChild>
           <Link href="/admin/clientes">
             <ArrowLeft className="h-4 w-4" />
           </Link>
         </Button>
-        <div className="flex-1">
+        <div className="min-w-0 flex-1">
           <h1 className="text-2xl font-bold">{nombreCompleto}</h1>
           <p className="text-sm text-muted-foreground">
             {cliente.telefono ?? "Sin teléfono"} · {cliente.email ?? "Sin email"}
@@ -350,12 +350,14 @@ export function ClienteDetalle({
       </div>
 
       <Tabs defaultValue="autos">
-        <TabsList>
-          <TabsTrigger value="autos">Autos ({autos.length})</TabsTrigger>
-          <TabsTrigger value="lavados">Lavados ({lavados.length})</TabsTrigger>
-          <TabsTrigger value="turnos">Turnos ({turnos.length})</TabsTrigger>
-          <TabsTrigger value="info">Detalles</TabsTrigger>
-        </TabsList>
+        <div className="overflow-x-auto">
+          <TabsList>
+            <TabsTrigger value="autos">Autos ({autos.length})</TabsTrigger>
+            <TabsTrigger value="lavados">Lavados ({lavados.length})</TabsTrigger>
+            <TabsTrigger value="turnos">Turnos ({turnos.length})</TabsTrigger>
+            <TabsTrigger value="info">Detalles</TabsTrigger>
+          </TabsList>
+        </div>
 
         <TabsContent value="autos" className="space-y-3">
           <div className="flex justify-end">

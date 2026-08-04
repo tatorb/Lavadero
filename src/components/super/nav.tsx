@@ -3,44 +3,24 @@
 import * as React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import {
-  CalendarDays,
-  Droplets,
-  LogOut,
-  Menu,
-  Settings,
-  SprayCan,
-  Users,
-  Waves,
-} from "lucide-react";
+import { Building2, Droplets, LogOut, Menu, Users } from "lucide-react";
 
 import { cerrarSesion } from "@/server/actions/auth";
 import { cn } from "@/lib/utils";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 
 const NAV = [
-  { href: "/admin/turnos", label: "Turnos", icon: CalendarDays },
-  { href: "/admin/clientes", label: "Clientes", icon: Users },
-  { href: "/admin/lavados", label: "Lavados", icon: Waves },
-  { href: "/admin/servicios", label: "Servicios", icon: SprayCan },
-  { href: "/admin/configuracion/franjas", label: "Franjas horarias", icon: Settings },
+  { href: "/super/lavaderos", label: "Lavaderos", icon: Building2 },
+  { href: "/super/usuarios", label: "Usuarios", icon: Users },
 ];
 
-interface UsuarioInfo {
-  nombre: string;
-  rol: string;
-}
-
 function NavContenido({
-  usuario,
-  lavaderoNombre,
+  nombreUsuario,
   onNavegar,
 }: {
-  usuario: UsuarioInfo;
-  lavaderoNombre: string;
+  nombreUsuario: string;
   onNavegar?: () => void;
 }) {
   const pathname = usePathname();
@@ -48,12 +28,12 @@ function NavContenido({
   return (
     <>
       <div className="flex items-center gap-2 px-4 py-5">
-        <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary text-primary-foreground">
+        <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-neutral-900 text-white">
           <Droplets className="h-5 w-5" />
         </div>
-        <div className="min-w-0">
-          <p className="truncate text-sm font-semibold">{lavaderoNombre}</p>
-          <p className="text-xs text-muted-foreground">Panel de gestión</p>
+        <div>
+          <p className="text-sm font-semibold">Lavadero</p>
+          <p className="text-xs text-muted-foreground">Super admin</p>
         </div>
       </div>
       <Separator />
@@ -80,12 +60,7 @@ function NavContenido({
       </nav>
       <Separator />
       <div className="space-y-2 p-4">
-        <div className="flex items-center justify-between gap-2">
-          <p className="truncate text-sm font-medium">{usuario.nombre}</p>
-          <Badge variant={usuario.rol === "ADMIN" ? "default" : "secondary"}>
-            {usuario.rol === "ADMIN" ? "Admin" : "Operativo"}
-          </Badge>
-        </div>
+        <p className="truncate text-sm font-medium">{nombreUsuario}</p>
         <form action={cerrarSesion}>
           <Button variant="outline" size="sm" className="w-full" type="submit">
             <LogOut className="h-4 w-4" />
@@ -97,29 +72,15 @@ function NavContenido({
   );
 }
 
-/** Sidebar fija — solo visible en desktop (lg+). */
-export function AdminSidebar({
-  usuario,
-  lavaderoNombre,
-}: {
-  usuario: UsuarioInfo;
-  lavaderoNombre: string;
-}) {
+export function SuperSidebar({ nombreUsuario }: { nombreUsuario: string }) {
   return (
     <aside className="sticky top-0 hidden h-screen w-60 shrink-0 flex-col border-r bg-background lg:flex">
-      <NavContenido usuario={usuario} lavaderoNombre={lavaderoNombre} />
+      <NavContenido nombreUsuario={nombreUsuario} />
     </aside>
   );
 }
 
-/** Header sticky con hamburguesa + drawer — solo visible en mobile (< lg). */
-export function AdminMobileHeader({
-  usuario,
-  lavaderoNombre,
-}: {
-  usuario: UsuarioInfo;
-  lavaderoNombre: string;
-}) {
+export function SuperMobileHeader({ nombreUsuario }: { nombreUsuario: string }) {
   const [abierto, setAbierto] = React.useState(false);
 
   return (
@@ -133,17 +94,16 @@ export function AdminMobileHeader({
         <SheetContent side="left">
           <SheetTitle className="sr-only">Menú de navegación</SheetTitle>
           <NavContenido
-            usuario={usuario}
-            lavaderoNombre={lavaderoNombre}
+            nombreUsuario={nombreUsuario}
             onNavegar={() => setAbierto(false)}
           />
         </SheetContent>
       </Sheet>
       <div className="flex min-w-0 items-center gap-2">
-        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary text-primary-foreground">
+        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-neutral-900 text-white">
           <Droplets className="h-4 w-4" />
         </div>
-        <p className="truncate text-sm font-semibold">{lavaderoNombre}</p>
+        <p className="truncate text-sm font-semibold">Super admin</p>
       </div>
     </header>
   );

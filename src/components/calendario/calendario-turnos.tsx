@@ -139,7 +139,7 @@ function VistaGrilla({
   return (
     <div className="overflow-x-auto rounded-lg border bg-background">
       <div
-        className="grid min-w-[640px]"
+        className={cn("grid", dias.length > 1 && "min-w-[640px]")}
         style={{ gridTemplateColumns: `56px repeat(${dias.length}, minmax(0, 1fr))` }}
       >
         {/* Cabecera de días */}
@@ -291,7 +291,7 @@ function VistaMes({
               <div
                 key={dia}
                 className={cn(
-                  "min-h-24 space-y-1 border-l p-1 first:border-l-0",
+                  "min-h-16 space-y-1 border-l p-1 first:border-l-0 sm:min-h-24",
                   !delMes && "bg-muted/40",
                   dia === hoy && "bg-primary/5"
                 )}
