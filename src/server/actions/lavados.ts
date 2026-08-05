@@ -17,6 +17,8 @@ const crearLavadoSchema = z.object({
   addonIds: z.array(z.string()).optional(),
   detalles: z.string().optional(),
   turnoId: z.string().optional(),
+  /** ISO UTC de la llegada; si falta se usa ahora (permite cargar lavados de otros días) */
+  llegadaISO: z.string().optional(),
 });
 
 /**
@@ -69,9 +71,19 @@ export async function crearLavado(input: z.infer<typeof crearLavadoSchema>): Pro
   }
 
   // Precio de lista según el tipo de vehículo del auto
+  // Precio de lista según el tipo de vehículo del auto
   const precioFinal =
     precioParaTipo(servicio, auto.tipo) +
     addons.reduce((sum, a) => sum + precioParaTipo(a, auto.tipo), 0);
+
+  let llegadaAt = new Date();
+  if (data.llegadaISO) {
+    llegadaAt = new Date(data.llegadaISO);
+    if (Number.isNaN(llegadaAt.getTime())) return { error: "Fecha de llegada inválida" };
+    if (llegadaAt.getTime() > Date.now() + 60 * 60 * 1000) {
+      return { error: "La llegada no puede ser en el futuro" };
+    }
+  }
 
   const lavado = await prisma.$transaction(async (tx) => {
     const creado = await tx.lavado.create({
@@ -81,7 +93,7 @@ export async function crearLavado(input: z.infer<typeof crearLavadoSchema>): Pro
         autoId: auto.id,
         servicioId: servicio.id,
         turnoId: data.turnoId,
-        llegadaAt: new Date(),
+        llegadaAt,
         detalles: data.detalles,
         precioFinal,
         addons: {
@@ -108,11 +120,16 @@ export async function crearLavado(input: z.infer<typeof crearLavadoSchema>): Pro
 
 export async function iniciarLavado(id: string): Promise<EstadoAccion> {
   const user = await requireStaff();
-  const { count } = await prisma.lavado.updateMany({
+  const lavado = await prisma.lavado.findFirst({
     where: { id, lavaderoId: user.lavaderoId, inicioAt: null },
-    data: { inicioAt: new Date() },
   });
-  if (count === 0) return { error: "El lavado no existe o ya fue iniciado" };
+  if (!lavado) return { error: "El lavado no existe o ya fue iniciado" };
+  // Lavado cargado con fecha pasada: el inicio acompaña a la llegada
+  const esRetroactivo = Date.now() - lavado.llegadaAt.getTime() > 12 * 60 * 60 * 1000;
+  await prisma.lavado.update({
+    where: { id: lavado.id },
+    data: { inicioAt: esRetroactivo ? lavado.llegadaAt : new Date() },
+  });
   revalidatePath(`/admin/lavados/${id}`);
   revalidatePath("/admin/lavados");
   return { ok: true };
@@ -131,7 +148,11 @@ export async function finalizarLavado(id: string): Promise<EstadoAccion> {
   if (!lavado.inicioAt) return { error: "El lavado todavía no fue iniciado" };
   if (lavado.finAt) return { error: "El lavado ya fue finalizado" };
 
-  const finAt = new Date();
+  // Lavado cargado con fecha pasada: el fin (y la gamificación) usan esa fecha
+  const esRetroactivo = Date.now() - lavado.llegadaAt.getTime() > 12 * 60 * 60 * 1000;
+  const finAt = esRetroactivo
+    ? new Date(lavado.llegadaAt.getTime() + 45 * 60 * 1000)
+    : new Date();
   await prisma.$transaction((tx) => otorgarPuntosLavado(tx, lavado.id, finAt));
 
   revalidatePath(`/admin/lavados/${id}`);

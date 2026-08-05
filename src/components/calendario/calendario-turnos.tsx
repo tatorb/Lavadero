@@ -519,6 +519,7 @@ function TurnoDialog({
           <NuevoLavadoForm
             clientes={clientes}
             servicios={servicios}
+            timezone={tz}
             turnoId={turno.id}
             clientePreseleccionado={turno.cliente.id}
             onDone={(id) => {

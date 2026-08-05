@@ -28,12 +28,18 @@ export async function otorgarPuntosLavado(
     lavado.servicio.puntos +
     lavado.addons.reduce((sum, a) => sum + a.servicio.puntos, 0);
 
-  const nuevaRacha = calcularNuevaRacha(
-    lavado.cliente.ultimaVisita,
-    lavado.cliente.rachaActual,
-    finAt,
-    lavado.lavadero.rachaVentanaDias
-  );
+  // Un lavado cargado con fecha anterior a la última visita suma puntos pero
+  // no pisa la racha ni la última visita (evita que un retroactivo la reinicie)
+  const esAnterior =
+    lavado.cliente.ultimaVisita !== null && finAt < lavado.cliente.ultimaVisita;
+  const nuevaRacha = esAnterior
+    ? lavado.cliente.rachaActual
+    : calcularNuevaRacha(
+        lavado.cliente.ultimaVisita,
+        lavado.cliente.rachaActual,
+        finAt,
+        lavado.lavadero.rachaVentanaDias
+      );
 
   await tx.puntosMovimiento.create({
     data: {
@@ -52,7 +58,7 @@ export async function otorgarPuntosLavado(
       puntosTotal: { increment: puntos },
       rachaActual: nuevaRacha,
       mejorRacha: Math.max(lavado.cliente.mejorRacha, nuevaRacha),
-      ultimaVisita: finAt,
+      ultimaVisita: esAnterior ? lavado.cliente.ultimaVisita : finAt,
     },
   });
 

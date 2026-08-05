@@ -9,6 +9,11 @@ export const metadata = { title: "Lavados — Gestión" };
 export default async function LavadosPage() {
   const user = await requireStaff();
 
+  const lavadero = await prisma.lavadero.findUniqueOrThrow({
+    where: { id: user.lavaderoId },
+    select: { timezone: true },
+  });
+
   const [lavados, clientes, servicios] = await Promise.all([
     prisma.lavado.findMany({
       where: { lavaderoId: user.lavaderoId },
@@ -72,6 +77,7 @@ export default async function LavadosPage() {
           precios: matrizPrecios(s),
           tipo: s.tipo,
         }))}
+        timezone={lavadero.timezone}
       />
     </div>
   );

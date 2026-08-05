@@ -3,6 +3,8 @@
 import * as React from "react";
 import { useRouter } from "next/navigation";
 import { type ColumnDef } from "@tanstack/react-table";
+import { format } from "date-fns";
+import { fromZonedTime, toZonedTime } from "date-fns-tz";
 import { Plus } from "lucide-react";
 import { toast } from "sonner";
 
@@ -17,6 +19,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
   Select,
@@ -67,12 +70,14 @@ const ESTADO_LAVADO: Record<LavadoRow["estado"], { label: string; variant: "warn
 export function NuevoLavadoForm({
   clientes,
   servicios,
+  timezone,
   turnoId,
   clientePreseleccionado,
   onDone,
 }: {
   clientes: ClienteConAutos[];
   servicios: ServicioOption[];
+  timezone: string;
   turnoId?: string;
   clientePreseleccionado?: string;
   onDone: (id?: string) => void;
@@ -82,6 +87,10 @@ export function NuevoLavadoForm({
   const [servicioId, setServicioId] = React.useState("");
   const [addonIds, setAddonIds] = React.useState<string[]>([]);
   const [detalles, setDetalles] = React.useState("");
+  // Llegada editable: por defecto ahora (hora local del lavadero)
+  const [llegadaLocal, setLlegadaLocal] = React.useState(() =>
+    format(toZonedTime(new Date(), timezone), "yyyy-MM-dd'T'HH:mm")
+  );
   const [pending, setPending] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
 
@@ -181,6 +190,18 @@ export function NuevoLavadoForm({
         </div>
       )}
       <div className="space-y-2">
+        <Label htmlFor="llegada">Fecha y hora de llegada</Label>
+        <Input
+          id="llegada"
+          type="datetime-local"
+          value={llegadaLocal}
+          onChange={(e) => setLlegadaLocal(e.target.value)}
+        />
+        <p className="text-xs text-muted-foreground">
+          Por defecto es ahora; cambiala para cargar un lavado de otro día.
+        </p>
+      </div>
+      <div className="space-y-2">
         <Label htmlFor="detalles">Detalles</Label>
         <Textarea
           id="detalles"
@@ -207,6 +228,9 @@ export function NuevoLavadoForm({
             addonIds,
             detalles: detalles || undefined,
             turnoId,
+            llegadaISO: llegadaLocal
+              ? fromZonedTime(llegadaLocal, timezone).toISOString()
+              : undefined,
           });
           setPending(false);
           if (r?.error) setError(r.error);
@@ -226,10 +250,12 @@ export function LavadosTable({
   lavados,
   clientes,
   servicios,
+  timezone,
 }: {
   lavados: LavadoRow[];
   clientes: ClienteConAutos[];
   servicios: ServicioOption[];
+  timezone: string;
 }) {
   const router = useRouter();
   const [creando, setCreando] = React.useState(false);
@@ -281,6 +307,7 @@ export function LavadosTable({
             <NuevoLavadoForm
               clientes={clientes}
               servicios={servicios}
+              timezone={timezone}
               onDone={(id) => {
                 setCreando(false);
                 if (id) router.push(`/admin/lavados/${id}`);
