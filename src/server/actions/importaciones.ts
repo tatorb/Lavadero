@@ -4,8 +4,28 @@ import { revalidatePath } from "next/cache";
 
 import { requireStaff } from "@/lib/auth-helpers";
 import { prisma } from "@/lib/db";
+import { importarRegistroBosquecito } from "@/server/import/bosquecito";
 
 export type EstadoAccion = { error?: string; ok?: boolean } | undefined;
+
+/**
+ * Importa el registro histórico de El Bosquecito en el lavadero del admin
+ * logueado. Corre en el servidor, por lo que funciona también desde el celular.
+ */
+export async function importarRegistroHistorico(): Promise<EstadoAccion> {
+  const user = await requireStaff(["ADMIN"]);
+  try {
+    await importarRegistroBosquecito(prisma, user.lavaderoId);
+  } catch (e) {
+    return { error: e instanceof Error ? e.message : "La importación falló" };
+  }
+  revalidatePath("/admin/configuracion/importaciones");
+  revalidatePath("/admin/clientes");
+  revalidatePath("/admin/lavados");
+  revalidatePath("/admin/caja");
+  revalidatePath("/admin/servicios");
+  return { ok: true };
+}
 
 /**
  * Deshace un lote de importación completo: elimina clientes, autos, lavados,

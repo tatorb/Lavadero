@@ -2,11 +2,14 @@
 
 import * as React from "react";
 import { useRouter } from "next/navigation";
-import { Undo2 } from "lucide-react";
+import { Download, Loader2, Undo2 } from "lucide-react";
 import { toast } from "sonner";
 
 import { formatFecha } from "@/lib/format";
-import { deshacerImportacion } from "@/server/actions/importaciones";
+import {
+  deshacerImportacion,
+  importarRegistroHistorico,
+} from "@/server/actions/importaciones";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -42,16 +45,78 @@ const ETIQUETAS: Record<string, string> = {
 export function ImportacionesLista({
   batches,
   puedeDeshacer,
+  puedeImportar,
 }: {
   batches: BatchRow[];
   puedeDeshacer: boolean;
+  puedeImportar: boolean;
 }) {
   const router = useRouter();
   const [confirmando, setConfirmando] = React.useState<BatchRow | null>(null);
+  const [confirmandoImport, setConfirmandoImport] = React.useState(false);
   const [pending, setPending] = React.useState(false);
 
   return (
     <div className="space-y-4">
+      {puedeImportar && (
+        <Card className="border-primary/40 bg-primary/5">
+          <CardContent className="flex flex-wrap items-center justify-between gap-3 pt-6">
+            <div>
+              <p className="font-semibold">Registro histórico de El Bosquecito</p>
+              <p className="text-sm text-muted-foreground">
+                Importa en este lavadero los ~585 lavados, 287 clientes, gastos de
+                caja y cuentas corrientes del registro (oct 2025 – ago 2026), con
+                el catálogo de servicios y los puntos/niveles recalculados.
+              </p>
+            </div>
+            <Button onClick={() => setConfirmandoImport(true)} disabled={pending}>
+              {pending ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Download className="h-4 w-4" />
+              )}
+              {pending ? "Importando…" : "Importar ahora"}
+            </Button>
+          </CardContent>
+        </Card>
+      )}
+
+      <Dialog open={confirmandoImport} onOpenChange={(o) => !o && setConfirmandoImport(false)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>¿Importar el registro histórico?</DialogTitle>
+          </DialogHeader>
+          <p className="text-sm text-muted-foreground">
+            Se van a crear en <strong>este lavadero</strong> los clientes,
+            vehículos, lavados, gastos de caja y cuentas corrientes del registro
+            histórico de El Bosquecito, y se agregará el catálogo de servicios con
+            precios por tipo de vehículo. Todo entra como un lote que después se
+            puede deshacer desde esta misma pantalla.
+          </p>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setConfirmandoImport(false)}>
+              Cancelar
+            </Button>
+            <Button
+              disabled={pending}
+              onClick={async () => {
+                setPending(true);
+                setConfirmandoImport(false);
+                toast.info("Importando… puede tardar un minuto");
+                const r = await importarRegistroHistorico();
+                setPending(false);
+                if (r?.error) toast.error(r.error);
+                else {
+                  toast.success("Registro histórico importado");
+                  router.refresh();
+                }
+              }}
+            >
+              Sí, importar
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
       {batches.map((b) => (
         <Card key={b.id}>
           <CardContent className="space-y-3 pt-6">

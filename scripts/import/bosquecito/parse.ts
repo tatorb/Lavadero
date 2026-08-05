@@ -1,6 +1,6 @@
-import fs from "node:fs";
-import path from "node:path";
 import type { TipoRelacion, TipoVehiculo } from "@prisma/client";
+
+import { REGISTRO } from "./registro";
 
 import { parsearServicio } from "./catalogo";
 import {
@@ -106,10 +106,8 @@ function categoriaGasto(texto: string): string {
   return "Otros";
 }
 
-export function parseRegistro(rutaArchivo?: string): Staging {
-  const ruta =
-    rutaArchivo ?? path.join(__dirname, "registro.txt");
-  const lineas = fs.readFileSync(ruta, "utf8").split("\n");
+export function parseRegistro(contenido: string = REGISTRO): Staging {
+  const lineas = contenido.split("\n");
 
   const staging: Staging = {
     lavados: [],
