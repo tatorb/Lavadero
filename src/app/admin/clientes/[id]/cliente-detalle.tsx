@@ -7,15 +7,24 @@ import {
   ArrowLeft,
   Car,
   Flame,
+  History,
   Link2,
   Link2Off,
+  MessageCircle,
   Pencil,
+  Phone,
   Plus,
   Trophy,
+  X,
 } from "lucide-react";
 import { toast } from "sonner";
 
-import { formatARS, formatFecha } from "@/lib/format";
+import {
+  ESTADO_PAGO_LABEL,
+  TIPO_VEHICULO_LABEL,
+  formatARS,
+  formatFecha,
+} from "@/lib/format";
 import {
   crearAuto,
   desvincularCliente,
@@ -70,7 +79,26 @@ interface AutoItem {
   tipo: string;
   color: string | null;
   detalles: string | null;
+  descripcionOriginal?: string | null;
+  cantidadLavados?: number;
 }
+
+const RELACION_LABEL: Record<string, string> = {
+  CLIENTE: "Cliente",
+  AMIGO: "Amigo",
+  FAMILIAR: "Familiar",
+  DESCONOCIDO: "Desconocido",
+};
+
+const BADGE_PAGO: Record<string, "success" | "warning" | "info" | "muted"> = {
+  PAGADO: "success",
+  PARCIAL: "warning",
+  PENDIENTE: "warning",
+  CORTESIA: "info",
+  SALDO_APLICADO: "info",
+  BONIFICADO: "info",
+  SIN_DATO: "muted",
+};
 
 const TIPOS_VEHICULO = [
   ["AUTO", "Auto"],
@@ -161,6 +189,7 @@ export function ClienteDetalle({
   nivel,
   candidatosVinculo,
   cuenta,
+  resumen,
 }: {
   cliente: {
     id: string;
@@ -170,6 +199,8 @@ export function ClienteDetalle({
     email: string | null;
     tipoRelacion: string;
     origen: string | null;
+    nombreOriginal: string | null;
+    visitasAnotadas: number | null;
     detalles: string | null;
     conCuenta: boolean;
     puntosTotal: number;
@@ -184,10 +215,19 @@ export function ClienteDetalle({
     fecha: string;
     servicio: string;
     auto: string;
+    autoId: string;
     finalizado: boolean;
+    cancelado: boolean;
     puntos: number;
     precio: number | null;
+    cobrado: number | null;
+    estadoPago: string;
   }>;
+  resumen: {
+    totalLavados: number;
+    totalGastado: number;
+    primeraVisita: string | null;
+  };
   turnos: Array<{
     id: string;
     fecha: string;
@@ -215,8 +255,15 @@ export function ClienteDetalle({
   const [editandoAuto, setEditandoAuto] = React.useState<AutoItem | null>(null);
   const [vinculando, setVinculando] = React.useState(false);
   const [vinculoSeleccion, setVinculoSeleccion] = React.useState("");
+  const [tab, setTab] = React.useState("autos");
+  const [filtroAuto, setFiltroAuto] = React.useState<string | null>(null);
 
   const nombreCompleto = [cliente.nombre, cliente.apellido].filter(Boolean).join(" ");
+  const lavadosVisibles = filtroAuto
+    ? lavados.filter((l) => l.autoId === filtroAuto)
+    : lavados;
+  const autoFiltrado = autos.find((a) => a.id === filtroAuto);
+  const telefonoLimpio = cliente.telefono?.replace(/[^\d+]/g, "");
 
   return (
     <div className="space-y-6">
@@ -228,14 +275,35 @@ export function ClienteDetalle({
         </Button>
         <div className="min-w-0 flex-1">
           <h1 className="text-2xl font-bold">{nombreCompleto}</h1>
-          <p className="text-sm text-muted-foreground">
-            {cliente.telefono ?? "Sin teléfono"} · {cliente.email ?? "Sin email"}
-            {cliente.conCuenta && (
-              <Badge variant="success" className="ml-2">
-                Usa la app
-              </Badge>
+          <div className="mt-1 flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
+            <span>{cliente.telefono ?? "Sin teléfono"}</span>
+            {telefonoLimpio && (
+              <>
+                <a
+                  href={`tel:${telefonoLimpio}`}
+                  className="text-primary"
+                  aria-label="Llamar"
+                >
+                  <Phone className="h-4 w-4" />
+                </a>
+                <a
+                  href={`https://wa.me/${telefonoLimpio.replace(/^\+/, "")}`}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="text-emerald-600"
+                  aria-label="WhatsApp"
+                >
+                  <MessageCircle className="h-4 w-4" />
+                </a>
+              </>
             )}
-          </p>
+            <span>· {cliente.email ?? "Sin email"}</span>
+            {cliente.tipoRelacion !== "CLIENTE" && (
+              <Badge variant="info">{RELACION_LABEL[cliente.tipoRelacion]}</Badge>
+            )}
+            {cliente.origen && <Badge variant="muted">Llegó por: {cliente.origen}</Badge>}
+            {cliente.conCuenta && <Badge variant="success">Usa la app</Badge>}
+          </div>
         </div>
         <Dialog open={editando} onOpenChange={setEditando}>
           <DialogTrigger asChild>
@@ -258,7 +326,30 @@ export function ClienteDetalle({
         </Dialog>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-3">
+      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="flex items-center gap-2 text-sm text-muted-foreground">
+              <History className="h-4 w-4" /> Historial
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-xl font-bold">
+              {resumen.totalLavados}{" "}
+              <span className="text-sm font-normal text-muted-foreground">
+                lavados · {formatARS(resumen.totalGastado)}
+              </span>
+            </p>
+            <p className="text-xs text-muted-foreground">
+              Cliente desde{" "}
+              {resumen.primeraVisita
+                ? formatFecha(new Date(resumen.primeraVisita), "MM/yyyy")
+                : "—"}
+              {cliente.visitasAnotadas != null &&
+                ` · Anotado a mano: ${cliente.visitasAnotadas} visitas`}
+            </p>
+          </CardContent>
+        </Card>
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="flex items-center gap-2 text-sm text-muted-foreground">
@@ -387,7 +478,7 @@ export function ClienteDetalle({
         </Card>
       </div>
 
-      <Tabs defaultValue="autos">
+      <Tabs value={tab} onValueChange={setTab}>
         <div className="overflow-x-auto">
           <TabsList>
             <TabsTrigger value="autos">Autos ({autos.length})</TabsTrigger>
@@ -421,22 +512,53 @@ export function ClienteDetalle({
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {autos.map((auto) => (
               <Card key={auto.id}>
-                <CardContent className="flex items-start justify-between gap-2 pt-6">
-                  <div className="flex items-start gap-3">
-                    <Car className="mt-1 h-5 w-5 text-muted-foreground" />
-                    <div>
-                      <p className="font-medium">
-                        {auto.marca} {auto.modelo}
-                      </p>
-                      <p className="text-sm text-muted-foreground">
-                        {auto.patente ?? "Sin patente"}
-                        {auto.color ? ` · ${auto.color}` : ""}
-                      </p>
+                <CardContent className="space-y-3 pt-6">
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="flex items-start gap-3">
+                      <Car className="mt-1 h-5 w-5 text-muted-foreground" />
+                      <div>
+                        <p className="font-medium">
+                          {auto.marca !== "—" ? `${auto.marca} ` : ""}
+                          {auto.modelo}
+                        </p>
+                        <p className="text-sm text-muted-foreground">
+                          {auto.patente ?? "Sin patente"}
+                          {auto.color ? ` · ${auto.color}` : ""}
+                        </p>
+                      </div>
                     </div>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => setEditandoAuto(auto)}
+                    >
+                      <Pencil className="h-4 w-4" />
+                    </Button>
                   </div>
-                  <Button variant="ghost" size="icon" onClick={() => setEditandoAuto(auto)}>
-                    <Pencil className="h-4 w-4" />
-                  </Button>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <Badge variant="muted">{TIPO_VEHICULO_LABEL[auto.tipo] ?? auto.tipo}</Badge>
+                    {(auto.cantidadLavados ?? 0) > 0 ? (
+                      <button
+                        type="button"
+                        className="text-xs font-medium text-primary hover:underline"
+                        onClick={() => {
+                          setFiltroAuto(auto.id);
+                          setTab("lavados");
+                        }}
+                      >
+                        Ver sus {auto.cantidadLavados}{" "}
+                        {auto.cantidadLavados === 1 ? "lavado" : "lavados"} →
+                      </button>
+                    ) : (
+                      <span className="text-xs text-muted-foreground">Sin lavados</span>
+                    )}
+                  </div>
+                  {auto.descripcionOriginal &&
+                    auto.descripcionOriginal !== auto.modelo && (
+                      <p className="text-xs text-muted-foreground">
+                        En el registro original: “{auto.descripcionOriginal}”
+                      </p>
+                    )}
                 </CardContent>
               </Card>
             ))}
@@ -463,7 +585,18 @@ export function ClienteDetalle({
           </Dialog>
         </TabsContent>
 
-        <TabsContent value="lavados">
+        <TabsContent value="lavados" className="space-y-3">
+          {autoFiltrado && (
+            <button
+              type="button"
+              onClick={() => setFiltroAuto(null)}
+              className="inline-flex items-center gap-1.5 rounded-full border border-primary bg-primary/10 px-3 py-1 text-sm text-primary"
+            >
+              Solo {autoFiltrado.marca !== "—" ? `${autoFiltrado.marca} ` : ""}
+              {autoFiltrado.modelo}
+              <X className="h-3.5 w-3.5" />
+            </button>
+          )}
           <div className="rounded-lg border bg-background">
             <Table>
               <TableHeader>
@@ -471,31 +604,39 @@ export function ClienteDetalle({
                   <TableHead>Fecha</TableHead>
                   <TableHead>Servicio</TableHead>
                   <TableHead>Auto</TableHead>
-                  <TableHead>Precio</TableHead>
+                  <TableHead>Cobrado</TableHead>
+                  <TableHead>Pago</TableHead>
                   <TableHead>Puntos</TableHead>
-                  <TableHead>Estado</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {lavados.map((l) => (
+                {lavadosVisibles.map((l) => (
                   <TableRow
                     key={l.id}
                     className="cursor-pointer"
                     onClick={() => router.push(`/admin/lavados/${l.id}`)}
                   >
-                    <TableCell>{formatFecha(new Date(l.fecha))}</TableCell>
+                    <TableCell>
+                      {formatFecha(new Date(l.fecha), "dd/MM/yyyy")}
+                    </TableCell>
                     <TableCell>{l.servicio}</TableCell>
                     <TableCell>{l.auto}</TableCell>
-                    <TableCell>{l.precio != null ? formatARS(l.precio) : "—"}</TableCell>
-                    <TableCell>{l.puntos || "—"}</TableCell>
                     <TableCell>
-                      <Badge variant={l.finalizado ? "success" : "warning"}>
-                        {l.finalizado ? "Finalizado" : "En curso"}
+                      {l.cobrado != null
+                        ? formatARS(l.cobrado)
+                        : l.precio != null
+                          ? formatARS(l.precio)
+                          : "—"}
+                    </TableCell>
+                    <TableCell>
+                      <Badge variant={BADGE_PAGO[l.estadoPago] ?? "muted"}>
+                        {ESTADO_PAGO_LABEL[l.estadoPago] ?? l.estadoPago}
                       </Badge>
                     </TableCell>
+                    <TableCell>{l.puntos || "—"}</TableCell>
                   </TableRow>
                 ))}
-                {lavados.length === 0 && (
+                {lavadosVisibles.length === 0 && (
                   <TableRow>
                     <TableCell colSpan={6} className="h-20 text-center text-muted-foreground">
                       Sin lavados registrados.
@@ -553,11 +694,54 @@ export function ClienteDetalle({
           />
         </TabsContent>
 
-        <TabsContent value="info">
+        <TabsContent value="info" className="space-y-3">
           <Card>
-            <CardContent className="pt-6">
+            <CardContent className="grid gap-x-6 gap-y-3 pt-6 text-sm sm:grid-cols-2">
+              <div>
+                <p className="text-xs text-muted-foreground">Relación</p>
+                <p className="font-medium">{RELACION_LABEL[cliente.tipoRelacion]}</p>
+              </div>
+              <div>
+                <p className="text-xs text-muted-foreground">¿Cómo llegó?</p>
+                <p className="font-medium">{cliente.origen ?? "Sin dato"}</p>
+              </div>
+              <div>
+                <p className="text-xs text-muted-foreground">Teléfono</p>
+                <p className="font-medium">{cliente.telefono ?? "Sin dato"}</p>
+              </div>
+              <div>
+                <p className="text-xs text-muted-foreground">Email</p>
+                <p className="font-medium">{cliente.email ?? "Sin dato"}</p>
+              </div>
+              {cliente.nombreOriginal &&
+                cliente.nombreOriginal !== cliente.nombre && (
+                  <div>
+                    <p className="text-xs text-muted-foreground">
+                      Nombre en el registro original
+                    </p>
+                    <p className="font-medium">{cliente.nombreOriginal}</p>
+                  </div>
+                )}
+              {cliente.visitasAnotadas != null && (
+                <div>
+                  <p className="text-xs text-muted-foreground">
+                    Visitas anotadas a mano (control)
+                  </p>
+                  <p className="font-medium">
+                    {cliente.visitasAnotadas} anotadas · {resumen.totalLavados}{" "}
+                    reales
+                  </p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm">Observaciones</CardTitle>
+            </CardHeader>
+            <CardContent>
               <p className="whitespace-pre-wrap text-sm">
-                {cliente.detalles || "Sin detalles cargados."}
+                {cliente.detalles || "Sin observaciones cargadas."}
               </p>
             </CardContent>
           </Card>

@@ -25,7 +25,7 @@ export default async function ClienteDetallePage({
       lavados: {
         include: { servicio: true, auto: true },
         orderBy: { llegadaAt: "desc" },
-        take: 50,
+        take: 200,
       },
       turnos: {
         include: { servicio: true, auto: true },
@@ -56,6 +56,16 @@ export default async function ClienteDetallePage({
 
   const estadoNivel = calcularNivel(cliente.puntosTotal, niveles);
 
+  const totalGastado = cliente.lavados.reduce(
+    (s, l) => s + (l.importeCobrado?.toNumber() ?? 0),
+    0
+  );
+  const primeraVisita = cliente.lavados.at(-1)?.llegadaAt ?? null;
+  const lavadosPorAuto = new Map<string, number>();
+  for (const l of cliente.lavados) {
+    lavadosPorAuto.set(l.autoId, (lavadosPorAuto.get(l.autoId) ?? 0) + 1);
+  }
+
   return (
     <ClienteDetalle
       cliente={{
@@ -66,6 +76,8 @@ export default async function ClienteDetallePage({
         email: cliente.email,
         tipoRelacion: cliente.tipoRelacion,
         origen: cliente.origen,
+        nombreOriginal: cliente.nombreOriginal,
+        visitasAnotadas: cliente.visitasAnotadas,
         detalles: cliente.detalles,
         conCuenta: !!cliente.passwordHash,
         puntosTotal: cliente.puntosTotal,
@@ -89,16 +101,27 @@ export default async function ClienteDetallePage({
         tipo: a.tipo,
         color: a.color,
         detalles: a.detalles,
+        descripcionOriginal: a.descripcionOriginal,
+        cantidadLavados: lavadosPorAuto.get(a.id) ?? 0,
       }))}
       lavados={cliente.lavados.map((l) => ({
         id: l.id,
         fecha: l.llegadaAt.toISOString(),
         servicio: l.servicio.nombre,
         auto: descripcionAuto(l.auto),
+        autoId: l.autoId,
         finalizado: !!l.finAt,
+        cancelado: !!l.canceladoAt,
         puntos: l.puntosOtorgados,
         precio: l.precioFinal?.toNumber() ?? null,
+        cobrado: l.importeCobrado?.toNumber() ?? null,
+        estadoPago: l.estadoPago,
       }))}
+      resumen={{
+        totalLavados: cliente.lavados.length,
+        totalGastado,
+        primeraVisita: primeraVisita?.toISOString() ?? null,
+      }}
       turnos={cliente.turnos.map((t) => ({
         id: t.id,
         fecha: t.fechaTurno.toISOString(),
