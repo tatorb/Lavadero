@@ -3,6 +3,8 @@ import { fromZonedTime, toZonedTime } from "date-fns-tz";
 
 import { requireStaff } from "@/lib/auth-helpers";
 import { prisma } from "@/lib/db";
+import { descripcionAuto } from "@/lib/format";
+import { matrizPrecios } from "@/lib/precios";
 import { CalendarioTurnos, type Vista } from "@/components/calendario/calendario-turnos";
 
 export const metadata = { title: "Turnos — Gestión" };
@@ -68,6 +70,7 @@ export default async function TurnosPage({
     }),
     prisma.servicio.findMany({
       where: { lavaderoId: user.lavaderoId, activo: true },
+      include: { precios: true },
       orderBy: { orden: "asc" },
     }),
   ]);
@@ -92,7 +95,7 @@ export default async function TurnosPage({
           nombre: [t.cliente.nombre, t.cliente.apellido].filter(Boolean).join(" "),
           telefono: t.cliente.telefono,
         },
-        auto: t.auto ? `${t.auto.marca} ${t.auto.modelo} (${t.auto.patente})` : null,
+        auto: t.auto ? descripcionAuto(t.auto) : null,
         servicio: t.servicio.nombre,
         addons: t.addons.map((a) => a.servicio.nombre),
       }))}
@@ -102,11 +105,13 @@ export default async function TurnosPage({
         autos: [
           ...c.autos.map((a) => ({
             id: a.id,
-            label: `${a.marca} ${a.modelo} (${a.patente})`,
+            label: descripcionAuto(a),
+            tipoVehiculo: a.tipo,
           })),
           ...(c.vinculadoCon?.autos.map((a) => ({
             id: a.id,
-            label: `${a.marca} ${a.modelo} (${a.patente}) — de ${c.vinculadoCon!.nombre}`,
+            label: `${descripcionAuto(a)} — de ${c.vinculadoCon!.nombre}`,
+            tipoVehiculo: a.tipo,
           })) ?? []),
         ],
       }))}
@@ -114,6 +119,7 @@ export default async function TurnosPage({
         id: s.id,
         nombre: s.nombre,
         precio: s.precio.toNumber(),
+        precios: matrizPrecios(s),
         tipo: s.tipo,
       }))}
     />

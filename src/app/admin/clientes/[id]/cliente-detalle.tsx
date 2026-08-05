@@ -65,10 +65,24 @@ interface AutoItem {
   id: string;
   marca: string;
   modelo: string;
-  patente: string;
+  patente: string | null;
+  tipo: string;
   color: string | null;
   detalles: string | null;
 }
+
+const TIPOS_VEHICULO = [
+  ["AUTO", "Auto"],
+  ["SUV", "SUV"],
+  ["PICKUP", "Pickup"],
+  ["PICKUP_GRANDE", "Pickup grande"],
+  ["UTILITARIO", "Utilitario"],
+  ["UTILITARIO_GRANDE", "Utilitario grande"],
+  ["MOTO", "Moto"],
+  ["MOTORHOME", "Motorhome"],
+  ["UTV", "UTV"],
+  ["OTRO", "Otro"],
+] as const;
 
 function AutoForm({
   action,
@@ -103,10 +117,25 @@ function AutoForm({
           <Input id="modelo" name="modelo" defaultValue={defaults?.modelo} required />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="patente">Patente</Label>
-          <Input id="patente" name="patente" defaultValue={defaults?.patente} required />
+          <Label htmlFor="patente">Patente (opcional)</Label>
+          <Input id="patente" name="patente" defaultValue={defaults?.patente ?? ""} />
         </div>
         <div className="space-y-2">
+          <Label>Tipo de vehículo</Label>
+          <Select name="tipo" defaultValue={defaults?.tipo ?? "AUTO"}>
+            <SelectTrigger>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {TIPOS_VEHICULO.map(([valor, label]) => (
+                <SelectItem key={valor} value={valor}>
+                  {label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        <div className="col-span-2 space-y-2">
           <Label htmlFor="color">Color</Label>
           <Input id="color" name="color" defaultValue={defaults?.color ?? ""} />
         </div>
@@ -390,7 +419,7 @@ export function ClienteDetalle({
                         {auto.marca} {auto.modelo}
                       </p>
                       <p className="text-sm text-muted-foreground">
-                        {auto.patente}
+                        {auto.patente ?? "Sin patente"}
                         {auto.color ? ` · ${auto.color}` : ""}
                       </p>
                     </div>

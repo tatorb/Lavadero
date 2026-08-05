@@ -1,10 +1,53 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import type { TipoVehiculo } from "@prisma/client";
 import { z } from "zod";
 
 import { requireStaff } from "@/lib/auth-helpers";
 import { prisma } from "@/lib/db";
+
+const TIPOS_VEHICULO: TipoVehiculo[] = [
+  "AUTO",
+  "SUV",
+  "PICKUP",
+  "PICKUP_GRANDE",
+  "UTILITARIO",
+  "UTILITARIO_GRANDE",
+  "MOTO",
+  "MOTORHOME",
+  "UTV",
+  "OTRO",
+];
+
+/** Lee del form los precios por tipo (campos precio_AUTO, precio_SUV, …). */
+function preciosPorTipo(formData: FormData) {
+  const precios: Array<{ tipoVehiculo: TipoVehiculo; precio: number }> = [];
+  for (const tipo of TIPOS_VEHICULO) {
+    const valor = formData.get(`precio_${tipo}`);
+    if (typeof valor === "string" && valor.trim() !== "") {
+      const n = Number(valor);
+      if (!Number.isNaN(n) && n > 0) precios.push({ tipoVehiculo: tipo, precio: n });
+    }
+  }
+  return precios;
+}
+
+async function guardarPrecios(
+  servicioId: string,
+  precios: Array<{ tipoVehiculo: TipoVehiculo; precio: number }>
+) {
+  await prisma.$transaction([
+    prisma.precioServicio.deleteMany({ where: { servicioId } }),
+    ...(precios.length
+      ? [
+          prisma.precioServicio.createMany({
+            data: precios.map((p) => ({ ...p, servicioId })),
+          }),
+        ]
+      : []),
+  ]);
+}
 
 const servicioSchema = z.object({
   nombre: z.string().min(2, "Nombre demasiado corto"),
@@ -31,7 +74,7 @@ export async function crearServicio(
     _max: { orden: true },
   });
 
-  await prisma.servicio.create({
+  const servicio = await prisma.servicio.create({
     data: {
       ...parsed.data,
       activo: true,
@@ -39,6 +82,7 @@ export async function crearServicio(
       lavaderoId: user.lavaderoId,
     },
   });
+  await guardarPrecios(servicio.id, preciosPorTipo(formData));
   revalidatePath("/admin/servicios");
   return { ok: true };
 }
@@ -57,6 +101,7 @@ export async function editarServicio(
     data: parsed.data,
   });
   if (count === 0) return { error: "Servicio no encontrado" };
+  await guardarPrecios(id, preciosPorTipo(formData));
   revalidatePath("/admin/servicios");
   return { ok: true };
 }

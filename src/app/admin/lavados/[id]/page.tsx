@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 
 import { requireStaff } from "@/lib/auth-helpers";
 import { prisma } from "@/lib/db";
+import { descripcionAuto } from "@/lib/format";
 import { LavadoDetalle } from "./lavado-detalle";
 
 export const metadata = { title: "Lavado — Gestión" };
@@ -36,7 +37,7 @@ export default async function LavadoDetallePage({
             .filter(Boolean)
             .join(" "),
         },
-        auto: `${lavado.auto.marca} ${lavado.auto.modelo} (${lavado.auto.patente})`,
+        auto: descripcionAuto(lavado.auto),
         servicio: lavado.servicio.nombre,
         addons: lavado.addons.map((a) => ({
           nombre: a.servicio.nombre,

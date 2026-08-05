@@ -39,11 +39,25 @@ export interface ServicioRow {
   nombre: string;
   descripcion: string | null;
   precio: number;
+  precios: Partial<Record<string, number>>;
   tipo: "PRINCIPAL" | "ADDON";
   duracionMin: number;
   puntos: number;
   activo: boolean;
 }
+
+const TIPOS_VEHICULO = [
+  ["AUTO", "Auto"],
+  ["SUV", "SUV"],
+  ["PICKUP", "Pickup"],
+  ["PICKUP_GRANDE", "Pickup grande"],
+  ["UTILITARIO", "Utilitario"],
+  ["UTILITARIO_GRANDE", "Utilitario grande"],
+  ["MOTO", "Moto"],
+  ["MOTORHOME", "Motorhome"],
+  ["UTV", "UTV"],
+  ["OTRO", "Otro"],
+] as const;
 
 function ServicioForm({
   servicio,
@@ -128,6 +142,32 @@ function ServicioForm({
           />
         </div>
       </div>
+      <details className="rounded-md border px-3 py-2" open={servicio && Object.keys(servicio.precios).length > 0}>
+        <summary className="cursor-pointer text-sm font-medium">
+          Precios por tipo de vehículo (opcional)
+        </summary>
+        <p className="mt-1 text-xs text-muted-foreground">
+          Si un tipo no tiene precio, se usa el precio base del servicio.
+        </p>
+        <div className="mt-3 grid grid-cols-2 gap-3">
+          {TIPOS_VEHICULO.map(([valor, label]) => (
+            <div key={valor} className="space-y-1">
+              <Label htmlFor={`precio_${valor}`} className="text-xs">
+                {label}
+              </Label>
+              <Input
+                id={`precio_${valor}`}
+                name={`precio_${valor}`}
+                type="number"
+                min={0}
+                step="0.01"
+                placeholder="Precio base"
+                defaultValue={servicio?.precios[valor] ?? ""}
+              />
+            </div>
+          ))}
+        </div>
+      </details>
       {state?.error && <p className="text-sm font-medium text-destructive">{state.error}</p>}
       <Button type="submit" className="w-full" disabled={pending}>
         {pending ? "Guardando…" : servicio ? "Guardar cambios" : "Crear servicio"}
@@ -160,7 +200,19 @@ export function ServiciosTable({
     {
       accessorKey: "precio",
       header: "Precio",
-      cell: ({ row }) => formatARS(row.original.precio),
+      cell: ({ row }) => {
+        const cantVariantes = Object.keys(row.original.precios).length;
+        return (
+          <div>
+            {formatARS(row.original.precio)}
+            {cantVariantes > 0 && (
+              <span className="ml-1 text-xs text-muted-foreground">
+                +{cantVariantes} por tipo
+              </span>
+            )}
+          </div>
+        );
+      },
     },
     {
       accessorKey: "duracionMin",

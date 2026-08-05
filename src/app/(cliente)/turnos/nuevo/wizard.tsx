@@ -23,6 +23,7 @@ interface AutoOption {
   id: string;
   label: string;
   sublabel: string;
+  tipoVehiculo: string;
 }
 
 interface ServicioOption {
@@ -30,9 +31,15 @@ interface ServicioOption {
   nombre: string;
   descripcion: string | null;
   precio: number;
+  precios?: Partial<Record<string, number>>;
   duracionMin: number;
   puntos: number;
   tipo: "PRINCIPAL" | "ADDON";
+}
+
+function precioServicio(s: ServicioOption, tipoVehiculo?: string): number {
+  if (tipoVehiculo && s.precios?.[tipoVehiculo] != null) return s.precios[tipoVehiculo]!;
+  return s.precio;
 }
 
 const PASOS = ["Auto", "Servicio", "Horario", "Confirmar"] as const;
@@ -62,13 +69,17 @@ export function NuevoTurnoWizard({
   const addons = servicios.filter((s) => s.tipo === "ADDON");
   const servicio = servicios.find((s) => s.id === servicioId);
   const slot = slots?.find((s) => s.fechaISO === slotISO);
+  const tipoAuto = autos.find((a) => a.id === autoId)?.tipoVehiculo;
 
   const hoyLocal = toZonedTime(new Date(), timezone);
   const dias = Array.from({ length: 14 }, (_, i) => addDays(hoyLocal, i));
 
   const total =
-    (servicio?.precio ?? 0) +
-    addonIds.reduce((sum, id) => sum + (servicios.find((s) => s.id === id)?.precio ?? 0), 0);
+    (servicio ? precioServicio(servicio, tipoAuto) : 0) +
+    addonIds.reduce((sum, id) => {
+      const a = servicios.find((s) => s.id === id);
+      return sum + (a ? precioServicio(a, tipoAuto) : 0);
+    }, 0);
   const puntos =
     (servicio?.puntos ?? 0) +
     addonIds.reduce((sum, id) => sum + (servicios.find((s) => s.id === id)?.puntos ?? 0), 0);
@@ -170,7 +181,7 @@ export function NuevoTurnoWizard({
                 <CardContent className="p-4 text-left">
                   <div className="flex items-center justify-between">
                     <p className="font-medium">{s.nombre}</p>
-                    <p className="font-semibold">{formatARS(s.precio)}</p>
+                    <p className="font-semibold">{formatARS(precioServicio(s, tipoAuto))}</p>
                   </div>
                   <p className="text-xs text-muted-foreground">
                     {s.descripcion} · {s.duracionMin} min · +{s.puntos} pts
@@ -201,7 +212,7 @@ export function NuevoTurnoWizard({
                           : "border-input text-muted-foreground"
                       )}
                     >
-                      {a.nombre} · {formatARS(a.precio)}
+                      {a.nombre} · {formatARS(precioServicio(a, tipoAuto))}
                     </button>
                   );
                 })}

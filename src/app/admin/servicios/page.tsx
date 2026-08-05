@@ -8,6 +8,7 @@ export default async function ServiciosPage() {
   const user = await requireStaff();
   const servicios = await prisma.servicio.findMany({
     where: { lavaderoId: user.lavaderoId },
+    include: { precios: true },
     orderBy: [{ tipo: "asc" }, { orden: "asc" }],
   });
 
@@ -25,6 +26,9 @@ export default async function ServiciosPage() {
           nombre: s.nombre,
           descripcion: s.descripcion,
           precio: s.precio.toNumber(),
+          precios: Object.fromEntries(
+            s.precios.map((p) => [p.tipoVehiculo, p.precio.toNumber()])
+          ),
           tipo: s.tipo,
           duracionMin: s.duracionMin,
           puntos: s.puntos,

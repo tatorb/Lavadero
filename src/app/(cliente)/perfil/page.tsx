@@ -79,7 +79,7 @@ export default async function PerfilPage() {
               <span>
                 {a.marca} {a.modelo}
               </span>
-              <span className="text-muted-foreground">{a.patente}</span>
+              <span className="text-muted-foreground">{a.patente ?? "—"}</span>
             </div>
           ))}
           {cliente.autos.length === 0 && (
@@ -105,7 +105,7 @@ export default async function PerfilPage() {
                 <span>
                   {a.marca} {a.modelo}
                 </span>
-                <span className="text-muted-foreground">{a.patente}</span>
+                <span className="text-muted-foreground">{a.patente ?? "—"}</span>
               </div>
             ))}
           </CardContent>

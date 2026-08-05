@@ -41,14 +41,21 @@ interface LavadoRow {
 export interface ClienteConAutos {
   id: string;
   nombre: string;
-  autos: Array<{ id: string; label: string }>;
+  autos: Array<{ id: string; label: string; tipoVehiculo: string }>;
 }
 
 export interface ServicioOption {
   id: string;
   nombre: string;
   precio: number;
+  /** Precio específico por tipo de vehículo (si no está, rige `precio`) */
+  precios?: Partial<Record<string, number>>;
   tipo: "PRINCIPAL" | "ADDON";
+}
+
+export function precioServicio(s: ServicioOption, tipoVehiculo?: string): number {
+  if (tipoVehiculo && s.precios?.[tipoVehiculo] != null) return s.precios[tipoVehiculo]!;
+  return s.precio;
 }
 
 const ESTADO_LAVADO: Record<LavadoRow["estado"], { label: string; variant: "warning" | "info" | "success" }> = {
@@ -81,10 +88,15 @@ export function NuevoLavadoForm({
   const cliente = clientes.find((c) => c.id === clienteId);
   const principales = servicios.filter((s) => s.tipo === "PRINCIPAL");
   const addons = servicios.filter((s) => s.tipo === "ADDON");
+  const tipoAuto = cliente?.autos.find((a) => a.id === autoId)?.tipoVehiculo;
 
+  const precioDe = (id: string) => {
+    const s = servicios.find((x) => x.id === id);
+    return s ? precioServicio(s, tipoAuto) : 0;
+  };
   const total =
-    (servicios.find((s) => s.id === servicioId)?.precio ?? 0) +
-    addonIds.reduce((sum, id) => sum + (servicios.find((s) => s.id === id)?.precio ?? 0), 0);
+    (servicioId ? precioDe(servicioId) : 0) +
+    addonIds.reduce((sum, id) => sum + precioDe(id), 0);
 
   return (
     <div className="space-y-4">
@@ -134,7 +146,7 @@ export function NuevoLavadoForm({
           <SelectContent>
             {principales.map((s) => (
               <SelectItem key={s.id} value={s.id}>
-                {s.nombre} — {formatARS(s.precio)}
+                {s.nombre} — {formatARS(precioServicio(s, tipoAuto))}
               </SelectItem>
             ))}
           </SelectContent>
@@ -161,7 +173,7 @@ export function NuevoLavadoForm({
                       : "border-input text-muted-foreground hover:bg-accent"
                   }`}
                 >
-                  {a.nombre} · {formatARS(a.precio)}
+                  {a.nombre} · {formatARS(precioServicio(a, tipoAuto))}
                 </button>
               );
             })}

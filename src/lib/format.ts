@@ -50,6 +50,45 @@ export function horaAMinutos(hora: string) {
   return h * 60 + m;
 }
 
+export function descripcionAuto(auto: {
+  marca: string;
+  modelo: string;
+  patente?: string | null;
+}) {
+  return `${auto.marca} ${auto.modelo}${auto.patente ? ` (${auto.patente})` : ""}`;
+}
+
+export const TIPO_VEHICULO_LABEL: Record<string, string> = {
+  AUTO: "Auto",
+  SUV: "SUV",
+  PICKUP: "Pickup",
+  PICKUP_GRANDE: "Pickup grande",
+  UTILITARIO: "Utilitario",
+  UTILITARIO_GRANDE: "Utilitario grande",
+  MOTO: "Moto",
+  MOTORHOME: "Motorhome",
+  UTV: "UTV",
+  OTRO: "Otro",
+};
+
+export const ESTADO_PAGO_LABEL: Record<string, string> = {
+  PAGADO: "Pagado",
+  PARCIAL: "Pago parcial",
+  PENDIENTE: "Pendiente",
+  CORTESIA: "Cortesía",
+  SALDO_APLICADO: "Saldo aplicado",
+  BONIFICADO: "Bonificado",
+  SIN_DATO: "Sin dato",
+};
+
+export const FORMA_PAGO_LABEL: Record<string, string> = {
+  EFECTIVO: "Efectivo",
+  TRANSFERENCIA: "Transferencia",
+  MIXTO: "Mixto",
+  OTRO: "Otro",
+  SIN_DATO: "Sin dato",
+};
+
 export const DIAS_SEMANA = [
   "Domingo",
   "Lunes",

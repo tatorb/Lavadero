@@ -108,10 +108,32 @@ export async function desvincularCliente(clienteId: string): Promise<EstadoAccio
 const autoSchema = z.object({
   marca: z.string().min(2, "Ingresá la marca"),
   modelo: z.string().min(1, "Ingresá el modelo"),
-  patente: z.string().min(5, "Patente inválida"),
+  patente: z
+    .string()
+    .optional()
+    .transform((v) => (v?.trim() ? v.toUpperCase().replace(/\s/g, "") : null)),
+  tipo: z.enum([
+    "AUTO",
+    "SUV",
+    "PICKUP",
+    "PICKUP_GRANDE",
+    "UTILITARIO",
+    "UTILITARIO_GRANDE",
+    "MOTO",
+    "MOTORHOME",
+    "UTV",
+    "OTRO",
+  ]),
   color: z.string().optional(),
   detalles: z.string().optional(),
 });
+
+async function patenteDuplicada(lavaderoId: string, patente: string, exceptoId?: string) {
+  const existente = await prisma.auto.findUnique({
+    where: { lavaderoId_patente: { lavaderoId, patente } },
+  });
+  return existente !== null && existente.id !== exceptoId;
+}
 
 export async function crearAuto(
   clienteId: string,
@@ -121,20 +143,19 @@ export async function crearAuto(
   const user = await requireStaff();
   const parsed = autoSchema.safeParse(Object.fromEntries(formData));
   if (!parsed.success) return { error: parsed.error.issues[0].message };
-  const patente = parsed.data.patente.toUpperCase().replace(/\s/g, "");
+  const { patente, ...datos } = parsed.data;
 
   const cliente = await prisma.cliente.findFirst({
     where: { id: clienteId, lavaderoId: user.lavaderoId },
   });
   if (!cliente) return { error: "Cliente no encontrado" };
 
-  const existente = await prisma.auto.findUnique({
-    where: { lavaderoId_patente: { lavaderoId: user.lavaderoId, patente } },
-  });
-  if (existente) return { error: "Ya existe un auto con esa patente" };
+  if (patente && (await patenteDuplicada(user.lavaderoId, patente))) {
+    return { error: "Ya existe un auto con esa patente" };
+  }
 
   await prisma.auto.create({
-    data: { ...parsed.data, patente, clienteId, lavaderoId: user.lavaderoId },
+    data: { ...datos, patente, clienteId, lavaderoId: user.lavaderoId },
   });
   revalidatePath(`/admin/clientes/${clienteId}`);
   return { ok: true };
@@ -148,22 +169,20 @@ export async function editarAuto(
   const user = await requireStaff();
   const parsed = autoSchema.safeParse(Object.fromEntries(formData));
   if (!parsed.success) return { error: parsed.error.issues[0].message };
-  const patente = parsed.data.patente.toUpperCase().replace(/\s/g, "");
+  const { patente, ...datos } = parsed.data;
 
   const auto = await prisma.auto.findFirst({
     where: { id: autoId, lavaderoId: user.lavaderoId },
   });
   if (!auto) return { error: "Auto no encontrado" };
 
-  const duplicada = await prisma.auto.findUnique({
-    where: { lavaderoId_patente: { lavaderoId: user.lavaderoId, patente } },
-  });
-  if (duplicada && duplicada.id !== autoId)
+  if (patente && (await patenteDuplicada(user.lavaderoId, patente, autoId))) {
     return { error: "Ya existe otro auto con esa patente" };
+  }
 
   await prisma.auto.update({
     where: { id: autoId },
-    data: { ...parsed.data, patente },
+    data: { ...datos, patente },
   });
   revalidatePath(`/admin/clientes/${auto.clienteId}`);
   return { ok: true };

@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 
 import { requireStaff } from "@/lib/auth-helpers";
 import { prisma } from "@/lib/db";
+import { descripcionAuto } from "@/lib/format";
 import { calcularNivel } from "@/lib/gamificacion/niveles";
 import { ClienteDetalle } from "./cliente-detalle";
 
@@ -81,6 +82,7 @@ export default async function ClienteDetallePage({
         marca: a.marca,
         modelo: a.modelo,
         patente: a.patente,
+        tipo: a.tipo,
         color: a.color,
         detalles: a.detalles,
       }))}
@@ -88,7 +90,7 @@ export default async function ClienteDetallePage({
         id: l.id,
         fecha: l.llegadaAt.toISOString(),
         servicio: l.servicio.nombre,
-        auto: `${l.auto.marca} ${l.auto.modelo} (${l.auto.patente})`,
+        auto: descripcionAuto(l.auto),
         finalizado: !!l.finAt,
         puntos: l.puntosOtorgados,
         precio: l.precioFinal?.toNumber() ?? null,

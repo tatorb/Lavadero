@@ -1,5 +1,7 @@
 import { requireStaff } from "@/lib/auth-helpers";
 import { prisma } from "@/lib/db";
+import { descripcionAuto } from "@/lib/format";
+import { matrizPrecios } from "@/lib/precios";
 import { LavadosTable } from "./lavados-table";
 
 export const metadata = { title: "Lavados — Gestión" };
@@ -24,6 +26,7 @@ export default async function LavadosPage() {
     }),
     prisma.servicio.findMany({
       where: { lavaderoId: user.lavaderoId, activo: true },
+      include: { precios: true },
       orderBy: { orden: "asc" },
     }),
   ]);
@@ -41,7 +44,7 @@ export default async function LavadosPage() {
           id: l.id,
           fecha: l.llegadaAt.toISOString(),
           cliente: [l.cliente.nombre, l.cliente.apellido].filter(Boolean).join(" "),
-          auto: `${l.auto.marca} ${l.auto.modelo} (${l.auto.patente})`,
+          auto: descripcionAuto(l.auto),
           servicio: l.servicio.nombre,
           precio: l.precioFinal?.toNumber() ?? null,
           estado: l.finAt ? "finalizado" : l.inicioAt ? "en_curso" : "en_espera",
@@ -52,11 +55,13 @@ export default async function LavadosPage() {
           autos: [
             ...c.autos.map((a) => ({
               id: a.id,
-              label: `${a.marca} ${a.modelo} (${a.patente})`,
+              label: descripcionAuto(a),
+              tipoVehiculo: a.tipo,
             })),
             ...(c.vinculadoCon?.autos.map((a) => ({
               id: a.id,
-              label: `${a.marca} ${a.modelo} (${a.patente}) — de ${c.vinculadoCon!.nombre}`,
+              label: `${descripcionAuto(a)} — de ${c.vinculadoCon!.nombre}`,
+              tipoVehiculo: a.tipo,
             })) ?? []),
           ],
         }))}
@@ -64,6 +69,7 @@ export default async function LavadosPage() {
           id: s.id,
           nombre: s.nombre,
           precio: s.precio.toNumber(),
+          precios: matrizPrecios(s),
           tipo: s.tipo,
         }))}
       />

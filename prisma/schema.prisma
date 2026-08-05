@@ -44,6 +44,63 @@ enum TipoDescuento {
   MONTO_FIJO
 }
 
+enum TipoVehiculo {
+  AUTO
+  SUV
+  PICKUP
+  PICKUP_GRANDE
+  UTILITARIO
+  UTILITARIO_GRANDE
+  MOTO
+  MOTORHOME
+  UTV
+  OTRO
+}
+
+enum TipoRelacion {
+  CLIENTE
+  AMIGO
+  FAMILIAR
+  DESCONOCIDO
+}
+
+enum EstadoPago {
+  PAGADO
+  PARCIAL
+  PENDIENTE
+  CORTESIA
+  SALDO_APLICADO
+  BONIFICADO
+  SIN_DATO
+}
+
+enum FormaPago {
+  EFECTIVO
+  TRANSFERENCIA
+  MIXTO
+  OTRO
+  SIN_DATO
+}
+
+enum TipoMovimientoCaja {
+  INGRESO
+  EGRESO
+}
+
+enum TipoMovimientoCuenta {
+  DEUDA
+  PAGO
+  SALDO_A_FAVOR
+  USO_SALDO
+  CORTESIA
+  AJUSTE
+}
+
+enum EstadoImportacion {
+  APLICADO
+  DESHECHO
+}
+
 // ===== TENANT =====
 
 model Lavadero {
@@ -67,10 +124,13 @@ model Lavadero {
   servicios    Servicio[]
   turnos       Turno[]
   lavados      Lavado[]
-  reglasFranja ReglaFranja[]
-  niveles      Nivel[]
-  descuentos   Descuento[]
-  movimientos  PuntosMovimiento[]
+  reglasFranja      ReglaFranja[]
+  niveles           Nivel[]
+  descuentos        Descuento[]
+  movimientos       PuntosMovimiento[]
+  movimientosCaja   MovimientoCaja[]
+  movimientosCuenta MovimientoCuenta[]
+  importBatches     ImportBatch[]
 }
 
 // ===== STAFF =====
@@ -103,6 +163,12 @@ model Cliente {
   passwordHash String? // null hasta que el cliente active su cuenta
   detalles     String?
 
+  tipoRelacion    TipoRelacion @default(CLIENTE) // cliente / amigo / familiar
+  origen          String? // cómo llegó: de pasada, gomería, pauta, boca en boca…
+  nombreOriginal  String? // texto tal cual estaba en el registro importado
+  visitasAnotadas Int? // recurrencia anotada a mano en el histórico (solo control)
+  importBatchId   String?
+
   // Vínculo pareja/familiar (1 a 1 simétrico, mantenido en ambas filas por transacción)
   vinculadoConId String?  @unique
   vinculadoCon   Cliente? @relation("Vinculo", fields: [vinculadoConId], references: [id])
@@ -118,10 +184,12 @@ model Cliente {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  autos       Auto[]
-  turnos      Turno[]
-  lavados     Lavado[]
-  movimientos PuntosMovimiento[]
+  autos             Auto[]
+  turnos            Turno[]
+  lavados           Lavado[]
+  movimientos       PuntosMovimiento[]
+  movimientosCuenta MovimientoCuenta[]
+  movimientosCaja   MovimientoCaja[]
 
   @@unique([lavaderoId, email])
   @@index([lavaderoId, nombre])
@@ -135,12 +203,17 @@ model Auto {
   cliente    Cliente  @relation(fields: [clienteId], references: [id])
   marca      String
   modelo     String
-  patente    String
+  patente    String? // opcional: los registros históricos no la tienen
+  tipo       TipoVehiculo @default(AUTO)
   color      String?
   detalles   String?
-  activo     Boolean  @default(true)
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+
+  descripcionOriginal String? // texto tal cual estaba en el registro importado
+  importBatchId       String?
+
+  activo    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   turnos  Turno[]
   lavados Lavado[]
@@ -170,8 +243,20 @@ model Servicio {
   lavados      Lavado[]
   turnoAddons  TurnoAddon[]
   lavadoAddons LavadoAddon[]
+  precios      PrecioServicio[]
 
   @@index([lavaderoId, activo])
+}
+
+// Precio del servicio según el tipo de vehículo (si no hay fila, rige Servicio.precio)
+model PrecioServicio {
+  id           String       @id @default(cuid())
+  servicioId   String
+  servicio     Servicio     @relation(fields: [servicioId], references: [id], onDelete: Cascade)
+  tipoVehiculo TipoVehiculo
+  precio       Decimal      @db.Decimal(12, 2)
+
+  @@unique([servicioId, tipoVehiculo])
 }
 
 // ===== TURNOS =====
@@ -228,21 +313,46 @@ model Lavado {
   turnoId    String?  @unique // si nació de un turno
   turno      Turno?   @relation(fields: [turnoId], references: [id])
 
-  llegadaAt DateTime // llegada al lavadero
-  inicioAt  DateTime? // inicio del lavado
-  finAt     DateTime? // fin del lavado → dispara gamificación
+  llegadaAt   DateTime // llegada al lavadero
+  inicioAt    DateTime? // inicio del lavado
+  finAt       DateTime? // fin del lavado → dispara gamificación
+  entregadoAt DateTime? // entrega del vehículo al cliente
+  canceladoAt DateTime? // lavado cancelado
 
   detalles        String?
-  precioFinal     Decimal? @db.Decimal(12, 2) // snapshot servicio + addons
+  precioFinal     Decimal? @db.Decimal(12, 2) // precio de lista (servicio + addons, snapshot)
   puntosOtorgados Int      @default(0)
+
+  // Cobro
+  importeCobrado Decimal?   @db.Decimal(12, 2) // lo realmente cobrado
+  estadoPago     EstadoPago @default(SIN_DATO)
+  formaPago      FormaPago  @default(SIN_DATO)
+  motivoAjuste   String? // descuento, cortesía, pago de más, etc.
+
+  servicioOriginal String? // texto tal cual estaba en el registro importado
+  importBatchId    String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  addons LavadoAddon[]
+  addons            LavadoAddon[]
+  pagos             Pago[]
+  movimientosCuenta MovimientoCuenta[]
+  movimientosCaja   MovimientoCaja[]
 
   @@index([lavaderoId, llegadaAt])
   @@index([clienteId])
+}
+
+// Detalle de medios de pago (para pagos mixtos)
+model Pago {
+  id       String    @id @default(cuid())
+  lavadoId String
+  lavado   Lavado    @relation(fields: [lavadoId], references: [id], onDelete: Cascade)
+  medio    FormaPago
+  importe  Decimal   @db.Decimal(12, 2)
+
+  @@index([lavadoId])
 }
 
 model LavadoAddon {
@@ -312,6 +422,79 @@ model PuntosMovimiento {
   createdAt   DateTime             @default(now())
 
   @@index([clienteId, createdAt])
+  @@index([lavaderoId])
+}
+
+// ===== CAJA =====
+
+model MovimientoCaja {
+  id         String   @id @default(cuid())
+  lavaderoId String
+  lavadero   Lavadero @relation(fields: [lavaderoId], references: [id])
+
+  fecha            DateTime
+  tipo             TipoMovimientoCaja
+  categoria        String // productos, nafta, agua, sueldos, cartelería, mantenimiento…
+  concepto         String
+  conceptoOriginal String? // texto tal cual estaba en el registro importado
+  importe          Decimal            @db.Decimal(12, 2)
+  formaPago        FormaPago          @default(SIN_DATO)
+
+  clienteId String?
+  cliente   Cliente? @relation(fields: [clienteId], references: [id])
+  lavadoId  String?
+  lavado    Lavado?  @relation(fields: [lavadoId], references: [id])
+
+  observaciones String?
+  importBatchId String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([lavaderoId, fecha])
+}
+
+// ===== CUENTAS CORRIENTES =====
+
+// Ledger por cliente: deudas, pagos, saldos a favor, cortesías y ajustes.
+// Convención de saldo: DEUDA y USO_SALDO restan; PAGO y SALDO_A_FAVOR suman;
+// AJUSTE se guarda con signo; CORTESIA no afecta el saldo (informativa).
+model MovimientoCuenta {
+  id         String   @id @default(cuid())
+  lavaderoId String
+  lavadero   Lavadero @relation(fields: [lavaderoId], references: [id])
+  clienteId  String
+  cliente    Cliente  @relation(fields: [clienteId], references: [id])
+
+  fecha   DateTime
+  tipo    TipoMovimientoCuenta
+  importe Decimal              @db.Decimal(12, 2)
+
+  lavadoId String?
+  lavado   Lavado? @relation(fields: [lavadoId], references: [id])
+
+  observaciones String?
+  importBatchId String?
+  createdAt     DateTime @default(now())
+
+  @@index([clienteId, fecha])
+  @@index([lavaderoId])
+}
+
+// ===== IMPORTACIONES =====
+
+// Lote de importación masiva: todo lo insertado referencia su importBatchId
+// para poder deshacer la importación completa.
+model ImportBatch {
+  id         String   @id @default(cuid())
+  lavaderoId String
+  lavadero   Lavadero @relation(fields: [lavaderoId], references: [id])
+
+  nombre     String
+  estado     EstadoImportacion @default(APLICADO)
+  resumen    Json?
+  createdAt  DateTime          @default(now())
+  deshechoAt DateTime?
+
   @@index([lavaderoId])
 }
 

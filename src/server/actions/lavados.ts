@@ -6,6 +6,7 @@ import { z } from "zod";
 import { requireStaff } from "@/lib/auth-helpers";
 import { prisma } from "@/lib/db";
 import { otorgarPuntosLavado } from "@/lib/gamificacion/puntos";
+import { precioParaTipo } from "@/lib/precios";
 
 export type EstadoAccion = { error?: string; ok?: boolean; id?: string } | undefined;
 
@@ -36,6 +37,7 @@ export async function crearLavado(input: z.infer<typeof crearLavadoSchema>): Pro
     prisma.auto.findFirst({ where: { id: data.autoId, lavaderoId: user.lavaderoId } }),
     prisma.servicio.findFirst({
       where: { id: data.servicioId, lavaderoId: user.lavaderoId, tipo: "PRINCIPAL" },
+      include: { precios: true },
     }),
   ]);
   if (!cliente) return { error: "Cliente no encontrado" };
@@ -55,6 +57,7 @@ export async function crearLavado(input: z.infer<typeof crearLavadoSchema>): Pro
           lavaderoId: user.lavaderoId,
           tipo: "ADDON",
         },
+        include: { precios: true },
       })
     : [];
 
@@ -65,8 +68,10 @@ export async function crearLavado(input: z.infer<typeof crearLavadoSchema>): Pro
     if (!turno) return { error: "Turno no encontrado o ya tiene un lavado asociado" };
   }
 
+  // Precio de lista según el tipo de vehículo del auto
   const precioFinal =
-    servicio.precio.toNumber() + addons.reduce((sum, a) => sum + a.precio.toNumber(), 0);
+    precioParaTipo(servicio, auto.tipo) +
+    addons.reduce((sum, a) => sum + precioParaTipo(a, auto.tipo), 0);
 
   const lavado = await prisma.$transaction(async (tx) => {
     const creado = await tx.lavado.create({
@@ -80,7 +85,10 @@ export async function crearLavado(input: z.infer<typeof crearLavadoSchema>): Pro
         detalles: data.detalles,
         precioFinal,
         addons: {
-          create: addons.map((a) => ({ servicioId: a.id, precio: a.precio })),
+          create: addons.map((a) => ({
+            servicioId: a.id,
+            precio: precioParaTipo(a, auto.tipo),
+          })),
         },
       },
     });
