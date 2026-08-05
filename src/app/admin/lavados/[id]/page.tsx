@@ -23,6 +23,7 @@ export default async function LavadoDetallePage({
       servicio: true,
       turno: true,
       addons: { include: { servicio: true } },
+      pagos: true,
     },
   });
   if (!lavado) notFound();
@@ -46,10 +47,20 @@ export default async function LavadoDetallePage({
         llegadaAt: lavado.llegadaAt.toISOString(),
         inicioAt: lavado.inicioAt?.toISOString() ?? null,
         finAt: lavado.finAt?.toISOString() ?? null,
+        entregadoAt: lavado.entregadoAt?.toISOString() ?? null,
+        canceladoAt: lavado.canceladoAt?.toISOString() ?? null,
         detalles: lavado.detalles,
         precioFinal: lavado.precioFinal?.toNumber() ?? null,
         puntosOtorgados: lavado.puntosOtorgados,
         deTurno: !!lavado.turnoId,
+        importeCobrado: lavado.importeCobrado?.toNumber() ?? null,
+        estadoPago: lavado.estadoPago,
+        formaPago: lavado.formaPago,
+        motivoAjuste: lavado.motivoAjuste,
+        pagos: lavado.pagos.map((p) => ({
+          medio: p.medio,
+          importe: p.importe.toNumber(),
+        })),
       }}
     />
   );

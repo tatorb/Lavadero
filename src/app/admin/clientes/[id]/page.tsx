@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 
 import { requireStaff } from "@/lib/auth-helpers";
 import { prisma } from "@/lib/db";
+import { calcularSaldo } from "@/lib/cuentas";
 import { descripcionAuto } from "@/lib/format";
 import { calcularNivel } from "@/lib/gamificacion/niveles";
 import { ClienteDetalle } from "./cliente-detalle";
@@ -31,6 +32,7 @@ export default async function ClienteDetallePage({
         orderBy: { fechaTurno: "desc" },
         take: 50,
       },
+      movimientosCuenta: { orderBy: { fecha: "desc" }, take: 100 },
     },
   });
   if (!cliente) notFound();
@@ -62,6 +64,8 @@ export default async function ClienteDetallePage({
         apellido: cliente.apellido,
         telefono: cliente.telefono,
         email: cliente.email,
+        tipoRelacion: cliente.tipoRelacion,
+        origen: cliente.origen,
         detalles: cliente.detalles,
         conCuenta: !!cliente.passwordHash,
         puntosTotal: cliente.puntosTotal,
@@ -113,6 +117,18 @@ export default async function ClienteDetallePage({
         id: c.id,
         nombre: [c.nombre, c.apellido].filter(Boolean).join(" "),
       }))}
+      cuenta={{
+        saldo: calcularSaldo(cliente.movimientosCuenta),
+        movimientos: cliente.movimientosCuenta.map((m) => ({
+          id: m.id,
+          fecha: m.fecha.toISOString(),
+          tipo: m.tipo,
+          importe: m.importe.toNumber(),
+          observaciones: m.observaciones,
+          lavadoId: m.lavadoId,
+        })),
+        esAdmin: user.rol === "ADMIN",
+      }}
     />
   );
 }

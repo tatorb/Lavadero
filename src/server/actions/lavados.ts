@@ -140,6 +140,171 @@ export async function finalizarLavado(id: string): Promise<EstadoAccion> {
   return { ok: true };
 }
 
+/** Marca la entrega del vehículo al cliente. */
+export async function entregarLavado(id: string): Promise<EstadoAccion> {
+  const user = await requireStaff();
+  const { count } = await prisma.lavado.updateMany({
+    where: {
+      id,
+      lavaderoId: user.lavaderoId,
+      finAt: { not: null },
+      entregadoAt: null,
+      canceladoAt: null,
+    },
+    data: { entregadoAt: new Date() },
+  });
+  if (count === 0) return { error: "El lavado no está finalizado o ya fue entregado" };
+  revalidatePath(`/admin/lavados/${id}`);
+  revalidatePath("/admin/lavados");
+  return { ok: true };
+}
+
+/** Cancela un lavado que todavía no fue finalizado. */
+export async function cancelarLavado(id: string): Promise<EstadoAccion> {
+  const user = await requireStaff();
+  const { count } = await prisma.lavado.updateMany({
+    where: { id, lavaderoId: user.lavaderoId, finAt: null, canceladoAt: null },
+    data: { canceladoAt: new Date() },
+  });
+  if (count === 0) return { error: "El lavado no se puede cancelar" };
+  revalidatePath(`/admin/lavados/${id}`);
+  revalidatePath("/admin/lavados");
+  return { ok: true };
+}
+
+const cobroSchema = z.object({
+  importe: z.coerce.number().min(0),
+  formaPago: z.enum(["EFECTIVO", "TRANSFERENCIA", "MIXTO", "OTRO", "SIN_DATO"]),
+  pagos: z
+    .array(
+      z.object({
+        medio: z.enum(["EFECTIVO", "TRANSFERENCIA", "OTRO"]),
+        importe: z.coerce.number().positive(),
+      })
+    )
+    .optional(),
+  esCortesia: z.boolean().optional(),
+  // Qué hacer con la diferencia contra el precio de lista
+  tratamientoFaltante: z.enum(["DEUDA", "BONIFICADO"]).optional(),
+  tratamientoSobrante: z.enum(["SALDO_A_FAVOR", "PROPINA"]).optional(),
+  motivo: z.string().optional(),
+});
+
+/**
+ * Registra (o corrige) el cobro de un lavado. Según la diferencia con el
+ * precio de lista genera deuda o saldo a favor en la cuenta corriente del
+ * cliente. Re-ejecutarlo reemplaza el cobro anterior.
+ */
+export async function registrarCobro(
+  lavadoId: string,
+  input: z.infer<typeof cobroSchema>
+): Promise<EstadoAccion> {
+  const user = await requireStaff();
+  const parsed = cobroSchema.safeParse(input);
+  if (!parsed.success) return { error: parsed.error.issues[0].message };
+  const data = parsed.data;
+
+  const lavado = await prisma.lavado.findFirst({
+    where: { id: lavadoId, lavaderoId: user.lavaderoId, canceladoAt: null },
+  });
+  if (!lavado) return { error: "Lavado no encontrado" };
+  if (lavado.precioFinal == null) return { error: "El lavado no tiene precio de lista" };
+  const precioLista = lavado.precioFinal.toNumber();
+
+  if (data.formaPago === "MIXTO") {
+    const suma = (data.pagos ?? []).reduce((s, p) => s + p.importe, 0);
+    if (!data.pagos?.length || Math.abs(suma - data.importe) > 0.01) {
+      return { error: "Los medios del pago mixto no suman el importe cobrado" };
+    }
+  }
+
+  await prisma.$transaction(async (tx) => {
+    // Reemplaza cobro anterior: limpia pagos y movimientos generados por este lavado
+    await tx.pago.deleteMany({ where: { lavadoId } });
+    await tx.movimientoCuenta.deleteMany({
+      where: { lavadoId, tipo: { in: ["DEUDA", "SALDO_A_FAVOR", "CORTESIA"] } },
+    });
+
+    if (data.esCortesia) {
+      await tx.lavado.update({
+        where: { id: lavadoId },
+        data: {
+          importeCobrado: 0,
+          estadoPago: "CORTESIA",
+          formaPago: "SIN_DATO",
+          motivoAjuste: data.motivo || "Cortesía",
+        },
+      });
+      await tx.movimientoCuenta.create({
+        data: {
+          lavaderoId: user.lavaderoId,
+          clienteId: lavado.clienteId,
+          fecha: new Date(),
+          tipo: "CORTESIA",
+          importe: precioLista,
+          lavadoId,
+          observaciones: data.motivo || "Lavado de cortesía",
+        },
+      });
+      return;
+    }
+
+    const diferencia = data.importe - precioLista;
+    let estadoPago: "PAGADO" | "PARCIAL" | "BONIFICADO" = "PAGADO";
+
+    if (diferencia < -0.01) {
+      if (data.tratamientoFaltante === "DEUDA") {
+        estadoPago = "PARCIAL";
+        await tx.movimientoCuenta.create({
+          data: {
+            lavaderoId: user.lavaderoId,
+            clienteId: lavado.clienteId,
+            fecha: new Date(),
+            tipo: "DEUDA",
+            importe: -diferencia,
+            lavadoId,
+            observaciones: data.motivo || "Diferencia pendiente del lavado",
+          },
+        });
+      } else {
+        estadoPago = "BONIFICADO";
+      }
+    } else if (diferencia > 0.01 && data.tratamientoSobrante === "SALDO_A_FAVOR") {
+      await tx.movimientoCuenta.create({
+        data: {
+          lavaderoId: user.lavaderoId,
+          clienteId: lavado.clienteId,
+          fecha: new Date(),
+          tipo: "SALDO_A_FAVOR",
+          importe: diferencia,
+          lavadoId,
+          observaciones: data.motivo || "Pagó de más en el lavado",
+        },
+      });
+    }
+
+    await tx.lavado.update({
+      where: { id: lavadoId },
+      data: {
+        importeCobrado: data.importe,
+        estadoPago,
+        formaPago: data.formaPago,
+        motivoAjuste: data.motivo || null,
+        pagos:
+          data.formaPago === "MIXTO"
+            ? { create: data.pagos!.map((p) => ({ medio: p.medio, importe: p.importe })) }
+            : undefined,
+      },
+    });
+  });
+
+  revalidatePath(`/admin/lavados/${lavadoId}`);
+  revalidatePath("/admin/lavados");
+  revalidatePath(`/admin/clientes/${lavado.clienteId}`);
+  revalidatePath("/admin/caja");
+  return { ok: true };
+}
+
 export async function editarDetallesLavado(
   id: string,
   detalles: string

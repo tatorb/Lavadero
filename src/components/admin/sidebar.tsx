@@ -10,7 +10,9 @@ import {
   Menu,
   Settings,
   SprayCan,
+  Upload,
   Users,
+  Wallet,
   Waves,
 } from "lucide-react";
 
@@ -25,8 +27,10 @@ const NAV = [
   { href: "/admin/turnos", label: "Turnos", icon: CalendarDays },
   { href: "/admin/clientes", label: "Clientes", icon: Users },
   { href: "/admin/lavados", label: "Lavados", icon: Waves },
+  { href: "/admin/caja", label: "Caja", icon: Wallet },
   { href: "/admin/servicios", label: "Servicios", icon: SprayCan },
   { href: "/admin/configuracion/franjas", label: "Franjas horarias", icon: Settings },
+  { href: "/admin/configuracion/importaciones", label: "Importaciones", icon: Upload },
 ];
 
 interface UsuarioInfo {

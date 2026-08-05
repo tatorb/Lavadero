@@ -17,6 +17,8 @@ const clienteSchema = z.object({
     .email("Email inválido")
     .optional()
     .or(z.literal("").transform(() => undefined)),
+  tipoRelacion: z.enum(["CLIENTE", "AMIGO", "FAMILIAR", "DESCONOCIDO"]).optional(),
+  origen: z.string().optional(),
   detalles: z.string().optional(),
 });
 

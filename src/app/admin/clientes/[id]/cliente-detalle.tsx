@@ -59,6 +59,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { ClienteForm } from "../clientes-table";
+import { CuentaTab, type MovimientoCuentaItem } from "./cuenta-tab";
 import { ESTADO_TURNO_BADGE } from "@/components/turnos/estado";
 
 interface AutoItem {
@@ -159,6 +160,7 @@ export function ClienteDetalle({
   turnos,
   nivel,
   candidatosVinculo,
+  cuenta,
 }: {
   cliente: {
     id: string;
@@ -166,6 +168,8 @@ export function ClienteDetalle({
     apellido: string | null;
     telefono: string | null;
     email: string | null;
+    tipoRelacion: string;
+    origen: string | null;
     detalles: string | null;
     conCuenta: boolean;
     puntosTotal: number;
@@ -199,6 +203,11 @@ export function ClienteDetalle({
     puntosParaSiguiente: number;
   };
   candidatosVinculo: Array<{ id: string; nombre: string }>;
+  cuenta: {
+    saldo: number;
+    movimientos: MovimientoCuentaItem[];
+    esAdmin: boolean;
+  };
 }) {
   const router = useRouter();
   const [editando, setEditando] = React.useState(false);
@@ -384,6 +393,7 @@ export function ClienteDetalle({
             <TabsTrigger value="autos">Autos ({autos.length})</TabsTrigger>
             <TabsTrigger value="lavados">Lavados ({lavados.length})</TabsTrigger>
             <TabsTrigger value="turnos">Turnos ({turnos.length})</TabsTrigger>
+            <TabsTrigger value="cuenta">Cuenta</TabsTrigger>
             <TabsTrigger value="info">Detalles</TabsTrigger>
           </TabsList>
         </div>
@@ -532,6 +542,15 @@ export function ClienteDetalle({
               </TableBody>
             </Table>
           </div>
+        </TabsContent>
+
+        <TabsContent value="cuenta">
+          <CuentaTab
+            clienteId={cliente.id}
+            saldo={cuenta.saldo}
+            movimientos={cuenta.movimientos}
+            esAdmin={cuenta.esAdmin}
+          />
         </TabsContent>
 
         <TabsContent value="info">

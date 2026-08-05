@@ -18,6 +18,13 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { DataTable } from "@/components/admin/data-table";
 
@@ -44,6 +51,8 @@ export function ClienteForm({
     apellido: string | null;
     telefono: string | null;
     email: string | null;
+    tipoRelacion: string;
+    origen: string | null;
     detalles: string | null;
   }>;
   submitLabel: string;
@@ -80,6 +89,31 @@ export function ClienteForm({
       <div className="space-y-2">
         <Label htmlFor="email">Email</Label>
         <Input id="email" name="email" type="email" defaultValue={defaults?.email ?? ""} />
+      </div>
+      <div className="grid grid-cols-2 gap-3">
+        <div className="space-y-2">
+          <Label>Relación</Label>
+          <Select name="tipoRelacion" defaultValue={defaults?.tipoRelacion ?? "CLIENTE"}>
+            <SelectTrigger>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="CLIENTE">Cliente</SelectItem>
+              <SelectItem value="AMIGO">Amigo</SelectItem>
+              <SelectItem value="FAMILIAR">Familiar</SelectItem>
+              <SelectItem value="DESCONOCIDO">Desconocido</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="origen">¿Cómo llegó?</Label>
+          <Input
+            id="origen"
+            name="origen"
+            placeholder="De pasada, pauta, boca en boca…"
+            defaultValue={defaults?.origen ?? ""}
+          />
+        </div>
       </div>
       <div className="space-y-2">
         <Label htmlFor="detalles">Detalles</Label>
