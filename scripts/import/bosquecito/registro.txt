@@ -1,0 +1,650 @@
+  | Nombre Cliente | Tipo Vehiculo/Modelo | Servicio | Precio | Cliente o amigo | Forma de pago | Como llego | Cantidad
+Octubre L 11 $136000
+15-10 | Andres | Ranger | Normal | - | Amigo | - | -
+15-10 | Viejo | Amarok | Normal | - | - | - | -
+20-10 | Debora | - | Normal | 11000 | Cliente  | Efectivo | Uber
+20-10 | Mely | Etios | Normal | 11000 | Cliente  | Transferencia | De pasada
+20-10 | Lula | Ka | Normal | 11000 | Cliente  | Transferencia | Gomeria
+21-10 | Matias | Voyage | Normal | 10500 | Cliente  | Transferencia | Facebook
+23-10 | Luis | Cronos | Normal | 7300 | Amigo | Transferencia | Papa Santi
+24-10 | Vieja | Jeep | Normal | - | - | - | -
+24-10 | Andres | Corolla | Normal | - | Amigo | - | -
+25-10 | Aníbal  | Máster | Normal | 18000 | Cliente  | Efectivo | De pasada
+25-10 | Tato | Compass | Normal | 10000 | Amigo | Efectivo | -
+29-10 | - | C3 | Normal | 15000 | Cliente  | Efectivo | -
+29-10 | Javier | Hyundai | Normal | 10000 | Amigo | Efectivo | -
+30-10 | Ivan  | Prisma | Normal | 15000 | Cliente  | Efectivo | Redes
+30-10 | Victor | Alaskan | Normal | 18000 | Cliente  | Transferencia | Patri
+Noviembre L 29 $457000
+1-11 | Emanuel  | C3 | Normal | 15000 | Cliente  | Efectivo | Gomeria
+1-11 | Martín | Hilux | Cera | 22000 | Cliente  | Transferencia | Gomeria
+3-11 | Luciano | Zanella Utilitario | Normal | 20000 | Cliente  | Transferencia | Andres
+5-11 | Veronica | Captus | Cera | 16500 | Cliente  | Transferencia | De pasada |  | 678
+6-11 | Jorge | Megane | Cera | 15000 | Cliente  | Transferencia | Grupo
+8-11 | Luis | Mercedes 300 | Cera | 16500 | Cliente  | Efectivo | -
+8-11 | Aníbal  | Máster | Normal | 18000 | Cliente  | Efectivo | Cliente  | 2 vez
+10-11 | Santiago | Suran | Cera | 20500 | Cliente  | Efectivo | ? | -
+13-11 | Luis | Virtus | Normal | 15000 | Cliente  | Transferencia | Gomeria
+14-11 | Lula | Ka | Cera | 15000 | Cliente  | Transferencia | - | 2 vez
+15-11 | Melina | Fox | Brillo | 15000 | Cliente  | Transferencia | Pauta
+15-11 | ? | Cruze | Cera | 22000 | Cliente  | Transferencia | Pasada
+15-11 | Martín | Hilux | Brillo | 22000 | Cliente  | Transferencia | - | 2 vez
+17-11 | Karina | Clio | Cera | 19000 | Cliente  | Efectivo
+17-11 | Victor | Maveric | Cera | 18000 | Cliente  | Transferencia |  | 2 vez
+17-11 | Javier | Hyundai | Cera | 15000 | Amigo | Transferencia | - | 2 vez
+19-11 | Esposo Mariana | Etios | Normal | 15000 | Cliente  | Efectivo | Pauta | -
+19-11 | Paula | Megane 2 | Normal | Gratis | Cliente  | - | Redes
+21-11 | Denise | Kicks | Normal | 16500 | Cliente  | Transferencia
+21-11 | Carolina | Agile | Normal | 15000 | Cliente  | Transferencia | Google Maps
+21-11 | Esposo Denise (Simon) | Toro | Normal | 18000 | Cliente  | Transferencia | -
+22-11 | Matias | Hilux | Cera | 18000 | Cliente  | Transferencia | Gomeria
+22-11 | Paco | Tracker | Normal | 15000 | Cliente  | Efectivo | Pauta | 2 vez
+22-11 | Gyuli | Montero | Normal | 18000 | Cliente  | Transferencia | -
+22-11 | Andres | Ranger | Normal | - | Amigo | - | -
+25-11 | Gabriel | 207 | Normal | 15000 | Cliente  | Efectivo | Pasada
+26-11 | Andres | Kangoo | Normal | - | Amigo | - | -
+27-11 | Jorge | Ranger | Normal | 18000 | Cliente  | Efectivo | Pasada
+29-11 | Diego | Amarok | Cera | 24000 | Cliente  | Efectivo | Pasada
+Diciembre L 39 $678500 %48
+8-12 | Santiago | Kwid | Normal | 15000 | Cliente  | Transferencia | ?
+8-12 | Santiago Esposa | Kwid | Normal | 15000 | Cliente  | Transferencia | ?
+9-12 | Luis | Vito | Normal | 20000 | Cliente  | Efectivo | - | 2 vez
+9-12 | Santiago | Suran | Normal | 16500 | Cliente  | Transferencia | - | 2 vez
+11-12 | Mauricio  | Strada | Normal | 16500 | Cliente  | Efectivo | Boca en boca | -
+11-12 | Melina | Fox | Normal | 19000 | Cliente  | Transferencia | - | 2 vez
+12-12 | Patrcia | Sandero | Normal | 15000 | Cliente  | Efectivo | ? | -
+12-12 | Mariana | Koleos | Normal | 16500 | Cliente  | Transferencia | - | -
+12-12 | Andres | Vento | Normal | 15000 | Cliente  | Transferencia | Pauta
+12-12 | Esposo Patrci | Fiat Utilitaria | Normal | 15000 | Cliente  | Efectivo | ? | -
+13-12 | Fernando  | Cruze cola | Cera | 19000 | Cliente  | Efectivo | - | 2 vez
+13-12 | Walter | Kangoo | Normal | 16500 | Cliente  | Efectivo | Pasada
+13-12 | Martin | Hilux | Cera | 22000 | Cliente  | Efectivo | - | 3 vez
+13-12 | Hector | Ranger | Normal | 18000 | Cliente  | Transferencia | Roman | -
+Pago provedor "productos" $29150  Caja Lav
+15-12 | Andres | Kangoo | Normal | 13000 | Amigo | Efectivo | - | -
+15-12 | Gonzalo | Renegade | Normal | 25000 | Cliente  | Transferencia | Gomeria | -
+15-12 | Luis | Ranger | Normal | 15000 | Cliente  | Transferencia | - | 3 vez
+15-12 | Esposa Luis | Citroen | Normal | 15000 | Cliente  | Transferencia | - | 4 vez
+17-12 | Joel | Tida | Normal | 15000 | Cliente  | Transferencia | Pasada | -
+17-12 | Andres | Hiliux | Normal | 16000 | Amigo | Efectivo | - | -
+17-12 | Esposa Joel | Santa Fe | Normal | 16500 | Cliente  | Transferencia | Pasada | -
+Faltante comida $1500 18-12
+18-12 | Andres | UTV | Normal | 8000 | Amigo | Efectivo | - | -
+18-12 | Joaquin | Chevrolet chata | Normal | 18000 | Cliente  | Efectivo | Pasada | -
+19-12 | Julian | Chevrolet chata | Normal | 16500 | Cliente  | Efectivo | ?
+19-12 | Joaquin | Amarok | Cera | 22000 | Cliente  | Efectivo | - | 2 vez
+Faltante medialunas $5500 20-12
+20-12 | Mauri | Amarok | Normal | 14500 | Cliente  | Transferencia | - | 2 vez
+Pague nafta $96000
+Pague comida $8300
+23-12 | Claudia | Fiat uno | Chasis + Motor | 35000 | Cliente  | Transferencia | Redes | -
+23-12 | Gyuli | Montero | Normal | 18000 | Cliente  | Transferencia | - | 2 vez
+23-12 | Martin | Hilux | Cera | 22000 | Cliente  | Transferencia | - | 4 vez
+26-12 | Joaquin | Amarok | Cera | 22000 | Cliente  | Efectivo | - | 3 vez
+27-12 | Norberto | Chevrolet | Cera | 19000 | Cliente  | Transferencia | ? | -
+27-12 | Andres | Kangoo | Normal | 13000 | Amigo | Efectivo | - | -
+29-12 | Flor | Mobi | Cera | 20000 | Cliente  | Efectivo | Pasada/Redes | -
+29-12 | Flor | Moto | Normal | 6000 | Cliente  | Transferencia | - | 2 vez
+29-12 | Sandro | Siena | Normal | 15000 | Cliente  | Transferencia | Google Maps | -
+30-12 | Javier | Hyundai | Normal | 15000 | Cliente  | Efectivo | - | 3 vez.
+30-12 | David | Cruze | Cera | 19000 | Cliente  | Efectivo | ? | -
+31-12 | Consuelo | Yaris | Cera | 19000 | Cliente  | Efectivo | ? | -
+31-12 | Martin | Hilux | Cera | 22000 | Cliente  | Transferencia | - | 5 vez
+Enero $806000 L 46 %19
+02-01 | Joaquin | Amarok | Cera | 22000 | Cliente  | Efectivo | - | 4 vez
+02-01 | Denise | Kicks | Normal | 20000 | Cliente  | Transferencia | - | 2 vez
+02-01 | Clever | 16500 | Hrv | 16500 | Cliente  | ? | - | -
+Pago provedor IGAPO  "productos" $15300  Caja Lav
+03-01 | Cintia | Gratis Sorteo | Normal | Gratis | Cliente  | - | Redes/Sorteo | -
+03-01 | Sonia | Gratis Sorteo | Normal | Gratis | Cliente  | - | Redes/Sorteo | -
+45 Roman uber 03-01 (CAJA LAVADERO)
+05-01 | Flor | Citroen  | Cera | 20000 | Cliente  | Transferencia | Grupo Tajamar | 1 Vez
+06-01 | Miguel | Corolla | Cera | 19000 | Cliente  | Transferencia | Grupo Tajamar | 1 Vez
+09-01 | Joaquin | Chevrolet | Normal | 17500 | Cliente  | Efectivo | Le hice precio | 5 vez
+09-01 | Joaquin | Amarok | Cera | 17500 | Cliente  | Efectivo | Le hice precio | 5 vez
+10-01 | David | Cruze  | Cera | 20000 | Cliente  | Efectivo | - | 2 Vez
+10-01 | Miguel | Corolla | Cera | 19000 | Cliente  | Transferencia | Grupo Tajamar | 2 Vez
+10-01 | Meli | Eco Sport | Normal | 17000 | Cliente  | ? | La Seranita | 1 Vez
+12-01 | Mariano Peralta | Renault | Normal | 20000 | Cliente  | Efectivo | ? | 1 Vez
+12-01 | Victor | Alaskan | Normal | 18000 | Cliente  | Transferencia | - | 3 vez
+14-01 | Carmen | Classic | Normal | 18000 | Cliente  | Efectivo | - | 1 Vez
+14-01 | Esposo Carmen | Ranger | Normal | 15000 | Cliente  | Efectivo | - | 1 Vez
+14-01 | Consuelo | Yaris | Cera | 19000 | Cliente  | Efectivo | - | 2 Vez
+14-01 | Agostina | Fiesta | Normal | 15000 | Cliente  | Transferencia | Grupo Tajamar | 1 Vez
+Gasto silicona $20900 Caja Lav
+Pago sueldo restante Roman $204.000  Caja Lav (80k eft + 124 transfer)
+16-01 | Francisco | Yaris Cross | Cera | 20000 | Cliente  | Transferencia | Falda del Carmen | 1 Vez
+16-01 | Joaquin | Chevrolet | Normal | 18000 | Cliente  | Transferencia | - | 6 vez
+16-01 | Joaquin | Amarok | Cera | 22000 | Cliente  | Transferencia | - | 7 vez
+16-01 | Mauri | Amarok | Normal | 18000 | Cliente  | Transferencia | - | 3 vez
+16-01 | Victor | Maverik | Normal | 18000 | Cliente  | Transferencia | - | 4 vez
+Gasto personal desayuno 18-1 $16.000
+Gasto Agua $5000  Caja Lav  eft
+Gasto toalla y cepillo $20000 caja lav
+Carteles pago $73000 carteles caja  papa
+Gasto carteles impresion $13000 caja lav
+Gastos postes $48.000 caja lav eft 21-1
+21-1 | Matias | Clio | Normal | 15000 | Cliente  | Efectivo | - | 1 Vez
+21-1 | Ariel | C3 | Normal | 15000 | Cliente  | Efectivo | - | 2 vez
+Gastos Clavos cartel 10k Caja lav  22-1
+22-1 | Daniel | 504 | Normal | 15000 | Cliente  | Transferencia | Maps | 1 Vez
+22-1 | Gyuli | Montero | Normal | 18000 | Cliente  | Transferencia | - | 3 vez
+23-1 | Denise | Kics | Normal | 15000 | Cliente  | ? | - | 3 vez
+24-1 | Joaquin | Amarok | Cera | 20000 | Cliente  | Efectivo | - | 8 vez
+24-1 | Emanuel | Strada | Profundo | 20000 | Cliente  | Efectivo | - | 2 vez
+24-1 | Ramiro | 307 | Normal | 15000 | Cliente  | Efectivo | Boca en boca | 1 Vez
+24-1 | Angeles | Versa | Normal | 15000 | Cliente  | Transferencia | ? | 1 Vez
+24-1 | Pablo Entreriano | Sw4 | Cera | 25000 | Cliente  | Transferencia | Pasada (Vio el cartel) | 1 Vez
+24-1 | Joaquin | Hilux | Normal | 15000 | Cliente  | Efectivo | - | 9 vez
+24-1 | Luis | - | Normal | 15000 | Cliente  | Transferencia | - | 3 vez
+Gastos Igapo $26300 caja lav eft
+28-1 | Clara | Virtus | Normal | 15000 | Cliente  | Efectivo | - | 1 Vez
+28-1 | Daniel Ex Malvinas | Classic | Normal | 15000 | Cliente  | Transferencia | Pasada | 1 Vez
+Gasto tela (Banderas) $20.000 caja  lav transfer
+Gasto Cartelitos $10600 caja  lav transfer
+29-1 | Marcelo | Classic | Descuento Uber | 12000 | Cliente  | Efectivo | - | 1 Vez
+29-1 | David | Cruze  | Cera | 20000 | Cliente  | Efectivo | - | 3 vez
+29-1 | Bolita | Fiat Tipo | Normal | 15000 | Cliente  | Transferencia | - | 1 Vez
+30-1 | Maxi | Ka | Normal | 16000 | Cliente  | Efectivo | - | 1 Vez
+Gasto remeras $38000 caja  lav transfer
+30-1 | Walter | Eco | Normal | 16500 | Cliente  | Efectivo | ? | 1 Vez
+30-1 | Adrian | Classic | Normal | 15000 | Cliente  | Transferencia | ? | 1 Vez
+31-1 | Joaquin | Amarok | Cera | 20000 | Cliente  | Transferencia | - | 10 vez
+31-1 | Joaquin | Chevrolet | Normal | 15000 | Cliente  | Transferencia | - | 10 vez
+31-1 | Dario | Eco Sport | Normal | 16500 | Cliente  | Transferencia | Pasada | 1 Vez
+31-1 | Ana | Tracker | Normal | 16500 | Cliente  | Transferencia | Marido de Santiago Suran | 1 vez
+31-1 | Fernando  | Cruze cola | Cera | 19000 | Cliente  | Efectivo | - | 3 vez
+Febrero $974.000 L54  %21
+2-2 | Carlos | Chevrolet | Normal | 15000 | Cliente  | Transferencia | - | 1 vez
+2-2 | Gonzalo | Renegade | Normal | 20000 | Cliente  | Transferencia | - | 2 vez
+2-2 | Walter | Cronos | Interior | 7500 | Cliente  | Efectivo | - | 1 vez
+3-2 | Gasto Botas inversion $40.000 caja lav
+4-2 | Mariano | Cronos | Normal | 15000 | Cliente  | Efectivo | Pasada (Clientazo) | 1 vez
+6-2 | Fabian | Strada | Normal | 16500 | Cliente  | Transferencia | - | 1 vez
+6-2 | Nestor | Fit | Profundo | 20000 | Cliente  | Transferencia | - | 1 vez
+7-2 | Emanuel | Strada | Normal | 20000 | Cliente  | Efectivo | - | 3 vez
+7-2 | Marcelo | Classic | Descuento Uber | 10000 | Cliente  | Efectivo |  | 2 vez
+7-2 | Mauricio | Amarok | Normal | 20000 | Cliente  | Efectivo | Mauri 5 mil a favor (pago 40k la strada y amarok) | 4 vez
+7-2 | Veronica | 2008 | Normal | 15000 | Cliente  | Transferencia | Hice precio | 2 vez
+7-2 | Santafesino (San Lorenzo | Cruze | Normal | 20000 | Cliente  | Efectivo | Dio 5k de mas | 1 vez
+7-2 |  Veronica (Esposo) | Capture | Normal | 15000 | Cliente  | Transferencia | Hice precio | 3 vez
+7-2 | Nestor | Cronos  | Normal | 15000 | Cliente  | Transferencia | - | 2 vez
+7-2 | Agente de viaje | Classic | Normal | 15000 | Cliente  | Efectivo | - | 1 vez | 223
+9-2 | Gastos Igapo $39000 caja lav trasf
+10-2 | Joaquin | Hilux | Normal | 16500 | Cliente  | Transferencia | - | 10 vez
+10-2 | Gastos agua $15000 caja lav trasf
+11-2 | Gastos saldo remeras $58.000 caja lav trasf
+11-2 | Gastos mantenimiento manguera $106.000
+12-2 | Mateo | Goltrend | Interior | 8000 | Cliente  | Transferencia | - | 1 vez
+12-2 | Andres | Ranger | Normal | 15000 | Cliente  | Transferencia | - | -
+12-2 | Cecilia  | Up  | Normal | 15000 | Cliente  | Efectivo | - | 1 vez | 218
+12-2 | Mario  | C3 | Normal | 15000 | Cliente  | 8k eft-falta 7 transfer | - | 1 vez
+12-2 | Maxi | Etios cola | Cera | 19000 | Cliente  | Transferencia | - | 1 vez
+12-2 | Victor | Renegade | Normal | 16500 | Cliente  | Transferencia | Pago 18.000 al final | 4 vez
+13-2 | Joaquin | Amarok | Normal | 16000 | Cliente  | Transferencia | - | 11 vez
+13-2 | Gabi Oviedo | Hilux | Cera | 22000 | Cliente  | Transferencia | Preguntar | 1 vez
+13-2 | Mirian esposo | Suram | Normal | 18000 | Cliente  | Transferencia | ? | 1 vez
+13-2 |  | Hilux | Rampa + Normal | 30000 | Cliente  | Transferencia | - | 1 vez
+14-2 | Andres | Kango | Normal | 13000 | Cliente  | Efectivo | - | -
+14-2 | Javier | Hyundai | Normal | 15000 | Cliente  | Transferencia
+18-2 | Gasto nafta $32.000
+18-2 | Andres | Hilux | Normal | 16000 | Cliente  | Efectivo | - | -
+18-2 | David | Cruze | Profundo + Cera | 23000 | Cliente  | 10 transfer y 13 eft | - | 4 Vez
+18-2 | Marcelo Uber | Classic | Economico | 10000 | Cliente  | 6 transfer 4 eft | - | 3 vez
+19-2 | Cristian | Corolla | Chasis | 12000 | Cliente  | 11 transfer y 1 eft | Pauta | 1 vez
+19-2 | Facundo | 208 | Normal | 15000 | Cliente  | Efectivo | - | 1 vez
+19-2 | Facundo | L200 | Normal | 15000 | Cliente  | Efectivo | - | 1 vez
+19-2 | Eduardo | Amarok | Profundo + Chasis | 40000 | Cliente  | Efectivo | Recomendacion mecanico | 1 vez
+20-2 | Juan | Sorento | Normal + Chasis | 40000 | Cliente  | Transferencia(pago 7k mas clientazo) | Pauta | 1 vez
+20-2 | Nestor | Fit | Cera | 19000 | Cliente  | Transferencia | - | 2 vez
+21-2 | Joaquin | Amarok | Cera | 18000 | Cliente  | Efectivo | - | 12 vez
+21-2 | Flor | Citroen  | Normal | 15000 | Cliente  | Transferencia | Grupo Tajamar | 2 Vez | 232
+21-2 | Diego | Amarok | Interior | 9000 | Cliente  | Efectivo | Se largo a llover. | 2 Vez
+23-2 | Cristian | Fiesta | Normal | 15000 | Cliente  | Transferencia | Pauta | 1 vez
+23-2 | Dario Vendedor de salames | Fiat Cubo | Normal + Cera | 16500 | Cliente  | Transferencia | - | 1 vez
+24-2 | Eduardo Montoro | Raptor | Normal + Chasis | 33000 | Cliente  | Efectivo | - | 2 vez
+24-2 | Gasto desengrasante $7500
+24-2 | Gasto envio $4500
+25-2 | Maxi cuñado Bauti | Kangoo | Normal + Chasis | 28500 | Cliente  | Efectivo | Pago 30.000 le quedam 1500 favor | 1 vez
+25-2 | Eric | C3  | Cera | 19000 | Cliente  | Transferencia | ? | 1 vez
+26-2 | Viejo viajero | Hilux tapada | Normal + Chasis | 30000 | Cliente  | Efectivo | Pauta | 1 vez
+26-2 | Dario Vendedor de salames | Sonic | Acondicionamiento de plasticos | 11500 | Cliente  | Transferencia | - | 2 vez
+27-2 | Julio (Miron) | Cronos | Normal | 15000 | Cliente  | Efectivo | Pauta | 1 vez
+27-2 | Raul | CRV | Normal + Chasis | 31500 | Cliente  | Transferencia | Pauta | 1 vez
+27-2 | Joaquin | Amarok | Cera | 18000 | Cliente  | Transferencia | - | 13 vez
+27-2 | Joaquin | Chevrolet | Normal | 16000 | Cliente  | Transferencia | - | 13 vez
+28-2 | Ana | Tracker | Normal | 16500 | Cliente  | Transferencia | - | 2 Vez
+28-2 | Marina hija | Yaris | Normal | 15000 | Cliente  | Efectivo | - | 2 Vez
+28-2 | Marina | Hilux | Normal | 18000 | Cliente  | Efectivo | - | 2 Vez
+28-2 | Mario | Izusu | Normal | 18000 | Cliente  | Efectivo | - | 1 vez
+Marzo
+3-3 | Leandro | Tera | Normal + Chasis | 28500 | Cliente  | Transferencia | - | 1 vez
+4-3 | Fabrizio | Raptor | Normal + Chasis | 33000 | Cliente  | Efectivo | - | 1 vez
+4-3 | Nestor | Fit | Cera | 19000 | Cliente  | Transferencia | Le hice tapizado | 3 vez
+80500
+11-3 | Victor | Alaskan | Normal + Tapizado | 88000 | Cliente  | Transferencia | Falta la mitad  | 5 vez
+12-3 | Axel | Tornado | Normal | 10000 | Cliente  | Efectivo | - | 1 vez
+12-3 | Bachi | Amarok | Motor | 20000 | Cliente  | Efectivo | - | 1 vez
+13-2 | Marina | Hilux | Normal | 20000 | Cliente  | Efectivo | Le quedan a 2k a favor | 3 vez
+14-3 | Viviana | Cronos | Normal | 15000 | Cliente  | Efectivo |  | 1 vez
+14-3 | Anibal | Ranger | Normal | 18000 | Cliente  | Efectivo |  | ?
+14-3 | Mario | C3 | Normal | 16500 | Cliente  | No pago ($3500 DEBE) |  | ?
+187500
+16-3 | Franco | Tida | Normal | 15000 | Cliente  | Efectivo | Pauta y pasada | 1 vez
+17-3 | Orlando | Cronos | Tapizado + Motor | 90000 | Cliente  | Efectivo | Pauta | 1 vez
+18-3 | Eric | C3 | Normal + Chasis | 27000 | Cliente  | Transferencia | - | 2 Vez
+18-3 | Giuly | Montero | Normal | 18000 | Cliente  | Transferencia | - | 4 Vez
+18-3 | Mariano | Cronos | Normal | 15000 | Cliente  | Transferencia | - | 2 vez
+18-3 | Enrique | 3008 | Normal | 16500 | Cliente  | Transferencia | ? | 1 vez
+19-3 | Mabel | Joy | Normal | 15000 | Cliente  | Transferencia | ? | 1 vez
+19-3 | Martin | Ka | Normal | 15000 | Cliente  | Transferencia | Boca en boca: Luis | 1 vez
+19-3 | Hugo | Amarok | Chasis + Normal | 33000 | Cliente  | Transferencia | Pauta y pasada | 1 vez
+19-3 | Ronald | Speway | Normal | 15000 | Cliente  | Transferencia | Pauta y pasada | 1 vez | 29
+19-3 | Marcio | Yaris | Normal | 15000 | Cliente  | eft pero di 5k transfer | Pasada | 1 vez | 16
+20-4 | Hector | Ranger | Chasis + Normal | 33000 | Cliente  | Transferencia | - | 2 Vez
+21-3 | Mariana | Koes | Normal | 16500 | Cliente  | Efectivo | - | 2 Vez
+21-3 | Pablo | Siena | Chasis + Normal | 23000 | Cliente  | Efectivo | Google- le hice precio | 1 vez
+21-3 | Tisiano | Hilux | Normal | 18000 | Cliente  | Efectivo | Martin Barrionuevo | 1 vez
+21-3 | Fernando | Cruze | Cera + Normal | 22000 | Cliente  | Efectivo | Pago de mas | 4 vez
+387000
+23-3 | Andres | Hilux | Normal | 16000 | Cliente  | Transferencia | - | -
+23-3 | Herman | Furgoneta | Normal | 16500 | Cliente  | Efectivo | ? | 1 vez
+23-3 | Daniel | Etios | Exterior | 10000 | Cliente  | Efectivo | Pago 1k de mas | 1 vez
+23-3 | Alejandro | Hilux | Normal | 20000 | Cliente  | Transferencia | ? | 1 vez
+23-3 | Herman esposa | Ecosport | Normal | 16500 | Cliente  | Efectivo | ? | 1 vez
+23-3 | Julieta | T cross | Normal | 16500 | Cliente  | Transferencia | Pauta | 1 vez
+23-3 | Juan | Saveriro | Normal | 16500 | Cliente  | Transferencia | Pauta | 1 vez
+25-3 | Dario Vendedor de Salames | Cubo | Vinilo + Cera | 20000 | Cliente  | Efectivo | Le cobre menos por queja de suciedad | 3 Vez
+25-3 | Agostina | Fiesta | Normal | 15000 | Cliente  | Efectivo | - | 2 Vez
+25-3 | Agostina esposo | A4 | Normal | 15000 | Cliente  | Efectivo | - | -
+26-3 | Raul | Crv | Normal | 16500 | Cliente  | Efectivo | - | 2 Vez
+26-3 | Raul esposa | Hyundai | Normal | 16500 | Cliente  | Efectivo | - | 2 Vez
+26-3 | Javier | Tucson | Normal | 15000 | Cliente  | Efectivo | - | 5 vez
+26-3 | Eugenia Chabo | Duster | Normal | 16500 | Cliente  | Transferencia | - | 1 vez
+27-3 | Marcelo Uber | Classic | Economico | 10000 | Cliente  | Efectivo | - | 4 vez
+27-3 | Joaquin | Amarok | Normal + Chasis | 18000 | Cliente  | Efectivo | Le hice desc | 14 vez
+27-3 | Walter | Eco | Normal + Chasis | 25000 | Cliente  | Transferencia | Le hice desc | 2 Vez
+27-3 | Stefania | Up | Normal | 16000 | Cliente  | Transferencia | - | 1 vez
+28-3 | Victor  | Renegade | Normal + Chasis | 32000 | Cliente  | Transferencia | - | 7 vez
+327000
+30-3 | Victor  | Alaskan | Normal | 20500 | Cliente  | Transferencia | - | 8 Vez
+31-3 | Esposo Vivi | Joy | Normal | 17000 | Cliente  | Transferencia | Viviana | 1 Vez
+31-3 | Mauri | Amarok | Normal | 20500 | Cliente  | Efectivo | - | 7 Vez
+31-3 | Laura | Gol | Normal | 17000 | Cliente  | Efectivo | ? | 1 Vez
+31-3 | Bachi | Amarok | Normal | 20500 | Cliente  | Transferencia | -  | 2 Vez
+Marzo $1077000 L50 %10
+Abril
+1-4 | Gabriela | Fox | Tapizado promo | 60000 | Cliente  | Transferencia | -  | 1 Vez
+1-4 | Nestor | Fit | Normal | 17000 | Cliente  | Transferencia | -  | 4 vez
+1-4 | Nicolas | Kangoo | Normal | 18500 | Cliente  | Efectivo | -  | 1 Vez
+1-4 | Florencia | Toro | Normal | 18500 | Cliente  | Transferencia | -  | 1 Vez
+3-4 | David | Cruze | Normal + Cera | 30000 | Cliente  | Efectivo | 7K a favor | 6 Vez
+3-4 | Mariana | Prisma | Normal | 17000 | Cliente  | Transferencia | -  | 1 Vez | 9
+3-4 | Diego | Sandero | Normal | 17000 | Cliente  | Transferencia | -  | 1 Vez |  |  |  |  |  |  |  |  |  |  | `
+3-4 | Gabriel  | 504 | Normal | 16000 | Cliente  | Efectivo | Le hice descuento  | 2 Vez
+3-4 | Dario Vendedor de Salames | L200 | Normal | 17000 | Cliente  | Transferencia | -  | 4 Vez
+211000
+6-4 | Mauricio Holi | Citroen | Tapizado promo | 80000 | Cliente  | Transferencia | -  | 1 Vez
+6-4 | Horacio | Reanult | Interior | 10000 | Cliente  | Efectivo | -  | 1 Vez
+7-4 | Marcelo Uber | Clasisc | Economico | 12000 | Cliente  | Efectivo | -  | 4 vez
+8-4 | Sebastian | Ranger | Normal + Cera | 25500 | Cliente  | Transferencia | -  | 1 Vez
+9-4 | Lucas | Versa | Normal | 17000 | Cliente  | Transferencia | -  | 1 Vez
+9-4 | Joquin Nuevo | L200 | Normal | 20500 | Cliente  | Transferencia | Pasada | 1 Vez
+9-4 | Soledad | Versa | Normal | 17000 | Cliente  | Transferencia | Boca en boca: Tajamar | 1 Vez
+10-4 | Vendedor de autos | Duster | Exterior | 10000 | Cliente  | Efectivo | Pasada | 1 Vez
+10-4 | Joaquin | Amarok | Normal | 18000 | Cliente  | Transferencia | -  | 18 vez
+10-4 | Empleado Joaquin Chuchi | Renault | Normal | 17000 | Cliente  | Transferencia | Boca en boca: Joaquin | 1 Vez | 21
+10-4 | Mauro Garcia | 308 | Normal | 17000 | Cliente  | Transferencia | ? | 1 Vez
+10-4 | Dario | Eco Sport | Normal | 18500 | Cliente  | Transferencia | - | 1 Vez
+10-4 | Vanesa | Polo | Normal | 17000 | Cliente  | Transferencia | - | 1 Vez
+11-4 | Ema | Strada | Normal | 20000 | Cliente  | Efectivo | Pago de mas | 5 vez
+11-4 | Consuelo | Yaris | Normal Cera | 22000 | Cliente  |  Transferencia | - | 3 vez
+11-4 | Esposo Consuelo | Ka | Normal Cera | 22000 | Cliente  | Transferencia | - | 3 vez
+11-4 | Esposo Flor | 308 gt | Normal | 17000 | Cliente  | Transferencia | - | 2 vez
+11-4 | Mauri  | Amarok | Normal | 20000 | Cliente  | Transferencia | - | 8 vez
+11-4 | Andres Mauri  hno | Punto | Normal | 17000 | Cliente  | Transferencia | Boca en boca: Tajamar | 1 vez
+11-4 | Julieta | China | Normal | 18500 | Cliente  | Transferencia | Boca en boca: Tajamar | 1 vez
+11-4 | Tiziano | Hilux | Normal | 20500 | Cliente  | Efectivo | Boca en boca | 2 Vez
+436500
+13-4 | Alejandro Laguia | Hilux | Normal Profundo | 25000 | Cliente  | Transferencia | - | 2 Vez
+13-4 | Mariela | Etios | Normal + Chasis | - | Cliente  | - | Sorteo | 1 Vez
+13-4 | Patricia | Siena | Normal | 17000 | Cliente  | Efectivo | Boca en boca: Tajamar | 1 Vez
+13-4 | Hector | Gol | Normal | 17000 | Cliente  | Transferencia | - | 4 vez
+13-4 | Hector | Ranger | Normal | 20000 | Cliente  | Transferencia |  | 5 vez
+15-4 | Viejo | Amarok | Normal | 20000 | - | - | - | -
+15-4 | Daniela | 208 | Normal | 17000 | Cliente  | Efectivo | Boca en boca: Tajamar | 1 Vez
+15-4 | Daniela amiga | Hyundai | Normal | 18500 | Cliente  | Efectivo | Boca en boca: Tajamar | 1 Vez
+15-4 | Sebastian  | Megane | Normal | 17000 | Cliente  | Transferencia | - | 2 vez
+16-4 | Marcelo | Classic | Normal | 12000 | Cliente  | Transferencia | - | 6 Vez
+16-4 | Lucas Tejeda | Palio | Normal | 17000 | Cliente  | Efectivo FAC | Boca en boca: Charly | 1 Vez
+16-4 | Mariana | Koleos | Normal | 18500 | Cliente  | Transferencia | - | 5 Vez
+17-4 | Joaquín  | Chevrolet | Normal | 18000 | Cliente  | Efectivo | - | 24 Vez | 24
+17-4 | Bachi | Amarok | Normal | 20000 | Cliente  | Efectivo | - | 4 Vez
+17-4 | Joaquín  | Amarok | Normal | 18000 | Cliente  | Transferencia | - | 24 Vez
+17-4 | Andres | Ranger | Normal | 18500 | Cliente  | Transferencia | - | 5 Vez
+17-4 | Andres | Fiorino | Normal | 17500 | Cliente  | Transferencia | - | 5 Vez
+17-4 | Carolina | Toro | Normal | 18500 | Cliente  | Transferencia | Boca en boca: Tajamar | 1 Vez
+17-4 | Giuly | Montero | Normal | 20500 | Cliente  | Transferencia | - | 4 Vez
+18-4 | Mauricio Holi | Classic | Normal | 17000 | Cliente  | Efectivo | - | 2 vez
+18-4 | Mazda Chata | Mazda Chata | Normal | 20500 | Cliente  | Efectivo | ? | 1 Vez
+18-4 | Lalo | Saveiro | Normal | 18500 | Cliente  | Efectivo | Pasada | 1 Vez
+18-4 | Dario | Ranger | Normal | 20500 | Cliente  | Transferencia FAC | ? | 1 Vez
+18-4 | Fernando | Ranger | Normal + Chasis | 36500 | Cliente  | Transferencia  | Pasada | 1 Vez
+443000
+21-4 | Cecilia | Up | Normal | 20000 | Cliente  | Transferencia  | - | 2 vez
+22-4 | Marcelo uber | Classic | Express | 12000 | Cliente  | Transferencia  | - | 7 Vez
+22-4 | Eduardo Montoro | Raptor | Profundo + Chasis | 50000 | Cliente  | Efectivo | - | 3 Vez
+23-4 | Santiago Canelo | Ranger | Normal | 26000 | Cliente  | Efectivo |  | 2 vez
+23-4 | Lucas Bustos  | Kick | Normal | 20000 | Cliente  | Transferencia  | - | 2 vez
+23-4 | Victor | Maverik | Normal | 26000 | Cliente  | Transferencia  | - | 10 vez
+23-4 | Lucas Bustos  Esposa | Spin | Normal | 22000 | Cliente  | Transferencia  | - | 2 vez
+23-4 | Mauro Garcia | Maverik | Normal | 26000 | Cliente  | Transferencia  | - | 2 vez
+23-4 | Eugenia Chiabon | Dusster | Normal | 22000 | Cliente  | Transferencia  | - | 2 vez
+24-4 | Ema | Strada | Normal | 22000 | Cliente  | Transferencia  | - | 6 vez | 18
+24-4 | Joaquin | Chevrolet | Normal | 22000 | Cliente  | Efectivo | - | 25 Vez
+24-4 | Lucas Gonzales | 308 | Normal | 20000 | Cliente  | Transferencia  | Pasada | 1 vez
+Nestor | Mauri | Amarok | Normal | 26000 | Cliente  | Transferencia  | - | 9 vez
+24-4 | Nadia Ledesma | Taos | Normal | 22000 | Cliente  | Transferencia  | Pasada | 1 vez
+24-4 | Andres | Kango | Normal | 20000 | Cliente  | Transferencia  | - | -
+25-4 | Marco | Classic | Normal | 20000 | Cliente  | Efectivo | Pasada | 1 vez
+25-4 | Joaquin | Amarok | Normal | 22000 | Cliente  | Efectivo |  | 26 vez
+25-4 | Andres hno Mauri | Punto | Normal | 20000 | Cliente  | Transferencia  |  | 2 vez
+418000
+27-4 | Sergio | Hilux | Normal + Chasis | 46000 | Cliente  | Transferencia  |  | 1 Vez
+27-4 | Sergio esposa | Yaris | Normal | 20000 | Cliente  | Transferencia  |  | 8 Vez
+27-4 | Marcelo | Classic | Express | 12000 | Cliente  | Transferencia  |  | 1 Vez
+27-4 | Facundo | Siena | Normal + Chasis | 36000 | Cliente  | Transferencia  |  | 1 Vez
+28-4 | Gyuli | Montero | Normal | 26000 | Cliente  | Transferencia  |  | 4 Vez
+28-4 | Hernan  | Hrv | Normal + Chasis | - | Amigo | Gratis |  | -
+28-4 | Marcelo Funes | Goltrend | Normal | 36000 | Cliente  | Transferencia  | Boca en Boca | 1 Vez
+29-4 | Facundo | Suran | Chasis | 16000 | Cliente  | Transferencia  |  | 1 Vez
+29-4 | Nestor | Fit | Normal | 20000 | Cliente  | Transferencia  |  | 6 vez
+29-4 | Julieta  | Taos | Normal | 22000 | Cliente  | Transferencia  |  | 2 vez
+29-4 | Natalia | Kango | Normal | 22000 | Cliente  | Transferencia  |  | 1 Vez
+30-4 | Andres | Corolla | Normal | 18000 | Cliente  | Efectivo
+30-4 | Pablo Canter | Palio | Normal | 20000 | Cliente  | Efectivo FAC
+30-4 | Eduardo | Berloingo | Normal | 22000 | Cliente  | Efectivo |  | 1 Vez
+30-4 | Emanuel | Corolla | Normal | 20000 | Cliente  | Efectivo |  | 1 Vez
+30-4 | Ariel | C3 | Normal | 20000 | Cliente  | Efectivo |  | 3 vez
+30-4 | Walter | Ranger | Normal | 26000 | Cliente  | Efectivo |  | 2 vez
+30-4 | Verónica | Tracker  | Normal | 22000 | Cliente  | Transferencia  |  | 1 Vez
+ABRIL $1.912.000 88 L 46,5%
+2-5 | Dario Promo | Cubo | Normal | 32000 | Cliente  | Transferencia  |  | 5 vez
+2-5 | Diego | Suran | Normal | 22000 | Cliente  | Efectivo |  | 1 Vez
+2-5 | Mario | Citroen | Normal | - | Cliente  | - |  | 4 vez
+2-5 | Victoria | Hrv | Normal | 22000 | Cliente  | Efectivo |  | 1 Vez
+2-5 | Julieta | Haval | Normal | 22000 | Cliente  | Transferencia  |  | 2 vez
+2-5 | Daniela | C4 | Normal | 20000 | Cliente  | Transferencia  |  | 1 Vez
+2-5 | Pablo | Susuki | Normal + Chasis | 40000 | Cliente  | Efectivo | Pago 4k de mas | 1 Vez
+2-5 | Daniela | 308 | Normal | 20000 | Cliente  | Efectivo |  | 2 vez
+2-5 | Dario Promo | L200 | Normal | 26000 | Cliente  | Transferencia  |  | 5 vez
+204000 |  |  |  |  |  |  |  |  | 204
+5-5 | Karina | Clio | Normal | 22000 | Cliente  | Transferencia  |  | 2 vez
+5-5 | Maxi Canter | Corolla | Normal | 20000 | Cliente  | Efectivo |  | 3 vez
+5-5 | Flor Ferreyra | Toro | Normal | 22000 | Cliente  | Transferencia  |  | 2 vez
+5-5 | Eugenia | Nivus | Normal + Chasis | 38000 | Cliente  | Transferencia  | Pauta | 2 vez
+5-5 | Gabriela Disandro | Rengade | Normal | 22000 | Cliente  | Transferencia  | Problematica | 1 Vez
+5-5 | Mauro Garcia | Maverik | Normal + Chasis | 46000 | Cliente  | Transferencia  |  | 3 vez
+5-5 | Luis Marquez | Chevlolet | Normal | 20000 | Cliente  | Transferencia  |  | 1 Vez
+6-5 | Lorena | Fox | Normal + Chasis | 40000 | Cliente  | Efectivo | Pasada | 1 Vez
+6-5 | Lucas Canter | Kangoo | Profundo | 30000 | Cliente  | Efectivo FAC |  | 4 Vez
+6-5 | Papa | Amarok | Normal | - | - | - |  | -
+6-5 | Walter | Kangoo | Normal | 22000 | Cliente  | Transferencia  |  | 3 Vez
+7-5 | Flor Ricarte | Voyage | Normal | 20000 | Cliente  | Transferencia  |  | 1 Vez
+7-5 | Joaquin | Chevlolet | Normal | 22000 | Cliente  | Transferencia  | - | 27 Vez
+7-5 | Cuñada Lauti | Hilux | Normal | 26000 | Cliente  | Transferencia  |  | 1 Vez
+7-5 | Daniel | Kuga  | Normal | 22000 | Cliente  | Transferencia  | 3515414720 | 1 Vez
+7-5 | Fernando Cervino | Cruze | Normal | 20000 | Cliente  | Efectivo |  | 5 Vez
+8-5 | Padastro Lionel | Fiat | Express | 15000 | Cliente  | Efectivo |  | 1 Vez
+8-5 | Lucas Cid | Polo | Normal | 20000 | Cliente  | Transferencia  |  | 1 Vez
+9-5 | Nicolas Cugat | 308 | Normal | 20000 | Cliente  | Efectivo |  | 1 Vez
+9-5 | Adrian Bustos | Palio | Normal | 20000 | Cliente  | Transferencia  | Pauta | 1 Vez
+9-5 | Joaquin | Amarok | Normal | 22000 | Cliente  | Transferencia  |  | 28
+9-5 | Paco | Tracker | Normal | 22000 | Cliente  | Transferencia  |  | 3 vez
+9-5 | Maximiliano Perreyra | Shaval | Normal | 22000 | Cliente  | Transferencia  | Pauta | 1 Vez
+9-5 | Herman Santillan | Berlingio | Normal | 22000 | Cliente  | Transferencia  |  | 3 Vez
+9-5 | Rocio Oyarzun | Fox | Normal + Chasis | 36000 | Cliente  | Efectivo | Pauta | 1 Vez
+9-5 | Esposa Paco | Etios | Normal | 22000 | Cliente  | Transferencia  | Pago 2 de mas  | 3 vez
+9-5 | Belen Heredia | Classic | Normal | 20000 | Cliente  | Transferencia  | Gomeria | 1 Vez
+9-5 | Daniel Romero | Goltrend | Normal | 20000 | Cliente  | Efectivo | Pauta | 1 Vez
+9-5 | Hector | Gol Power | Normal | 20000 | Cliente  | Efectivo |  | 4 vez
+673000
+12-5 | Gaston | Amarok | Normal + Chasis | 46000 | Cliente  | Transferencia  |  | 1 Vez | 673
+12-5 | Gaston Esposa | Classic | Normal + Chasis | 36000 | Cliente  | Transferencia  |  | 1 Vez
+12-5 | Sergio Marbian | Yaris | Normal  | 20000 | Cliente  | Efectivo |  | 2 vez
+13-5 | Victor | Alaskan | Normal  | 26000 | Cliente  | Transferencia  |  | 12
+13-5 | Julieta | Sw4 | Normal  | 26000 | Cliente  | Transferencia  |  | 3 Vez
+13-5 | Mateo | Saveiro | Normal  | 22000 | Cliente  | Transferencia  |  | 2 vez
+14-5 | Rosa | Fiat Idea | Normal  | 20000 | Cliente  | Efectivo |  | 1 Vez
+14-5 | Andres | Kaango | Normal  | 20000 | Cliente  | Efectivo |  | -
+14-5 | Giuly | Montero | Normal  | 26000 | Cliente  | Efectivo | Vuelto 4k en transfer | 5 vez
+15-5 | Alejandro | Falcon | Normal  | 20000 | Cliente  | Efectivo | 3516242452 | 1 Vez
+15-5 | Sergio | - | Normal  | 20000 | Cliente  | Efectivo |  | 1 Vez
+15-5 | Cecilia Luna | Ranger | Normal  | 26000 | Cliente  | Transferencia  |  | 1 Vez
+15-5 | Marco | Classic | Normal  | 20000 | Cliente  | Efectivo |  | 2 vez
+16-5 | Ezequiel Peralta | Fiesta | Motor-Chasis-Completo | 48500 | Cliente  | Transferencia  |  | 1 Vez
+376500 |  |  |  |  |  |  |  |  | 376
+18-5 | Carolina Sipan | Kwid | Normal  | 20000 | Cliente  | Transferencia  |  | 2 Vez
+18-5 | Javier Esquivel | Rengade | Normal  | 22000 | Cliente  | Transferencia
+18-5 | Simon Lopez | Toro | Normal  | 22000 | Cliente  | Transferencia  | Esposo Denise | 2 Vez
+18-5 | Denise | Kicks | Normal  | 20000 | Cliente  | Transferencia  |  | 7 vez
+18-5 | Lautaro Guiaz | Amarok | Normal  | 26000 | Cliente  | Efectivo | Tiene una casa en valle allegre | 1 Vez
+19-5 | Andres | Ranger | Normal  | 23000 | Cliente  | Efectivo | -
+19-5 | 3 Vez | Tracker | Normal + Chasis | 38000 | Cliente  | Transferencia  |  | 2 Vez
+19-5 | Sergio Marbian | Hilux | Normal  | 26000 | Cliente  | Transferencia  |  | 3 Vez
+20-5 | Enrique Godoy | 3008 | Normal  | 22000 | Cliente  | Transferencia  |  | 2 vez
+21-5 | Randon | Motorhome | - | 10000 | Cliente  | Efectivo | - | -
+21-5 | Lucas Tejada | Fiat Uno | Normal  | 20000 | Cliente  | Efectivo |  | 5 Vez
+21-5 | Víctor  | Renegade | Normal  | 22000 | Cliente  | Transferencia  |  | 12 vez
+22-5 | Alejandro Laguia | Hilux | Normal + Chasis | 46000 | Cliente  | Transferencia  |  | 3 vez
+22-5 | Esteban V6 | Amarok | Chasis | 30000 | Cliente  | Efectivo | Pago de mas (vive en nva) | 1 vez
+23-5 | Victor Cellone | Ranger | Normal  | 26000 | Cliente  | Efectivo | Reserva (pasada) | 1 vez
+23-5 | Joaquin | Amarok | Normal  | 22000 | Cliente  | Transferencia
+23-5 | Edith Rivarola | Toro | Normal + Chasis | 40000 | Cliente  | Efectivo | Pauta | 1 vez
+23-5 | Karina | Sandero | Normal  | 20000 | Cliente  | Transferencia  | Pauta | 1 vez
+23-5 | Karina | Corolla Cros | Normal  | 22000 | Cliente  | Transferencia  | Pauta | 1 vez
+23-5 | Wilfredo | Gol Trend | Normal  | 20000 | Cliente  | Transferencia  |  | 1 vez
+23-5 | Sergio Gremo | SW4 | Normal  | 26000 | Cliente  | Efectivo |  | 1 vez
+23-5 | Cira Rodriguez | Mercedez  Familiar | Normal  | 20000 | Cliente  | Efectivo |  | 1 vez
+23-5 | Magali Garcia | Fiat | Normal  | 20000 | Cliente  | Transferencia  |  | 1 vez
+563000 |  |  |  |  |  |  |  |  | 563
+25-5 | Maria | Palio | Normal + Chasis | 36000 | Cliente  | Transferencia  |  | 1 vez
+25-5 | Maria | Strada | Normal + Chasis | 38000 | Cliente  | Transferencia  |  | 1 vez
+25-5 | Gustavo F.  Carmen | Citroen C3 | Normal  | 22000 | Cliente  | Efectivo | Gomeria (Vendedor de autos) | 1 vez
+27-5 | Gabirel | Tida | Normal  | 20000 | Cliente  | Efectivo |  | 1 vez
+27-5 | Mateo Giordano | Saveiro | Normal  | 22000 | Cliente  | Transferencia  |  | 2 Vez
+27-5 | Emanuel Chavero | Corolla | Normal  | 20000 | Cliente  | Transferencia  |  | 2 Vez
+27-5 | Carla  Anzotegui | 208 | Normal  | 20000 | Cliente  | Transferencia  | Pauta | 1 vez
+27-5 | Sebastian | Nivus | Normal  | 20000 | Cliente  | Efectivo |  | 3 Vez | 600
+28-5 | Flor Ferreyra | 208 | Normal  | 20000 | Cliente  | Transferencia  |  | 3 Vez
+28-5 | Ricardo Arevalo | Hilux | Chasis + Interior | 33000 | Cliente  | Transferencia  | Gomeria | 1 vez
+28-5 | Sebastian | MG | Normal  | 20000 | Cliente  | Efectivo |  | 3 vez
+29-5 | Ramon Boliviano | Uno | Normal  | 20000 | Cliente  | Efectivo |  | 1 vez
+29-5 | Cira | Hrv | Normal  | 22000 | Cliente  | Efectivo |  | 2 Vez
+30-5 | Eduardo Camilleti | Jeep | Normal  | 22000 | Cliente  | Transferencia  | Esposo Gabirela D | 2 Vez
+30-5 | Joaquin | Amarok | Normal  | 22000 | Cliente  | Transferencia  |  | 30 vez
+30-5 | Eduardo Camilleti | Tracker | Normal + Chasis | 40000 | Cliente  | Transferencia  |  | 2 Vez
+30-5 | Hector | Amarok | Normal  | 26000 | Cliente  | Transferencia |  | 5 Vez
+423000
+Mayo $2.239.500 94 L 6,8%
+1-6 | Mariana | Koleos | Normal  | 22000 | Cliente  | Efectivo |  | 6 vez
+1-6 | Janet Ortiz | Hilux | Normal  | 26000 | Cliente  | Efectivo 20 Transferencia 6 | Se quejo con razon del mal interior , parte de atras. | 1 vez
+2-6 | Canter | Corolla | Normal  | 20000 | Cliente  | Efectivo | Fac | 6 vez
+5-6 | Carlos | Chevrolet | Normal  | 20000 | Cliente  | Efectivo |  | 2 vez
+5-6 | Stella | Up | Normal  | 20000 | Cliente  | Transferencia | Pauta | 1 vez
+5-6 | Mariano  | Cronos | Normal  | 20000 | Cliente  | Transferencia |  | 4 vez
+6-6 | Facundo | Fiat Uno | Normal  | 20000 | Cliente  | Efectivo |  | 2 vez
+6-6 | Melinan Loschiavo | Etios | Normal  | 20000 | Cliente  | Transferencia |  | 1 vez
+6-6 | Consuelo | Yaris Cola | Normal  | 20000 | Cliente  | Efectivo |  | 5 vez
+6-6 | Diego Videla | Fiat  Uno | Normal  | 20000 | Cliente  | Efectivo |  | 1 vez
+208000 |  |  |  |  |  |  |  |  | 208000
+8-6 | Joaquin | Amarok | Normal  | 22000 | Cliente  | Transferencia |  | 30 vez
+9-6 | Marcelo | Classic | Express | 14000 | Cliente  | Efectivo |  | 9 Vez
+10-6 | Flor | Captus | Normal  | 20000 | Cliente  | Transferencia |  | 3 vez
+11-6 | Lucas Tejeda | Saveiro | Normal  | 22000 | Cliente  | Efectivo |  | 6 vez
+11-6 | Victor Cellone | 3008 | Normal + Chasis | 40000 | Cliente  | Efectivo |  | 2 vez
+12-6 | Mauro Garcia | Maverik | Normal  | 26000 | Cliente  | Transferencia |  | 4 Vez
+12-6 | Tatiana | Ranger | Normal  | 26000 | Cliente  | Efectivo | Negra Villera | 1 vez
+12-6 | Walter | Eco | Normal  | 22000 | Cliente  | Transferencia |  | 3 vez
+12-6 | Julieta | Haval | Normal  | 22000 | Cliente  | Transferencia |  | 4 vez
+13-6 | Jose Martinez | Strada | Normal  | 30000 | Cliente  | Efectivo |  | 1 vez
+13-6 | Joaquin | Amarok | Normal  | 22000 | Cliente  | Transferencia |  | 31 vez
+13-6 | Janet Ortiz | Hilux | Normal  | 26000 | Cliente  | Transferencia |  | 2 vez
+13-6 | Maxi Cicioli | Corolla | Normal  | 20000 | Cliente  | Efectivo |  | 2 vez
+13-6 | Martin Ligouri | City | Normal  | 20000 | Cliente  | Efectivo |  | 1 vez
+332000
+15-6 | Viejo de Ocantivo | 3008 | Exterior | 16000 | Cliente  | Efectivo | Pago de mas (Pasada) | 1 vez
+16-6 | Mamá Lío | ? | Normal  | 18000 | Cliente  | Transferencia |  | 1 vez
+16-6 | Stefania Tomalino | Up | Normal  | 20000 | Cliente  | Transferencia |  | 2 vez
+17-6 | Lucas Tejeda | Palio | Normal  | 20000 | Cliente  | Efectivo |  | 7 vez
+17-6 | Lucas Tejeda | Corolla | Normal  | 20000 | Cliente  | Efectivo |  | 8 vez
+17-6 | Eugenia Chabo | Duster | Normal  | 22000 | Cliente  | Transferencia |  | 3 Vez
+17-6 | Amigo Lauti | Gol | Exterior | 12000 | Cliente  | Transferencia |  | 1 vez
+17-6 | Marcelo | Classic | Express | 14000 | Cliente  | Efectivo |  | 10 vez
+18-6 | Ramon Cuello | Toro | Normal  | 22000 | Cliente  | Efectivo | Dice tene run lav | 1 vez
+19-6 | Joaquin | Chevrolet | Normal  | 22000 | Cliente  | Transferencia |  | 31 vez
+19-6 | Graciela Cuñada | Hilux | Normal  | 30000 | Cliente  | Transferencia |  | 2 Vez
+19-6 | Javier Inquilino | Hyundai | Normal  | 20000 | Cliente  | Efectivo |  | 6 vez
+19-6 | David  | Amarok | Normal + Chasis | 48000 | Cliente  | Transferencia |  | 1 vez
+19-6 | Gyuli | Montero | Normal  | 26000 | Cliente  | Efectivo |  | 5 Vez
+19-6 | Sergio Marbian | Yaris | Normal  | 20000 | Cliente  | Transferencia |  | 4 Vez
+19-6 | Cintia | 308 | Normal  | 20000 | Cliente  | Efectivo |  | 1 Vez
+20-6 | Cesar | 500 | Exterior | 14000 | Cliente  | Efectivo | Pago de mas | 1 Vez
+20-6 | Jesus Bado | Uno | Normal  | 20000 | Cliente  | Transferencia | Maderas | 1 Vez
+20-6 | Carolina Sipan | Kwid | Normal  | 20000 | Cliente  | Transferencia |  | 4 Vez
+20-6 | Bautista Venier | Fiat | Chasis | 18000 | Cliente  | Transferencia | Her Mecanico | 1 Vez
+20-6 | Ruben Quinteros | Fiorino | Normal  | 22000 | Cliente  | Transferencia | Dario | 1 Vez
+20-6 | Victor | Maverik | Normal  | 26000 | Cliente  | Transferencia |  | 15 Vez
+470000
+23-6 | Sergio Marbian | Hilux | Normal  | 26000 | Cliente  | Transferencia |  | 4 Vez
+23-6 | Gabriel  | 504 | Normal | 20000 | Cliente  | Efectivo |  | 3 vez
+24-6 | Marcelo | Cronos | Normal | 20000 | Cliente  | Efectivo |  | 1 Vez
+25-6 | Andres | Ranger | Normal | 23000 | Cliente  | Transferencia |  | 23 vez
+25-6 | Maxi Cicioli | S100 | Normal | 23000 | Cliente  | Efectivo |  | 3 vez
+25-6 | Nacho | Audi  | Normal | 20000 | Cliente  | Transferencia |  | 2 vez
+26-6 | Joaquin | Amarok | Normal | 22000 | Cliente  | Transferencia |  | 32 vez
+26-6 | Andres | Moto | Normal | 10000 | Cliente  | Efectivo |  | 24 vez
+27-6 | Alejandra | Argo | Normal | 20000 | Cliente  | Transferencia |  | 1 Vez
+27-6 | 295000 | 308 GT | Normal | 20000 | Cliente  | Efectivo |  | 4 Vez
+27-6 | Micaela Zoluaga | Corolla | Normal | 20000 | Cliente  | Efectivo |  | 1 Vez
+27-6 | Luis Marquez | Classic | Normal | 20000 | Cliente  | Efectivo |  | 2 Vez
+27-6 | Juani | T Cross | Normal | 15000 | Amigo | Efectivo |  | 1 Vez
+27-6 | Mauro Gorordo | Fiat | Normal | 20000 | Cliente  | Efectivo |  | 1 Vez
+27-6 | Mariana Manzanelli | Ranger | Normal | 26000 | Cliente  | Transferencia | Amiga Victor | 1 Vez
+27-6 | Carla Anzotegui | 208 | Exterior | 12000 | Cliente  | Transferencia |  | 2 Vez
+27-6 | Ariel | Palio Adventure | Normal | 20000 | Cliente  | Efectivo |  | 1 Vez
+27-6 | Alejandro Laguia | Fiesta | Normal | 20000 | Cliente  | Transferencia |  |  4 Vez
+27-6 | Santiago Croci | Toro | Normal | 23000 | Cliente  | Efectivo |  | 1 Vez
+380000
+29-6 | Mariana | Koleos | Normal | 22000 | Cliente  | Transferencia |  | 4 Vez
+29-6 | Julio | Cronos | Normal | 20000 | Cliente  | Efectivo |  | 2 Vez
+29-6 | Lula | Ka | Normal | 20000 | Cliente  | Transferencia |  | 4 Vez
+29-6 | Fernando Cervino | Cruze | Cera | 26000 | Cliente  | Efectivo |  | 6 Vez
+30-6 | Eduardo Montoro  | Raptor | Normal + Chasis | 50000 | Cliente  | Transferencia |  | 4 Vez
+30-6 | Christian Powch | Note | Cera | 26000 | Cliente  | Transferencia |  | 1 Vez
+30-6 | Jose Ferreyra | Mg | Cera | 26000 | Cliente  | Efectivo |  | 1 Vez
+Junio $1.580.000 L72
+2-6 | Patricia | Sandero | Normal | 23000 | Cliente  | Transferencia |  | 2 Vez
+2-6 | Lorena Siciliani | Creta | Normal | 26000 | Cliente  | Efectivo | Papa de Lorena - Pago mas | 2 Vez
+2-6 | Gabriela Soria | Taos | Normal | 25000 | Cliente  | Efectivo |  | 1 Vez
+3-6 | Patricia Esposo | Berlingo | Normal | 24500 | Cliente  | Transferencia |  | 3 Vez
+3-6 | Gaston Vargas | Amarok | Normal | 29000 | Cliente  | Transferencia |  | 2 Vez
+3-6 | Victor | Renegade | Normal | 24500 | Cliente  | Transferencia |  | 17 Vez
+152000
+6-7 | Jose Ferreyra | Mg | Normal | 23000 | Cliente  | Transferencia |  | 2 Vez
+6-7 | Dario Promo | L200 | Normal | 30000 | Cliente  | Efectivo | Pago de mas | 6 Vez
+6-7 | Adrian Bezzi | Tracker | Normal | 24500 | Cliente  | Transferencia |  | 3 Vez
+7-7 | Emanuel Chavero | Corolla | Normal | 23000 | Cliente  | Transferencia |  | 3 Vez
+8-7 | Karina | Clio | Normal + Chasis | 43000 | Cliente  | Transferencia |  | 3 Vez
+8-7 | Giuly | Montero | Normal | 29000 | Cliente  | Transferencia |  | 7 Vez
+8-7 | Simon Lopez | Toro | Normal | 25000 | Cliente  | Transferencia |  | 3 Vez
+8-7 | Jorge Filipini | Ranger | Normal | 30000 | Cliente  | Efectivo |  pago de mas 1k | 2 Vez
+9-7 | Susana Aspitia | Megane | Normal | 23000 | Cliente  | Efectivo |  | 1 Vez
+9-7 | Janet Ortiz | Hilux | Normal | 29000 | Cliente  | Efectivo |  | 4 Vez
+9-7 | Flor Ferreyra | Toro | Normal | 25000 | Cliente  | Efectivo |  | 5 Vez
+10-7 | Eduardo Grammatico | Agile | Normal | 23000 | Cliente  | Transferencia |  | 2 Vez
+10-7 | Lucas Tejeda | Palio | Normal | 23000 | Cliente  | Efectivo |  | 9 Vez
+10-7 | Lucas Tejeda | Corolla | Normal | 23000 | Cliente  | Efectivo |  | 9 Vez
+10-7 | Alejandro Laguia | Hilux | Normal | 29000 | Cliente  | Efectivo | Esposa | 5 Vez
+10-7 | Mario Susi | Kangoo | Normal | Debia yo | Cliente  | Transferencia |  | 5 Vez
+10-7 | Victor | Alaskan | Normal | 34000 | Cliente  | Transferencia | Pago de mas | 18 Vez
+10-7 | Lautaro Cuello | 307 | Chasis | 20000 | Cliente  | Efectivo | Pauta | 1 Vez
+11-7 | Hernnan Santillan | Onix | Normal | 21000 | Cliente  | Transferencia | Hice precio por cantidad | 4 Vez
+11-7 | Joaquin | Amarok | Normal | 26000 | Cliente  | Efectivo |  | 33 Vez
+11-7 | Hernnan Santillan | Eco  | Normal | 21000 | Cliente  | Transferencia |  | 4 Vez
+11-7 | Hernnan Santillan | CItroen Furgo | Normal | 21000 | Cliente  | Transferencia |  | 4 Vez
+11-7 | Cira Rodriguez | Hrv | Normal | 23000 | Cliente  | Transferencia | No vino CIra vino una amiga | 4 Vez
+11-7 | Victor | Maverik | Normal | 29000 | Cliente  | Transferencia |  | 19 Vez
+11-7 | Diego | S10 | Normal | 40000 | Cliente  | Transferencia | Pago de mas pauta | 1 Vez
+637500
+13-7 | Fernando Juri | Amarok | Normal + Chasis | 53000 | Cliente  | Efectivo | Piolasos | 1 Vez
+13-7 | Nancy Gonzales | Sentra | Normal | 23000 | Cliente  | Transferencia | Boca en Boca | 1 Vez
+14-7 | Nacho Esposo Agos | A4 | Normal | 23000 | Cliente  | Transferencia |  | 4 Vez
+14-7 | Jose Ferreyra | MG | Exterior | 12000 | Cliente  | Efectivo |  | 3 Vez
+14-7 | Matias Quispe | Bora | Normal | 23000 | Cliente  | Transferencia |  | 1 Vez
+14-7 | Gabi Oviedo | Strada | Normal | 24500 | Cliente  | Transferencia |  | 2 Vez
+14-7 | Sebastian Pellegrini | Focus | Normal | 23000 | Cliente  | Transferencia |  | 1 Vez
+14-7 | Sebastian Pellegrini | Pulse | Normal | 23000 | Cliente  | Transferencia |  | 1 Vez
+14-7 | Dario Promo | L200 | Normal | 30000 | Cliente  | Transferencia |  | 7 Vez
+16-7 | Joaquin | S10 | Normal | 26000 | Cliente  | Efectivo Lauti |  | 34 Vez
+16-7 | Amiga Victor | Onix | Normal | 23000 | Cliente  | Efectivo |  | 1 Vez
+16-7 | Estela Martinez | 3008 | Normal | 23000 | Cliente  | Efectivo |  | 1 Vez
+16-7 | Juan Rivas | Fox | Normal | 29000 | Cliente  | Transferencia | Pauta | 1 Vez
+16-7 | Luis Troncoso | Amarok | Normal + Chasis | 53000 | Cliente  | Transferencia | Pauta | 1 Vez
+16-7 | Victor | Renegade | Normal | 25000 | Cliente  | Transferencia  |  | 19 Vez
+17-7 | Hna Mariana | Yaris Cross | Normal | 25000 | Cliente  | Efectivo |  | 1 Vez
+17-7 | Javier Esquivel | Rengade | Normal  | 24500 | Cliente  | Transferencia |  | 2 Vez
+17-7 | Marcelo Uber | Classic | Expres | 20000 | Cliente  | Transferencia | Hjo | 8 Vez
+17-7 | Marcelo Uber | Gol Country | Normal  | 15000 | Cliente  | Transferencia |  | 1 Vez
+17-7 | Sebastian Gomez | Sandero | Normal  | 23000 | Cliente  | Efectivo |  | 1 Vez
+18-7 | Facundo | L200 | Normal  | 20000 | Cliente  | Efectivo |  | 3 Vez
+18-7 | Joaquin | Amarok | Normal  | 26000 | Cliente  | Efectivo |  | 35 Vez
+567000
+20-7 | Mariana | Koleos | Normal  | 25000 | Cliente  | Transferencia |  | 5 Vez | 21
+20-7 | Sergio Marbian  | Yarias | Normal  | 23000 | Cliente  | Transferencia |  | 5 Vez
+21-7 | Mario | C3 | Normal  | 23000 | Cliente  | Efectivo |  | 7 Vez
+23-7 | Viejo pasada del Sur | Maverik | Exterior | 15000 | Cliente  | Efectivo |  | 1 Vez
+23-7 | Andres | Ranger | Normal  | 26000 | Cliente  | Efectivo |  | 25
+23-7 | Dario Promo Bus | L200 | Normal  | 23000 | Cliente  | Efectivo |  | 8
+23-7 | Dario  | Eco | Normal  | 30000 | Cliente  | Transferencia |  | 3
+23-7 | Sebastian Navarrete | MG | Normal  | 25000 | Cliente  | Transferencia |  | 4
+24-7 | Fernando Juri | Amarok | Normal  | 29000 | Cliente  | Transferencia |  | 2
+24-7 | Mayra Flores | Gol Power | Normal  | 23000 | Cliente  | Efectivo |  | 1 Vez
+24-7 | Kevin Filmore | Sw4 | Normal  | 62000 | Cliente  | Transferencia |  | 1 Vez
+24-7 | Gaston Vargas | Amarok | Normal + Extra | 35000 | Cliente  | Transferencia |  | 3
+24-7 | Sebastian Navarrete | Nivus | Normal  | 23000 | Cliente  | Transferencia |  | 5
+25-7 | Nuri esposa Jorge Filipini | Up | Normal  | 23000 | Cliente  | Transferencia |  | 3
+25-7 | Jose Ferreyra | Mg | Normal  | 25000 | Cliente  | Transferencia |  | 4
+25-7 | Gaston Vargas Esposa | Classic | Normal  | 23000 | Cliente  | Transferencia |  | 4
+25-7 | Joaquin | Amarok | Normal  | 26000 | Cliente  | Efectivo |  | 36
+25-7 | Patricia Enrique | Joy | Normal  | 23000 | Cliente  | Efectivo |  | 1 Vez
+25-7 | Ricardo Ottogalli | Hilux | Normal  | 29000 | Cliente  | Transferencia | Ex dueño lavadero | 1 Vez
+25-7 | Maxi Cicioli | S10 | Normal  | 26000 | Cliente  | Transferencia |  | 5
+25-7 | Victor | Maverik | Normal  | 29000 | Cliente  | Transferencia  |  | 20
+566000 |  |  |  |  |  |  |  |  | 74
+27-7 | Graciela Villarpando | Hilux | Normal  | 35000 | Cliente  | Transferencia  |  | 3
+27-7 | Lucas Tejeda | Saveiro | Normal  | 25000 | Cliente  | Transferencia  |  | 15
+28-7 | Stefania Tomalino | Up | Normal  | 23000 | Cliente  | Transferencia  |  | 3
+28-7 | Gabriel Morini | 308 | Normal  | 23000 | Cliente  | Transferencia  |  | 2
+29-7 | Gullermo Ruiz | Voyage | Normal  | 23000 | Cliente  | Transferencia  | Boca en boca: Stefania | 1
+30-7 | Eduardo Montoro | Amarok  | Normal  + Chasis | 60000 | Cliente  | Transferencia
+30-7 | Gian | Moto | Normal  | 10000 | Cliente  | Transferencia  | Viajero | 1
+31-7 | X | Ranger | Normal  | 27000 | Cliente  | Efectivo | Descuento 2 k | 1
+31-7 | Walter  | 307 | Normal  | 23000 | Cliente  | Efectivo |  | 1
+249000
+Agosto $2.171.000 L83
+1-8 | Nacho Esposo Agos | A4 | Normal  | 23000 | Cliente | Transferencia  |  | 3
+4 | Fernando Juri | Amarok | Normal  | 29000 | Cliente | Transferencia  |  | 3
+1-8 | Consuelo | Yaris | Normal + Cera | 29000 | Cliente | Efectivo |  | 6
+1-8 | Consuelo | Hilux | Normal + Cera | 35000 | Cliente | Efectivo |  | 6 |  | TOTAL DE CAJA  4-7 |  | 329 | Recordatorio
+1-8 | Anabel Mauleon | Duster | Normal  | 24000 | Cliente | Transferencia  |  | 1 |  | Deberia |  | 355
+1-8 | Ruben  | Hilux Gr | Normal + Chaisis + Nutriciones | 68000 | Cliente | Efectivo |  | 1 |  | eft 16 | transfer 313 |    | Lautaro cobra los 27
+1-8 | Herman | Hrv | Normal  | - | Amigo | - | Le tiro 6 Lauti | 2
+1-8 | Marcos Altamirano | 208 | Normal  | 23000 | Cliente | Transferencia  | Amigo Hernan, viene por recomendacion | 1
+1-8 | Mario Chiesa | Cronos | Normal  | 23000 | Cliente | Transferencia  |  | 1 |  | Objetivo conforme/ideal
+|  |  |  |  |  |  |  |  |  | Objetivo 104 L
+3-7 | Mercedes Dattolo | 207 | Normal + Cera | 28000 | Cliente | Transferencia  |  | 1
+3-7 | Joaquin | Hilux | Normal  | 26000 | Cliente | No PAGO |  | 37
+3-7 | Janet | Hilux | Normal  + Chasis | 50000 | Cliente | Transferencia  |  | 4
+4-7 | Antonio Perez | Berlingo | Normal  + Chasis | 44000 | Cliente | Transferencia  | Abuelito piolaso | 1
+4-7 | Victor | - | - | 100000 | Cliente |  | Ingreso Victor  | -

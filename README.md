@@ -87,6 +87,24 @@ src/
 └── server/actions/   server actions por dominio (validan sesión + tenant)
 ```
 
+## Importación de datos históricos (El Bosquecito)
+
+El registro histórico de El Bosquecito (oct 2025 – ago 2026) se importa por CLI
+con vista previa, normalización de nombres/modelos y deshacer por lote:
+
+```bash
+npx tsx scripts/import/bosquecito/run.ts --preview     # analiza y muestra conflictos, no toca la base
+npx tsx scripts/import/bosquecito/run.ts --apply       # crea el lavadero, catálogo, clientes, lavados, caja y cuentas
+npx tsx scripts/import/bosquecito/run.ts --undo <id>   # deshace el lote completo
+```
+
+Contra Neon: anteponer `DATABASE_URL="..." DIRECT_URL="..."` (cadena directa).
+La importación crea el lavadero `el-bosquecito` con su catálogo de servicios y
+precios por tipo de vehículo, el usuario `admin@elbosquecito.com`
+(contraseña `bosquecito2026`), y recalcula puntos, niveles y rachas de todos
+los clientes a partir de los lavados reales. Los lotes aplicados se ven y se
+deshacen también desde **Gestión → Importaciones**.
+
 ## Fuera de esta etapa
 
 Pagos, notificaciones (email/SMS/WhatsApp), OTP por teléfono, recuperación de contraseña, canje real de descuentos en el cobro, bonus por racha, drag & drop del calendario, reportes y RLS de Postgres.
