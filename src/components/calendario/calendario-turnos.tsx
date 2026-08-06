@@ -102,7 +102,7 @@ function TurnoCard({
       onClick={onClick}
       style={style}
       className={cn(
-        "block w-full overflow-hidden rounded-md border-l-4 px-1.5 text-left text-xs shadow-sm transition-shadow hover:shadow-md",
+        "block w-full overflow-hidden rounded-md border-l-4 px-1.5 text-left text-xs shadow-sm transition-[box-shadow,opacity] hover:shadow-md active:opacity-60",
         ESTADO_TURNO_CARD[turno.estado],
         compacta ? "truncate py-0.5" : "absolute py-1"
       )}

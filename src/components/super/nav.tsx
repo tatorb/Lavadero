@@ -46,7 +46,7 @@ function NavContenido({
               href={item.href}
               onClick={onNavegar}
               className={cn(
-                "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors",
+                "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors active:bg-accent active:text-foreground",
                 activo
                   ? "bg-primary/10 text-primary"
                   : "text-muted-foreground hover:bg-accent hover:text-foreground"

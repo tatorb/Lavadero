@@ -137,7 +137,7 @@ export function NuevoTurnoWizard({
             <button
               key={a.id}
               type="button"
-              className="w-full"
+              className="w-full transition-transform duration-100 active:scale-[0.98]"
               onClick={() => {
                 setAutoId(a.id);
                 setPaso(1);
@@ -169,7 +169,7 @@ export function NuevoTurnoWizard({
             <button
               key={s.id}
               type="button"
-              className="w-full"
+              className="w-full transition-transform duration-100 active:scale-[0.98]"
               onClick={() => setServicioId(s.id)}
             >
               <Card
@@ -206,7 +206,7 @@ export function NuevoTurnoWizard({
                         )
                       }
                       className={cn(
-                        "rounded-full border px-3 py-1.5 text-sm transition-colors",
+                        "rounded-full border px-3 py-1.5 text-sm transition-[transform,background-color,color] duration-100 active:scale-95",
                         activo
                           ? "border-primary bg-primary/10 text-primary"
                           : "border-input text-muted-foreground"
@@ -237,7 +237,7 @@ export function NuevoTurnoWizard({
                   type="button"
                   onClick={() => elegirDia(valor)}
                   className={cn(
-                    "flex w-14 shrink-0 flex-col items-center rounded-lg border py-2 text-sm transition-colors",
+                    "flex w-14 shrink-0 flex-col items-center rounded-lg border py-2 text-sm transition-[transform,background-color,color] duration-100 active:scale-95",
                     dia === valor
                       ? "border-primary bg-primary text-primary-foreground"
                       : "bg-background"
@@ -274,7 +274,7 @@ export function NuevoTurnoWizard({
                     disabled={s.estado !== "disponible"}
                     onClick={() => setSlotISO(s.fechaISO)}
                     className={cn(
-                      "rounded-lg border py-2 text-sm font-medium transition-colors",
+                      "rounded-lg border py-2 text-sm font-medium transition-[transform,background-color,color] duration-100 active:scale-95",
                       slotISO === s.fechaISO
                         ? "border-primary bg-primary text-primary-foreground"
                         : s.estado === "disponible"

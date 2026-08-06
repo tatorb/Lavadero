@@ -57,8 +57,23 @@
 @layer base {
   * {
     @apply border-border outline-ring/50;
+    /* Sin el highlight gris nativo del navegador: usamos nuestros estados active */
+    -webkit-tap-highlight-color: transparent;
   }
   body {
     @apply bg-background text-foreground font-sans;
   }
+}
+
+/* Barra de progreso de navegación (indeterminada) */
+@keyframes barra-progreso {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(400%);
+  }
+}
+.animate-barra {
+  animation: barra-progreso 1s ease-in-out infinite;
 }

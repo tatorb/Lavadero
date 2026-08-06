@@ -1,4 +1,7 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
+
+import { NavegacionProgreso } from "@/components/navegacion-progreso";
 import { Toaster } from "@/components/ui/sonner";
 import "./globals.css";
 
@@ -15,6 +18,9 @@ export default function RootLayout({
   return (
     <html lang="es" className="h-full antialiased">
       <body className="min-h-full flex flex-col">
+        <Suspense fallback={null}>
+          <NavegacionProgreso />
+        </Suspense>
         {children}
         <Toaster richColors position="top-center" />
       </body>

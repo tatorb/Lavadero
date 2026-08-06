@@ -176,7 +176,7 @@ export function NuevoLavadoForm({
                       activo ? prev.filter((id) => id !== a.id) : [...prev, a.id]
                     )
                   }
-                  className={`rounded-full border px-3 py-1 text-sm transition-colors ${
+                  className={`rounded-full border px-3 py-1 text-sm transition-[transform,background-color,color] duration-100 active:scale-95 ${
                     activo
                       ? "border-primary bg-primary/10 text-primary"
                       : "border-input text-muted-foreground hover:bg-accent"
