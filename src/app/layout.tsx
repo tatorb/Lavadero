@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 
+import { CLASES_FUENTES } from "@/lib/fuentes";
 import { NavegacionProgreso } from "@/components/navegacion-progreso";
 import { Toaster } from "@/components/ui/sonner";
 import "./globals.css";
@@ -16,7 +17,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="es" className="h-full antialiased">
+    <html lang="es" className={`${CLASES_FUENTES} h-full antialiased`}>
       <body className="min-h-full flex flex-col">
         <Suspense fallback={null}>
           <NavegacionProgreso />

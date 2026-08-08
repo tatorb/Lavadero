@@ -115,6 +115,12 @@ model Lavadero {
   // días máximos entre visitas para mantener la racha
   rachaVentanaDias Int @default(14)
 
+  // ===== Identidad de marca =====
+  logoUrl          String? // data URI o URL del logo
+  colorPrimario    String? // hex #RRGGBB
+  tipografiaTexto  String? @default("inter") // clave del catálogo de fuentes
+  tipografiaTitulo String? // si es null, usa la de texto
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 

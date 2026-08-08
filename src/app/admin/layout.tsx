@@ -1,6 +1,7 @@
 import { requireStaff } from "@/lib/auth-helpers";
 import { prisma } from "@/lib/db";
 import { AdminMobileHeader, AdminSidebar } from "@/components/admin/sidebar";
+import { EstilosMarca } from "@/components/marca/estilos-marca";
 
 export const metadata = { title: "Gestión — Lavadero" };
 
@@ -8,16 +9,33 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   const user = await requireStaff();
   const lavadero = await prisma.lavadero.findUnique({
     where: { id: user.lavaderoId },
-    select: { nombre: true },
+    select: {
+      nombre: true,
+      logoUrl: true,
+      colorPrimario: true,
+      tipografiaTexto: true,
+      tipografiaTitulo: true,
+    },
   });
 
   const usuario = { nombre: user.nombre, rol: user.rol! };
   const nombre = lavadero?.nombre ?? "Lavadero";
+  const logoUrl = lavadero?.logoUrl ?? null;
 
   return (
     <div className="flex min-h-screen w-full flex-col lg:flex-row">
-      <AdminSidebar usuario={usuario} lavaderoNombre={nombre} />
-      <AdminMobileHeader usuario={usuario} lavaderoNombre={nombre} />
+      {lavadero && (
+        <EstilosMarca
+          marca={{
+            logoUrl: lavadero.logoUrl,
+            colorPrimario: lavadero.colorPrimario,
+            tipografiaTexto: lavadero.tipografiaTexto,
+            tipografiaTitulo: lavadero.tipografiaTitulo,
+          }}
+        />
+      )}
+      <AdminSidebar usuario={usuario} lavaderoNombre={nombre} logoUrl={logoUrl} />
+      <AdminMobileHeader usuario={usuario} lavaderoNombre={nombre} logoUrl={logoUrl} />
       <main className="flex-1 overflow-x-hidden bg-muted/30 p-4 sm:p-6 lg:p-8">
         {children}
       </main>

@@ -17,8 +17,11 @@ import {
 
 export function RegistroForm({
   lavaderos,
+  lavaderoFijo,
 }: {
   lavaderos: Array<{ id: string; nombre: string }>;
+  /** Cuando se entra por el link del lavadero no hay nada que elegir */
+  lavaderoFijo?: boolean;
 }) {
   const [state, formAction, pending] = useActionState(registrarCliente, undefined);
 
@@ -55,21 +58,25 @@ export function RegistroForm({
               required
             />
           </div>
-          <div className="space-y-2">
-            <Label>Lavadero</Label>
-            <Select name="lavaderoId" required>
-              <SelectTrigger>
-                <SelectValue placeholder="Elegí tu lavadero" />
-              </SelectTrigger>
-              <SelectContent>
-                {lavaderos.map((l) => (
-                  <SelectItem key={l.id} value={l.id}>
-                    {l.nombre}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
+          {lavaderoFijo ? (
+            <input type="hidden" name="lavaderoId" value={lavaderos[0]?.id ?? ""} />
+          ) : (
+            <div className="space-y-2">
+              <Label>Lavadero</Label>
+              <Select name="lavaderoId" required>
+                <SelectTrigger>
+                  <SelectValue placeholder="Elegí tu lavadero" />
+                </SelectTrigger>
+                <SelectContent>
+                  {lavaderos.map((l) => (
+                    <SelectItem key={l.id} value={l.id}>
+                      {l.nombre}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          )}
           {state?.error && (
             <p className="text-sm font-medium text-destructive">{state.error}</p>
           )}

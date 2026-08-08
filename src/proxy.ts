@@ -37,7 +37,9 @@ export default auth((req) => {
     return NextResponse.next();
   }
 
-  if (path === "/login" || path === "/registro") {
+  // Links de marca por lavadero (/l/[slug]): públicos, pero si ya hay sesión
+  // no tiene sentido mostrar el login
+  if (path === "/login" || path === "/registro" || path.startsWith("/l/")) {
     if (esStaff)
       return NextResponse.redirect(
         new URL(user.rol === "SUPER_ADMIN" ? "/super" : "/admin", nextUrl)

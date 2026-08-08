@@ -5,9 +5,9 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   CalendarDays,
-  Droplets,
   LogOut,
   Menu,
+  Palette,
   Settings,
   SprayCan,
   Upload,
@@ -21,6 +21,7 @@ import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import { LogoLavadero } from "@/components/marca/logo-lavadero";
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 
 const NAV = [
@@ -30,6 +31,7 @@ const NAV = [
   { href: "/admin/caja", label: "Caja", icon: Wallet },
   { href: "/admin/servicios", label: "Servicios", icon: SprayCan },
   { href: "/admin/configuracion/franjas", label: "Franjas horarias", icon: Settings },
+  { href: "/admin/configuracion/marca", label: "Marca", icon: Palette },
   { href: "/admin/configuracion/importaciones", label: "Importaciones", icon: Upload },
 ];
 
@@ -41,10 +43,12 @@ interface UsuarioInfo {
 function NavContenido({
   usuario,
   lavaderoNombre,
+  logoUrl,
   onNavegar,
 }: {
   usuario: UsuarioInfo;
   lavaderoNombre: string;
+  logoUrl: string | null;
   onNavegar?: () => void;
 }) {
   const pathname = usePathname();
@@ -52,9 +56,7 @@ function NavContenido({
   return (
     <>
       <div className="flex items-center gap-2 px-4 py-5">
-        <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-          <Droplets className="h-5 w-5" />
-        </div>
+        <LogoLavadero logoUrl={logoUrl} nombre={lavaderoNombre} size={36} />
         <div className="min-w-0">
           <p className="truncate text-sm font-semibold">{lavaderoNombre}</p>
           <p className="text-xs text-muted-foreground">Panel de gestión</p>
@@ -105,13 +107,15 @@ function NavContenido({
 export function AdminSidebar({
   usuario,
   lavaderoNombre,
+  logoUrl,
 }: {
   usuario: UsuarioInfo;
   lavaderoNombre: string;
+  logoUrl: string | null;
 }) {
   return (
     <aside className="sticky top-0 hidden h-screen w-60 shrink-0 flex-col border-r bg-background lg:flex">
-      <NavContenido usuario={usuario} lavaderoNombre={lavaderoNombre} />
+      <NavContenido usuario={usuario} lavaderoNombre={lavaderoNombre} logoUrl={logoUrl} />
     </aside>
   );
 }
@@ -120,9 +124,11 @@ export function AdminSidebar({
 export function AdminMobileHeader({
   usuario,
   lavaderoNombre,
+  logoUrl,
 }: {
   usuario: UsuarioInfo;
   lavaderoNombre: string;
+  logoUrl: string | null;
 }) {
   const [abierto, setAbierto] = React.useState(false);
 
@@ -139,14 +145,13 @@ export function AdminMobileHeader({
           <NavContenido
             usuario={usuario}
             lavaderoNombre={lavaderoNombre}
+            logoUrl={logoUrl}
             onNavegar={() => setAbierto(false)}
           />
         </SheetContent>
       </Sheet>
       <div className="flex min-w-0 items-center gap-2">
-        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-          <Droplets className="h-4 w-4" />
-        </div>
+        <LogoLavadero logoUrl={logoUrl} nombre={lavaderoNombre} size={32} />
         <p className="truncate text-sm font-semibold">{lavaderoNombre}</p>
       </div>
     </header>

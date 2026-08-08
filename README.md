@@ -87,6 +87,26 @@ src/
 └── server/actions/   server actions por dominio (validan sesión + tenant)
 ```
 
+## Identidad de marca por lavadero
+
+Cada lavadero configura su marca desde **Gestión → Marca**: logo, color
+principal y tipografía (textos y, opcionalmente, títulos con otra fuente).
+
+- Los tokens (`--primary`, `--ring`, `--fuente-texto`, `--fuente-titulos`) se
+  sobrescriben **renderizados en el servidor** (`components/marca/estilos-marca.tsx`),
+  así no hay parpadeo del tema por defecto.
+- El **color de texto sobre el color de marca se calcula por contraste WCAG**:
+  si el color elegido es claro, el texto encima pasa a oscuro automáticamente.
+  La pantalla avisa si el contraste queda por debajo de 4.5:1.
+- El **logo se optimiza en el navegador** (máx. 256 px, WebP) antes de guardarse;
+  el campo acepta indistintamente data URI o URL, así migrar a un CDN no
+  requiere cambios de modelo.
+- Las tipografías son un catálogo curado auto-hospedado con `next/font`
+  (`lib/fuentes.ts` + `lib/marca.ts`); el navegador sólo descarga la que se usa.
+- Cada lavadero tiene su **link público de marca**: `/l/<slug>` (login) y
+  `/l/<slug>/registro`, más un **manifest PWA propio** en `/l/<slug>/manifest`
+  para que al instalar la app en el celular aparezca su logo y su color.
+
 ## Importación de datos históricos (El Bosquecito)
 
 El registro histórico de El Bosquecito (oct 2025 – ago 2026) se importa por CLI
