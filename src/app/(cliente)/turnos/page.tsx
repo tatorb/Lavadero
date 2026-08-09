@@ -4,7 +4,7 @@ import { CalendarPlus } from "lucide-react";
 import { requireCliente } from "@/lib/auth-helpers";
 import { prisma } from "@/lib/db";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { EstadoVacio } from "@/components/ui/estado-vacio";
 import { MisTurnos } from "./mis-turnos";
 
 export const metadata = { title: "Mis turnos" };
@@ -31,7 +31,7 @@ export default async function TurnosClientePage() {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h1 className="text-lg font-bold">Mis turnos</h1>
+        <h1 className="text-xl font-bold">Mis turnos</h1>
         <Button asChild size="sm">
           <Link href="/turnos/nuevo">
             <CalendarPlus className="h-4 w-4" />
@@ -40,11 +40,16 @@ export default async function TurnosClientePage() {
         </Button>
       </div>
       {turnos.length === 0 ? (
-        <Card>
-          <CardContent className="p-6 text-center text-sm text-muted-foreground">
-            No tenés turnos todavía. ¡Pedí el primero!
-          </CardContent>
-        </Card>
+        <EstadoVacio
+          icono={<CalendarPlus className="h-5 w-5" />}
+          titulo="No tenés turnos todavía"
+          descripcion="Reservá tu lugar y evitá la espera: elegís auto, servicio y horario en menos de un minuto."
+          accion={
+            <Button asChild size="sm">
+              <Link href="/turnos/nuevo">Pedir un turno</Link>
+            </Button>
+          }
+        />
       ) : (
         <MisTurnos
           timezone={lavadero.timezone}

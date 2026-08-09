@@ -7,6 +7,7 @@ import {
   Lock,
   Sparkles,
   Users,
+  Waves,
 } from "lucide-react";
 
 import { requireCliente } from "@/lib/auth-helpers";
@@ -16,18 +17,17 @@ import { calcularNivel } from "@/lib/gamificacion/niveles";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { MedidorNivel } from "@/components/cliente/medidor-nivel";
 import { ESTADO_TURNO_BADGE } from "@/components/turnos/estado";
 
 export default async function HomeCliente() {
   const user = await requireCliente();
 
-  const [cliente, niveles, lavadero] = await Promise.all([
+  const [cliente, niveles, lavadero, lavadosTotales] = await Promise.all([
     prisma.cliente.findUniqueOrThrow({
       where: { id: user.id },
       include: {
-        vinculadoCon: {
-          select: { id: true, nombre: true, puntosTotal: true },
-        },
+        vinculadoCon: { select: { id: true, nombre: true, puntosTotal: true } },
       },
     }),
     prisma.nivel.findMany({
@@ -38,6 +38,7 @@ export default async function HomeCliente() {
       where: { id: user.lavaderoId },
       select: { timezone: true },
     }),
+    prisma.lavado.count({ where: { clienteId: user.id, canceladoAt: null } }),
   ]);
 
   const estadoNivel = calcularNivel(cliente.puntosTotal, niveles);
@@ -70,81 +71,118 @@ export default async function HomeCliente() {
     }),
   ]);
 
-  const nivelColor = estadoNivel.nivelActual?.color ?? "#64748b";
+  const colorNivel = estadoNivel.nivelActual?.color ?? undefined;
 
   return (
-    <div className="space-y-4">
-      {/* Card de nivel */}
-      <Card className="overflow-hidden border-0 text-white" style={{ background: `linear-gradient(135deg, ${nivelColor}, ${nivelColor}cc)` }}>
-        <CardContent className="space-y-3 p-5">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-white/80">Tu nivel</p>
-              <p className="text-2xl font-bold">
-                {estadoNivel.nivelActual?.nombre ?? "—"}
-              </p>
-            </div>
-            <div className="text-right">
-              <p className="text-sm text-white/80">Puntos</p>
-              <p className="text-2xl font-bold">{cliente.puntosTotal}</p>
-            </div>
-          </div>
-          {estadoNivel.nivelSiguiente && (
-            <div className="space-y-1">
-              <div className="h-2.5 overflow-hidden rounded-full bg-white/25">
-                <div
-                  className="h-full rounded-full bg-white transition-all"
-                  style={{ width: `${Math.round(estadoNivel.progreso * 100)}%` }}
-                />
-              </div>
-              <p className="text-xs text-white/90">
+    <div className="space-y-5">
+      {/* Encabezado editorial */}
+      <header>
+        {/* first-letter en vez de capitalize: "Sábado 8 de agosto", no "8 De Agosto" */}
+        <p className="text-xs text-muted-foreground first-letter:uppercase">
+          {formatFecha(new Date(), "EEEE d 'de' MMMM", lavadero.timezone)}
+        </p>
+        <h1 className="text-2xl font-bold">Hola, {cliente.nombre} 👋</h1>
+      </header>
+
+      {/* Medidor de nivel */}
+      <Card className="shadow-elevada">
+        <CardContent className="px-4 pb-5 pt-6">
+          <MedidorNivel puntos={cliente.puntosTotal} progreso={estadoNivel.progreso} />
+          <div className="mt-1 flex flex-col items-center gap-1.5">
+            <span
+              className="text-xl font-bold"
+              style={colorNivel ? { color: colorNivel } : undefined}
+            >
+              Nivel {estadoNivel.nivelActual?.nombre ?? "—"}
+            </span>
+            {estadoNivel.nivelSiguiente ? (
+              <p className="text-sm text-muted-foreground">
                 {estadoNivel.puntosParaSiguiente === 1
                   ? "Te falta 1 punto"
                   : `Te faltan ${estadoNivel.puntosParaSiguiente} puntos`}{" "}
-                para ser{" "}
-                <span className="font-semibold">{estadoNivel.nivelSiguiente.nombre}</span>
+                para{" "}
+                <span className="font-semibold text-foreground">
+                  {estadoNivel.nivelSiguiente.nombre}
+                </span>
               </p>
-            </div>
-          )}
-          <div className="flex items-center gap-2 pt-1">
-            <Badge className="border-0 bg-white/20 text-white">
-              <Flame className="mr-1 h-3 w-3" />
-              Racha: {cliente.rachaActual}{" "}
-              {cliente.rachaActual === 1 ? "visita" : "visitas"}
-            </Badge>
-            {cliente.vinculadoCon && (
-              <Badge className="border-0 bg-white/20 text-white">
-                <Users className="mr-1 h-3 w-3" />
-                Con {cliente.vinculadoCon.nombre}
-              </Badge>
+            ) : (
+              <p className="text-sm text-muted-foreground">
+                ¡Llegaste al nivel máximo! 🎉
+              </p>
             )}
           </div>
         </CardContent>
       </Card>
 
-      {/* Próximo turno / CTA */}
+      {/* Métricas rápidas */}
+      <div className="grid grid-cols-2 gap-3">
+        <Card>
+          <CardContent className="space-y-1 p-4">
+            <Flame className="h-5 w-5 text-primary" />
+            <p className="dato-lg pt-1">{cliente.rachaActual}</p>
+            <p className="etiqueta">
+              {cliente.rachaActual === 1 ? "Visita seguida" : "Visitas seguidas"}
+            </p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="space-y-1 p-4">
+            <Waves className="h-5 w-5 text-primary" />
+            <p className="dato-lg pt-1">{lavadosTotales}</p>
+            <p className="etiqueta">
+              {lavadosTotales === 1 ? "Lavado" : "Lavados"}
+            </p>
+          </CardContent>
+        </Card>
+      </div>
+
+      {cliente.vinculadoCon && (
+        <Card>
+          <CardContent className="flex items-center gap-3 p-4">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
+              <Users className="h-5 w-5" />
+            </div>
+            <div className="min-w-0">
+              <p className="text-sm font-medium">
+                Compartís cuenta con {cliente.vinculadoCon.nombre}
+              </p>
+              <p className="text-xs text-muted-foreground">
+                Usan los autos del otro y comparten beneficios
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Próximo turno o llamada a la acción */}
       {proximoTurno ? (
-        <Link href="/turnos">
-          <Card className="transition-shadow hover:shadow-md">
-            <CardContent className="flex items-center justify-between p-4">
-              <div>
-                <p className="text-sm text-muted-foreground">Próximo turno</p>
-                <p className="font-semibold">
-                  {formatFecha(proximoTurno.fechaTurno, "EEEE d/MM 'a las' HH:mm", lavadero.timezone)}
+        <Link href="/turnos" className="block">
+          <Card className="transition-shadow hover:shadow-elevada active:opacity-80">
+            <CardContent className="flex items-center justify-between gap-3 p-4">
+              <div className="min-w-0">
+                <p className="etiqueta">Próximo turno</p>
+                <p className="mt-1 font-semibold first-letter:uppercase">
+                  {formatFecha(
+                    proximoTurno.fechaTurno,
+                    "EEEE d/MM 'a las' HH:mm",
+                    lavadero.timezone
+                  )}
                 </p>
-                <p className="text-sm text-muted-foreground">
-                  {proximoTurno.servicio.nombre} ·{" "}
+                <div className="mt-1.5 flex flex-wrap items-center gap-2">
                   <Badge variant={ESTADO_TURNO_BADGE[proximoTurno.estado].variant}>
                     {ESTADO_TURNO_BADGE[proximoTurno.estado].label}
                   </Badge>
-                </p>
+                  <span className="text-sm text-muted-foreground">
+                    {proximoTurno.servicio.nombre}
+                  </span>
+                </div>
               </div>
-              <ChevronRight className="h-5 w-5 text-muted-foreground" />
+              <ChevronRight className="h-5 w-5 shrink-0 text-muted-foreground" />
             </CardContent>
           </Card>
         </Link>
       ) : (
-        <Button asChild className="h-12 w-full text-base">
+        <Button asChild className="h-12 w-full text-base shadow-halo">
           <Link href="/turnos/nuevo">
             <CalendarPlus className="h-5 w-5" />
             Pedir un turno
@@ -152,11 +190,11 @@ export default async function HomeCliente() {
         </Button>
       )}
 
-      {/* Descuentos */}
-      <div className="space-y-2">
-        <h2 className="flex items-center gap-2 font-semibold">
-          <Gift className="h-4 w-4 text-primary" />
-          Descuentos y beneficios
+      {/* Beneficios */}
+      <section className="space-y-2">
+        <h2 className="etiqueta flex items-center gap-1.5">
+          <Gift className="h-3.5 w-3.5" />
+          Beneficios
         </h2>
         {descuentos.length === 0 && (
           <p className="text-sm text-muted-foreground">
@@ -166,22 +204,38 @@ export default async function HomeCliente() {
         {descuentos.map((d) => {
           const bloqueado =
             d.nivel != null && (nivelEfectivo?.puntosMin ?? 0) < d.nivel.puntosMin;
+          const faltan = d.nivel ? d.nivel.puntosMin - puntosEfectivos : 0;
           return (
-            <Card key={d.id} className={bloqueado ? "opacity-70" : ""}>
+            <Card key={d.id} className={bloqueado ? "shadow-none" : undefined}>
               <CardContent className="flex items-center gap-3 p-4">
                 <div
                   className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full"
                   style={{
-                    backgroundColor: `${d.nivel?.color ?? "#3b82f6"}20`,
-                    color: d.nivel?.color ?? "#3b82f6",
+                    backgroundColor: bloqueado
+                      ? "var(--muted)"
+                      : `${d.nivel?.color ?? "#3b82f6"}20`,
+                    color: bloqueado
+                      ? "var(--muted-foreground)"
+                      : (d.nivel?.color ?? "#3b82f6"),
                   }}
                 >
-                  {bloqueado ? <Lock className="h-5 w-5" /> : <Sparkles className="h-5 w-5" />}
+                  {bloqueado ? (
+                    <Lock className="h-5 w-5" />
+                  ) : (
+                    <Sparkles className="h-5 w-5" />
+                  )}
                 </div>
                 <div className="min-w-0 flex-1">
-                  <p className="font-medium">{d.nombre}</p>
-                  <p className="truncate text-sm text-muted-foreground">
-                    {d.descripcion}
+                  <p className={bloqueado ? "font-medium text-muted-foreground" : "font-medium"}>
+                    {d.nombre}
+                  </p>
+                  {/* Telemetría: qué falta para desbloquearlo */}
+                  <p className="line-clamp-2 text-sm text-muted-foreground">
+                    {bloqueado && faltan > 0
+                      ? faltan === 1
+                        ? "Te falta 1 punto para desbloquearlo"
+                        : `Te faltan ${faltan} puntos para desbloquearlo`
+                      : (d.descripcion ?? "Disponible para vos")}
                   </p>
                 </div>
                 {d.nivel && (
@@ -189,27 +243,28 @@ export default async function HomeCliente() {
                     variant="outline"
                     style={{ color: d.nivel.color ?? undefined }}
                   >
-                    {bloqueado ? `Desde ${d.nivel.nombre}` : d.nivel.nombre}
+                    {d.nivel.nombre}
                   </Badge>
                 )}
               </CardContent>
             </Card>
           );
         })}
-      </div>
+      </section>
 
-      {/* Placeholders próximas features */}
+      {/* Próximamente */}
       <div className="grid grid-cols-2 gap-3">
         {[
           { titulo: "Canjeá tus puntos", detalle: "Muy pronto" },
           { titulo: "Referí a un amigo", detalle: "Muy pronto" },
         ].map((c) => (
-          <Card key={c.titulo} className="border-dashed">
-            <CardContent className="p-4 text-center">
-              <p className="text-sm font-medium text-muted-foreground">{c.titulo}</p>
-              <p className="text-xs text-muted-foreground/70">{c.detalle}</p>
-            </CardContent>
-          </Card>
+          <div
+            key={c.titulo}
+            className="rounded-xl border-2 border-dashed border-border bg-muted/20 p-4 text-center"
+          >
+            <p className="text-sm font-medium text-muted-foreground">{c.titulo}</p>
+            <p className="text-xs text-muted-foreground/70">{c.detalle}</p>
+          </div>
         ))}
       </div>
     </div>

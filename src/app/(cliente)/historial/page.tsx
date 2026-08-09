@@ -1,10 +1,13 @@
+import Link from "next/link";
 import { Sparkles, Waves } from "lucide-react";
 
 import { requireCliente } from "@/lib/auth-helpers";
 import { prisma } from "@/lib/db";
 import { formatARS, formatFecha } from "@/lib/format";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { EstadoVacio } from "@/components/ui/estado-vacio";
 
 export const metadata = { title: "Mi historial" };
 
@@ -25,13 +28,18 @@ export default async function HistorialPage() {
 
   return (
     <div className="space-y-3">
-      <h1 className="text-lg font-bold">Mi historial de lavados</h1>
+      <h1 className="text-xl font-bold">Mi historial</h1>
       {lavados.length === 0 && (
-        <Card>
-          <CardContent className="p-6 text-center text-sm text-muted-foreground">
-            Todavía no tenés lavados registrados. ¡Pedí tu primer turno!
-          </CardContent>
-        </Card>
+        <EstadoVacio
+          icono={<Waves className="h-5 w-5" />}
+          titulo="Todavía no tenés lavados"
+          descripcion="Cuando pases por el lavadero vas a ver acá el detalle de cada lavado y los puntos que sumaste."
+          accion={
+            <Button asChild size="sm">
+              <Link href="/turnos/nuevo">Pedir mi primer turno</Link>
+            </Button>
+          }
+        />
       )}
       {lavados.map((l) => (
         <Card key={l.id}>

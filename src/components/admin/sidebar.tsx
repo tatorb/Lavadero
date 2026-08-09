@@ -44,11 +44,14 @@ function NavContenido({
   usuario,
   lavaderoNombre,
   logoUrl,
+  pendientes,
   onNavegar,
 }: {
   usuario: UsuarioInfo;
   lavaderoNombre: string;
   logoUrl: string | null;
+  /** Turnos esperando confirmación: se muestra como contador sobre Turnos */
+  pendientes: number;
   onNavegar?: () => void;
 }) {
   const pathname = usePathname();
@@ -79,7 +82,12 @@ function NavContenido({
               )}
             >
               <item.icon className="h-4 w-4" />
-              {item.label}
+              <span className="flex-1">{item.label}</span>
+              {item.href === "/admin/turnos" && pendientes > 0 && (
+                <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-primary px-1.5 text-xs font-semibold text-primary-foreground">
+                  {pendientes}
+                </span>
+              )}
             </Link>
           );
         })}
@@ -108,14 +116,21 @@ export function AdminSidebar({
   usuario,
   lavaderoNombre,
   logoUrl,
+  pendientes,
 }: {
   usuario: UsuarioInfo;
   lavaderoNombre: string;
   logoUrl: string | null;
+  pendientes: number;
 }) {
   return (
     <aside className="sticky top-0 hidden h-screen w-60 shrink-0 flex-col border-r bg-background lg:flex">
-      <NavContenido usuario={usuario} lavaderoNombre={lavaderoNombre} logoUrl={logoUrl} />
+      <NavContenido
+        usuario={usuario}
+        lavaderoNombre={lavaderoNombre}
+        logoUrl={logoUrl}
+        pendientes={pendientes}
+      />
     </aside>
   );
 }
@@ -125,10 +140,12 @@ export function AdminMobileHeader({
   usuario,
   lavaderoNombre,
   logoUrl,
+  pendientes,
 }: {
   usuario: UsuarioInfo;
   lavaderoNombre: string;
   logoUrl: string | null;
+  pendientes: number;
 }) {
   const [abierto, setAbierto] = React.useState(false);
 
@@ -136,8 +153,13 @@ export function AdminMobileHeader({
     <header className="sticky top-0 z-40 flex items-center gap-3 border-b bg-background/95 px-4 py-3 backdrop-blur lg:hidden">
       <Sheet open={abierto} onOpenChange={setAbierto}>
         <SheetTrigger asChild>
-          <Button variant="outline" size="icon" aria-label="Abrir menú">
+          <Button variant="outline" size="icon" aria-label="Abrir menú" className="relative">
             <Menu className="h-5 w-5" />
+            {pendientes > 0 && (
+              <span className="absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-primary px-1 text-[0.625rem] font-semibold text-primary-foreground">
+                {pendientes}
+              </span>
+            )}
           </Button>
         </SheetTrigger>
         <SheetContent side="left">
@@ -146,6 +168,7 @@ export function AdminMobileHeader({
             usuario={usuario}
             lavaderoNombre={lavaderoNombre}
             logoUrl={logoUrl}
+            pendientes={pendientes}
             onNavegar={() => setAbierto(false)}
           />
         </SheetContent>

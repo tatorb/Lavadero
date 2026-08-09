@@ -46,7 +46,7 @@ export function MisTurnos({
                     <CalendarDays className="h-4 w-4" />
                   </div>
                   <div>
-                    <p className="font-medium capitalize">
+                    <p className="font-medium first-letter:uppercase">
                       {formatFecha(new Date(t.fecha), "EEEE d/MM · HH:mm", timezone)} hs
                     </p>
                     <p className="text-xs text-muted-foreground">

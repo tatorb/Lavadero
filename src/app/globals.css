@@ -23,11 +23,19 @@
   --border: oklch(0.922 0 0);
   --input: oklch(0.922 0 0);
   --ring: oklch(0.488 0.17 258);
-  --radius: 0.625rem;
+  --radius: 1rem;
 
   /* Tipografía de marca: la sobrescribe el lavadero en su layout */
   --fuente-texto: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
   --fuente-titulos: var(--fuente-texto);
+
+  /* Sombras difusas teñidas con el color de marca (soft UI) */
+  --sombra-tinte: color-mix(in srgb, var(--primary) 30%, oklch(0.45 0.03 260));
+  --sombra-card: 0 1px 2px color-mix(in srgb, var(--sombra-tinte) 7%, transparent),
+    0 10px 26px -8px color-mix(in srgb, var(--sombra-tinte) 16%, transparent);
+  --sombra-elevada: 0 2px 4px color-mix(in srgb, var(--sombra-tinte) 8%, transparent),
+    0 18px 40px -10px color-mix(in srgb, var(--sombra-tinte) 26%, transparent);
+  --sombra-halo: 0 12px 32px -6px color-mix(in srgb, var(--primary) 32%, transparent);
 }
 
 @theme inline {
@@ -56,6 +64,9 @@
   --radius-xl: calc(var(--radius) + 4px);
   --font-sans: var(--fuente-texto);
   --font-titulo: var(--fuente-titulos);
+  --shadow-card: var(--sombra-card);
+  --shadow-elevada: var(--sombra-elevada);
+  --shadow-halo: var(--sombra-halo);
 }
 
 @layer base {
@@ -71,6 +82,28 @@
   h2,
   h3 {
     font-family: var(--fuente-titulos);
+    letter-spacing: -0.015em;
+  }
+}
+
+@layer components {
+  /* Etiqueta de metadato: minúscula, espaciada, no compite con el contenido */
+  .etiqueta {
+    @apply text-[0.6875rem] font-semibold uppercase tracking-[0.12em] text-muted-foreground;
+  }
+
+  /* Dato protagonista: el número que se lee de un vistazo */
+  .dato-xl {
+    font-family: var(--fuente-titulos);
+    @apply text-5xl font-bold leading-none tracking-tight tabular-nums;
+  }
+  .dato-lg {
+    font-family: var(--fuente-titulos);
+    @apply text-3xl font-bold leading-none tracking-tight tabular-nums;
+  }
+  /* Unidad chica en superíndice junto al dato */
+  .unidad {
+    @apply align-top text-base font-semibold text-muted-foreground;
   }
 }
 

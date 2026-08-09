@@ -14,7 +14,7 @@ import {
 } from "@/server/actions/caja";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { CardMetrica } from "@/components/admin/card-metrica";
 import {
   Dialog,
   DialogContent,
@@ -237,56 +237,31 @@ export function CajaContenido({
         </p>
       </div>
 
-      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="flex items-center gap-2 text-sm text-muted-foreground">
-              <Waves className="h-4 w-4" /> Cobrado por lavados
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-xl font-bold">{formatARS(resumen.ingresosLavados)}</p>
-            <p className="text-xs text-muted-foreground">
-              {resumen.cantidadLavados} lavados cobrados este mes
-            </p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="flex items-center gap-2 text-sm text-muted-foreground">
-              <ArrowUpCircle className="h-4 w-4" /> Otros ingresos
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-xl font-bold">{formatARS(resumen.ingresosExtra)}</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="flex items-center gap-2 text-sm text-muted-foreground">
-              <ArrowDownCircle className="h-4 w-4" /> Gastos
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-xl font-bold text-destructive">
-              {formatARS(resumen.egresos)}
-            </p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="flex items-center gap-2 text-sm text-muted-foreground">
-              <Wallet className="h-4 w-4" /> Resultado del mes
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p
-              className={`text-xl font-bold ${resumen.neto >= 0 ? "text-emerald-700" : "text-destructive"}`}
-            >
-              {formatARS(resumen.neto)}
-            </p>
-          </CardContent>
-        </Card>
+      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+        <CardMetrica
+          icono={<Waves />}
+          valor={formatARS(resumen.ingresosLavados)}
+          etiqueta="Cobrado por lavados"
+          detalle={`${resumen.cantidadLavados} lavados cobrados este mes`}
+        />
+        <CardMetrica
+          icono={<ArrowUpCircle />}
+          valor={formatARS(resumen.ingresosExtra)}
+          etiqueta="Otros ingresos"
+        />
+        <CardMetrica
+          icono={<ArrowDownCircle />}
+          valor={formatARS(resumen.egresos)}
+          etiqueta="Gastos"
+          tono="negativo"
+        />
+        <CardMetrica
+          icono={<Wallet />}
+          valor={formatARS(resumen.neto)}
+          etiqueta="Resultado del mes"
+          tono={resumen.neto >= 0 ? "positivo" : "negativo"}
+          className="shadow-elevada"
+        />
       </div>
 
       <DataTable

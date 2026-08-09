@@ -317,7 +317,7 @@ export function NuevoTurnoWizard({
                     .map((id) => servicios.find((s) => s.id === id)?.nombre)
                     .join(", ")}`}
               </div>
-              <div className="flex items-center gap-2 capitalize">
+              <div className="flex items-center gap-2 first-letter:uppercase">
                 <Clock3 className="h-4 w-4 text-muted-foreground" />
                 {format(
                   toZonedTime(new Date(slot.fechaISO), timezone),

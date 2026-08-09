@@ -14,6 +14,7 @@ import {
 import { ChevronLeft, ChevronRight, Search } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { EstadoVacio } from "@/components/ui/estado-vacio";
 import { Input } from "@/components/ui/input";
 import {
   Table,
@@ -73,7 +74,7 @@ export function DataTable<TData, TValue>({
         </div>
         {toolbar}
       </div>
-      <div className="rounded-lg border bg-background">
+      <div className="overflow-hidden rounded-xl bg-background shadow-card">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
@@ -111,9 +112,9 @@ export function DataTable<TData, TValue>({
                 </TableRow>
               ))
             ) : (
-              <TableRow>
-                <TableCell colSpan={columns.length} className="h-24 text-center text-muted-foreground">
-                  {emptyMessage}
+              <TableRow className="hover:bg-transparent">
+                <TableCell colSpan={columns.length} className="p-4">
+                  <EstadoVacio titulo={emptyMessage} className="border-0 bg-transparent" />
                 </TableCell>
               </TableRow>
             )}

@@ -385,7 +385,7 @@ function TurnoDialog({
             <div className="space-y-2 text-sm">
               <p className="flex items-center gap-2">
                 <Clock3 className="h-4 w-4 text-muted-foreground" />
-                <span className="capitalize">
+                <span className="first-letter:uppercase">
                   {format(local, "EEEE d 'de' MMMM, HH:mm", { locale: es })} hs ·{" "}
                   {turno.duracionMin} min
                 </span>
@@ -754,7 +754,7 @@ export function CalendarioTurnos({
           <Button variant="outline" onClick={() => navegar(vista, hoy)}>
             Hoy
           </Button>
-          <h2 className="ml-2 text-lg font-semibold capitalize">{titulo}</h2>
+          <h2 className="ml-2 text-lg font-semibold first-letter:uppercase">{titulo}</h2>
         </div>
         <Tabs value={vista} onValueChange={(v) => navegar(v as Vista, fecha)}>
           <TabsList>

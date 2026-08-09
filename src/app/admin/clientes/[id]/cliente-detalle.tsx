@@ -329,12 +329,12 @@ export function ClienteDetalle({
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="flex items-center gap-2 text-sm text-muted-foreground">
+            <CardTitle className="etiqueta flex items-center gap-2">
               <History className="h-4 w-4" /> Historial
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-xl font-bold">
+            <p className="dato-lg">
               {resumen.totalLavados}{" "}
               <span className="text-sm font-normal text-muted-foreground">
                 lavados · {formatARS(resumen.totalGastado)}
@@ -352,14 +352,14 @@ export function ClienteDetalle({
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="flex items-center gap-2 text-sm text-muted-foreground">
+            <CardTitle className="etiqueta flex items-center gap-2">
               <Trophy className="h-4 w-4" /> Nivel y puntos
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-2">
             <div className="flex items-baseline gap-2">
               <span
-                className="text-xl font-bold"
+                className="dato-lg"
                 style={nivel.color ? { color: nivel.color } : undefined}
               >
                 {nivel.actual}
@@ -377,7 +377,10 @@ export function ClienteDetalle({
                   />
                 </div>
                 <p className="text-xs text-muted-foreground">
-                  {nivel.puntosParaSiguiente} pts para {nivel.siguiente}
+                  {nivel.puntosParaSiguiente === 1
+                    ? "1 punto"
+                    : `${nivel.puntosParaSiguiente} puntos`}{" "}
+                  para {nivel.siguiente}
                 </p>
               </>
             )}
@@ -385,12 +388,12 @@ export function ClienteDetalle({
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="flex items-center gap-2 text-sm text-muted-foreground">
+            <CardTitle className="etiqueta flex items-center gap-2">
               <Flame className="h-4 w-4" /> Racha de visitas
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-xl font-bold">{cliente.rachaActual}</p>
+            <p className="dato-lg">{cliente.rachaActual}</p>
             <p className="text-xs text-muted-foreground">
               Mejor racha: {cliente.mejorRacha} · Última visita:{" "}
               {cliente.ultimaVisita
@@ -401,7 +404,7 @@ export function ClienteDetalle({
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="flex items-center gap-2 text-sm text-muted-foreground">
+            <CardTitle className="etiqueta flex items-center gap-2">
               <Link2 className="h-4 w-4" /> Vínculo (pareja/familiar)
             </CardTitle>
           </CardHeader>
@@ -480,12 +483,23 @@ export function ClienteDetalle({
 
       <Tabs value={tab} onValueChange={setTab}>
         <div className="overflow-x-auto">
-          <TabsList>
-            <TabsTrigger value="autos">Autos ({autos.length})</TabsTrigger>
-            <TabsTrigger value="lavados">Lavados ({lavados.length})</TabsTrigger>
-            <TabsTrigger value="turnos">Turnos ({turnos.length})</TabsTrigger>
-            <TabsTrigger value="cuenta">Cuenta</TabsTrigger>
-            <TabsTrigger value="info">Detalles</TabsTrigger>
+          {/* Tabs subrayados: más livianos que el contenedor tipo píldora */}
+          <TabsList className="h-auto w-full justify-start gap-1 rounded-none border-b bg-transparent p-0">
+            {[
+              ["autos", `Autos (${autos.length})`],
+              ["lavados", `Lavados (${lavados.length})`],
+              ["turnos", `Turnos (${turnos.length})`],
+              ["cuenta", "Cuenta"],
+              ["info", "Detalles"],
+            ].map(([valor, label]) => (
+              <TabsTrigger
+                key={valor}
+                value={valor}
+                className="rounded-none border-b-2 border-transparent px-3 pb-2.5 pt-2 data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:text-foreground data-[state=active]:shadow-none"
+              >
+                {label}
+              </TabsTrigger>
+            ))}
           </TabsList>
         </div>
 

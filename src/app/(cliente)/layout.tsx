@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 import { requireCliente } from "@/lib/auth-helpers";
 import { prisma } from "@/lib/db";
 import { BottomNav } from "@/components/cliente/bottom-nav";
@@ -40,16 +42,20 @@ export default async function ClienteLayout({
           <link rel="manifest" href={`/l/${lavadero.slug}/manifest`} />
         </>
       )}
-      <header className="sticky top-0 z-40 flex items-center gap-3 border-b bg-background/95 px-4 py-3 backdrop-blur">
+      <header className="sticky top-0 z-40 flex items-center gap-3 border-b bg-background/90 px-4 py-3 backdrop-blur">
         <LogoLavadero
           logoUrl={lavadero?.logoUrl ?? null}
           nombre={lavadero?.nombre ?? "Lavadero"}
-          size={40}
+          size={36}
         />
-        <div className="min-w-0">
-          <p className="truncate text-xs text-muted-foreground">{lavadero?.nombre}</p>
-          <p className="truncate font-semibold">Hola, {user.nombre} 👋</p>
-        </div>
+        <p className="min-w-0 flex-1 truncate font-semibold">{lavadero?.nombre}</p>
+        <Link
+          href="/perfil"
+          aria-label="Mi perfil"
+          className="flex h-9 w-9 items-center justify-center rounded-full bg-primary/10 text-sm font-semibold text-primary transition-transform duration-100 active:scale-90"
+        >
+          {user.nombre.charAt(0).toUpperCase()}
+        </Link>
       </header>
       <main className="flex-1 px-4 py-4 pb-24">{children}</main>
       <BottomNav />
