@@ -1,9 +1,10 @@
 "use client";
 
 import * as React from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { type ColumnDef } from "@tanstack/react-table";
-import { Plus } from "lucide-react";
+import { Eye, EyeOff, Merge, Plus } from "lucide-react";
 import { toast } from "sonner";
 
 import { crearCliente, type EstadoAccion } from "@/server/actions/clientes";
@@ -37,6 +38,7 @@ interface ClienteRow {
   lavados: number;
   puntos: number;
   conCuenta: boolean;
+  activo: boolean;
 }
 
 export function ClienteForm({
@@ -127,12 +129,27 @@ export function ClienteForm({
   );
 }
 
-export function ClientesTable({ clientes }: { clientes: ClienteRow[] }) {
+export function ClientesTable({
+  clientes,
+  verArchivados,
+}: {
+  clientes: ClienteRow[];
+  verArchivados: boolean;
+}) {
   const router = useRouter();
   const [creando, setCreando] = React.useState(false);
 
   const columns: ColumnDef<ClienteRow>[] = [
-    { accessorKey: "nombre", header: "Nombre" },
+    {
+      accessorKey: "nombre",
+      header: "Nombre",
+      cell: ({ row }) => (
+        <div className="flex items-center gap-2">
+          <span>{row.original.nombre}</span>
+          {!row.original.activo && <Badge variant="muted">Archivado</Badge>}
+        </div>
+      ),
+    },
     { accessorKey: "telefono", header: "Teléfono" },
     {
       accessorKey: "email",
@@ -157,11 +174,31 @@ export function ClientesTable({ clientes }: { clientes: ClienteRow[] }) {
       emptyMessage="Todavía no hay clientes cargados."
       onRowClick={(row) => router.push(`/admin/clientes/${row.id}`)}
       toolbar={
+        <div className="flex flex-1 items-center gap-2 sm:flex-none">
+        <Button variant="outline" asChild>
+          <Link href="/admin/clientes/fusionar">
+            <Merge className="h-4 w-4" />
+            Fusionar
+          </Link>
+        </Button>
+        <Button
+          variant="ghost"
+          size="icon"
+          asChild
+          title={verArchivados ? "Ocultar archivados" : "Ver archivados"}
+        >
+          <Link
+            href={verArchivados ? "/admin/clientes" : "/admin/clientes?archivados=1"}
+            aria-label={verArchivados ? "Ocultar archivados" : "Ver archivados"}
+          >
+            {verArchivados ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+          </Link>
+        </Button>
         <Dialog open={creando} onOpenChange={setCreando}>
           <DialogTrigger asChild>
-            <Button>
+            <Button className="ml-auto sm:ml-0">
               <Plus className="h-4 w-4" />
-              Nuevo cliente
+              Nuevo
             </Button>
           </DialogTrigger>
           <DialogContent>
@@ -178,6 +215,7 @@ export function ClientesTable({ clientes }: { clientes: ClienteRow[] }) {
             />
           </DialogContent>
         </Dialog>
+        </div>
       }
     />
   );

@@ -4,6 +4,7 @@ import * as React from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
+  Archive,
   ArrowLeft,
   Car,
   Flame,
@@ -27,6 +28,7 @@ import {
 } from "@/lib/format";
 import {
   crearAuto,
+  archivarCliente,
   desvincularCliente,
   editarAuto,
   editarCliente,
@@ -203,6 +205,7 @@ export function ClienteDetalle({
     visitasAnotadas: number | null;
     detalles: string | null;
     conCuenta: boolean;
+    activo: boolean;
     puntosTotal: number;
     rachaActual: number;
     mejorRacha: number;
@@ -257,6 +260,7 @@ export function ClienteDetalle({
   const [vinculoSeleccion, setVinculoSeleccion] = React.useState("");
   const [tab, setTab] = React.useState("autos");
   const [filtroAuto, setFiltroAuto] = React.useState<string | null>(null);
+  const [archivandoPend, iniciarArchivado] = React.useTransition();
 
   const nombreCompleto = [cliente.nombre, cliente.apellido].filter(Boolean).join(" ");
   const lavadosVisibles = filtroAuto
@@ -303,11 +307,31 @@ export function ClienteDetalle({
             )}
             {cliente.origen && <Badge variant="muted">Llegó por: {cliente.origen}</Badge>}
             {cliente.conCuenta && <Badge variant="success">Usa la app</Badge>}
+            {!cliente.activo && <Badge variant="muted">Archivado</Badge>}
           </div>
         </div>
+        <div className="flex w-full gap-2 sm:w-auto">
+        <Button
+          variant="outline"
+          className="flex-1 sm:flex-none"
+          disabled={archivandoPend}
+          onClick={() => {
+            iniciarArchivado(async () => {
+              const r = await archivarCliente(cliente.id, cliente.activo);
+              if (r?.error) toast.error(r.error);
+              else {
+                toast.success(cliente.activo ? "Cliente archivado" : "Cliente reactivado");
+                router.refresh();
+              }
+            });
+          }}
+        >
+          <Archive className="h-4 w-4" />
+          {cliente.activo ? "Archivar" : "Reactivar"}
+        </Button>
         <Dialog open={editando} onOpenChange={setEditando}>
           <DialogTrigger asChild>
-            <Button variant="outline">
+            <Button variant="outline" className="flex-1 sm:flex-none">
               <Pencil className="h-4 w-4" />
               Editar
             </Button>
@@ -324,6 +348,7 @@ export function ClienteDetalle({
             />
           </DialogContent>
         </Dialog>
+        </div>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">

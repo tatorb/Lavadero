@@ -3,8 +3,11 @@
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
+import type { Prisma } from "@prisma/client";
+
 import { requireStaff } from "@/lib/auth-helpers";
 import { prisma } from "@/lib/db";
+import { recalcularGamificacion } from "@/lib/gamificacion/recalcular";
 
 export type EstadoAccion = { error?: string; ok?: boolean; id?: string } | undefined;
 
@@ -101,6 +104,213 @@ export async function desvincularCliente(clienteId: string): Promise<EstadoAccio
       data: { vinculadoConId: null },
     }),
   ]);
+  revalidatePath(`/admin/clientes/${clienteId}`);
+  return { ok: true };
+}
+
+// ===== Fusión y archivado =====
+
+/** Campos de texto que se completan desde el duplicado si el principal los tiene vacíos. */
+const CAMPOS_HEREDABLES = ["telefono", "detalles", "origen", "nombreOriginal"] as const;
+
+export interface ResumenFusion {
+  principal: string;
+  duplicado: string;
+  lavados: number;
+  autos: number;
+  turnos: number;
+  puntos: number;
+  movimientosCuenta: number;
+  movimientosCaja: number;
+  /** Avisos sobre datos que se pierden o cambian al fusionar. */
+  avisos: string[];
+}
+
+const nombreDe = (c: { nombre: string; apellido: string | null }) =>
+  [c.nombre, c.apellido].filter(Boolean).join(" ");
+
+/**
+ * Calcula qué pasaría al fusionar, sin tocar nada. La pantalla lo muestra
+ * antes de confirmar porque la fusión no se puede deshacer.
+ */
+export async function previsualizarFusion(
+  principalId: string,
+  duplicadoId: string
+): Promise<{ error?: string; resumen?: ResumenFusion }> {
+  const user = await requireStaff(["ADMIN"]);
+  if (principalId === duplicadoId) return { error: "Elegí dos clientes distintos" };
+
+  const [principal, duplicado] = await Promise.all([
+    prisma.cliente.findFirst({ where: { id: principalId, lavaderoId: user.lavaderoId } }),
+    prisma.cliente.findFirst({
+      where: { id: duplicadoId, lavaderoId: user.lavaderoId },
+      include: {
+        _count: {
+          select: {
+            lavados: true,
+            autos: true,
+            turnos: true,
+            movimientos: true,
+            movimientosCuenta: true,
+            movimientosCaja: true,
+          },
+        },
+      },
+    }),
+  ]);
+  if (!principal || !duplicado) return { error: "Cliente no encontrado" };
+
+  const avisos: string[] = [];
+  if (duplicado.passwordHash) {
+    avisos.push(
+      principal.passwordHash
+        ? `La cuenta de la app de ${nombreDe(duplicado)} se da de baja; queda la de ${nombreDe(principal)}.`
+        : `La cuenta de la app de ${nombreDe(duplicado)} pasa a ${nombreDe(principal)}.`
+    );
+  }
+  if (duplicado.email && principal.email && duplicado.email !== principal.email) {
+    avisos.push(`Se descarta el email ${duplicado.email}; queda ${principal.email}.`);
+  }
+  if (duplicado.vinculadoConId && duplicado.vinculadoConId !== principal.id) {
+    avisos.push(
+      principal.vinculadoConId
+        ? "Se pierde el vínculo del duplicado; se mantiene el del principal."
+        : "El vínculo de pareja/familiar pasa al cliente principal."
+    );
+  }
+  if (principal.vinculadoConId === duplicado.id) {
+    avisos.push("Los dos estaban vinculados entre sí: el vínculo se elimina.");
+  }
+  avisos.push("Los puntos, la racha y el nivel se recalculan sobre el historial unificado.");
+
+  return {
+    resumen: {
+      principal: nombreDe(principal),
+      duplicado: nombreDe(duplicado),
+      lavados: duplicado._count.lavados,
+      autos: duplicado._count.autos,
+      turnos: duplicado._count.turnos,
+      puntos: duplicado.puntosTotal,
+      movimientosCuenta: duplicado._count.movimientosCuenta,
+      movimientosCaja: duplicado._count.movimientosCaja,
+      avisos,
+    },
+  };
+}
+
+/**
+ * Fusiona `duplicadoId` dentro de `principalId`: mueve autos, lavados, turnos,
+ * puntos y movimientos de cuenta/caja al principal, completa los datos que le
+ * falten, recalcula la gamificación y borra el duplicado.
+ *
+ * Es irreversible, así que solo lo puede hacer un ADMIN.
+ */
+export async function fusionarClientes(
+  principalId: string,
+  duplicadoId: string
+): Promise<EstadoAccion> {
+  const user = await requireStaff(["ADMIN"]);
+  if (principalId === duplicadoId) return { error: "Elegí dos clientes distintos" };
+
+  const [principal, duplicado] = await Promise.all([
+    prisma.cliente.findFirst({ where: { id: principalId, lavaderoId: user.lavaderoId } }),
+    prisma.cliente.findFirst({ where: { id: duplicadoId, lavaderoId: user.lavaderoId } }),
+  ]);
+  if (!principal || !duplicado) return { error: "Cliente no encontrado" };
+
+  const vinculoAHeredar =
+    duplicado.vinculadoConId && duplicado.vinculadoConId !== principal.id
+      ? duplicado.vinculadoConId
+      : null;
+
+  await prisma.$transaction(async (tx) => {
+    // 1. Soltar los vínculos del duplicado (y el mutuo, si estaban vinculados
+    //    entre sí) antes de mover nada: vinculadoConId es único.
+    if (duplicado.vinculadoConId) {
+      await tx.cliente.update({
+        where: { id: duplicado.vinculadoConId },
+        data: { vinculadoConId: null },
+      });
+      await tx.cliente.update({ where: { id: duplicado.id }, data: { vinculadoConId: null } });
+    }
+    if (principal.vinculadoConId === duplicado.id) {
+      await tx.cliente.update({ where: { id: principal.id }, data: { vinculadoConId: null } });
+    }
+
+    // 2. Liberar el email del duplicado antes de heredarlo (único por lavadero)
+    await tx.cliente.update({
+      where: { id: duplicado.id },
+      data: { email: null, passwordHash: null },
+    });
+
+    // 3. Mover todo lo que cuelga del duplicado
+    const alPrincipal = { where: { clienteId: duplicado.id }, data: { clienteId: principal.id } };
+    await tx.auto.updateMany(alPrincipal);
+    await tx.turno.updateMany(alPrincipal);
+    await tx.lavado.updateMany(alPrincipal);
+    await tx.puntosMovimiento.updateMany(alPrincipal);
+    await tx.movimientoCuenta.updateMany(alPrincipal);
+    await tx.movimientoCaja.updateMany(alPrincipal);
+
+    // 4. Completar los datos que el principal no tenga
+    const datos: Prisma.ClienteUpdateInput = {};
+    for (const campo of CAMPOS_HEREDABLES) {
+      if (!principal[campo] && duplicado[campo]) datos[campo] = duplicado[campo];
+    }
+    if (!principal.email && duplicado.email) datos.email = duplicado.email;
+    if (!principal.passwordHash && duplicado.passwordHash)
+      datos.passwordHash = duplicado.passwordHash;
+    if (principal.tipoRelacion === "DESCONOCIDO" && duplicado.tipoRelacion !== "DESCONOCIDO")
+      datos.tipoRelacion = duplicado.tipoRelacion;
+    if (principal.visitasAnotadas !== null || duplicado.visitasAnotadas !== null)
+      datos.visitasAnotadas =
+        (principal.visitasAnotadas ?? 0) + (duplicado.visitasAnotadas ?? 0);
+    // Las notas del duplicado se anexan en vez de perderse
+    if (principal.detalles && duplicado.detalles && principal.detalles !== duplicado.detalles)
+      datos.detalles = `${principal.detalles}\n${duplicado.detalles}`;
+    if (vinculoAHeredar && !principal.vinculadoConId)
+      datos.vinculadoCon = { connect: { id: vinculoAHeredar } };
+
+    if (Object.keys(datos).length > 0) {
+      await tx.cliente.update({ where: { id: principal.id }, data: datos });
+    }
+    if (vinculoAHeredar && !principal.vinculadoConId) {
+      await tx.cliente.update({
+        where: { id: vinculoAHeredar },
+        data: { vinculadoConId: principal.id },
+      });
+    }
+
+    // 5. El duplicado ya no tiene nada colgando
+    await tx.cliente.delete({ where: { id: duplicado.id } });
+
+    await recalcularGamificacion(tx, principal.id);
+  });
+
+  revalidatePath("/admin/clientes");
+  revalidatePath("/admin/clientes/fusionar");
+  revalidatePath(`/admin/clientes/${principalId}`);
+  revalidatePath("/admin/lavados");
+  return { ok: true, id: principalId };
+}
+
+/**
+ * Da de baja un cliente sin borrar su historial. Sirve para las filas del
+ * registro histórico que no son personas ("Mazda Chata", "3 Vez"): dejan de
+ * aparecer en los listados y selectores, pero los lavados siguen contando.
+ */
+export async function archivarCliente(
+  clienteId: string,
+  archivar: boolean
+): Promise<EstadoAccion> {
+  const user = await requireStaff(["ADMIN"]);
+  const { count } = await prisma.cliente.updateMany({
+    where: { id: clienteId, lavaderoId: user.lavaderoId },
+    data: { activo: !archivar },
+  });
+  if (count === 0) return { error: "Cliente no encontrado" };
+
+  revalidatePath("/admin/clientes");
   revalidatePath(`/admin/clientes/${clienteId}`);
   return { ok: true };
 }

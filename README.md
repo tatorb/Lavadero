@@ -125,6 +125,24 @@ precios por tipo de vehículo, el usuario `admin@elbosquecito.com`
 los clientes a partir de los lavados reales. Los lotes aplicados se ven y se
 deshacen también desde **Gestión → Importaciones**.
 
+### Limpieza de duplicados
+
+El registro se llevaba a mano, así que la misma persona quedó cargada varias
+veces con el nombre escrito distinto. **Gestión → Clientes → Fusionar** propone
+los pares sospechosos con un nivel de confianza y el motivo, deja elegir cuál
+se conserva y muestra qué se mueve antes de confirmar. Al fusionar, autos,
+lavados, turnos, puntos y movimientos de cuenta y caja pasan al cliente
+principal, y puntos, racha y nivel se recalculan sobre el historial unificado.
+
+El detector (`src/lib/clientes/duplicados.ts`) es puro y está testeado con los
+casos reales del lavadero. No propone variantes de género (Mariana/Mariano) ni
+familiares anotados por su relación ("Lucas Bustos" y "Lucas Bustos Esposa" son
+dos personas: ese caso es para el vínculo pareja/familiar, no para fusionar).
+
+La pestaña **Revisar** lista las filas que no parecen personas (un vehículo, un
+importe, un texto cortado) y permite archivarlas: dejan de aparecer en listados
+y selectores sin perder los lavados que tienen cargados.
+
 ## Fuera de esta etapa
 
 Pagos, notificaciones (email/SMS/WhatsApp), OTP por teléfono, recuperación de contraseña, canje real de descuentos en el cobro, bonus por racha, drag & drop del calendario, reportes y RLS de Postgres.
