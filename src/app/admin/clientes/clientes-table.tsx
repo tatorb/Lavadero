@@ -4,7 +4,7 @@ import * as React from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { type ColumnDef } from "@tanstack/react-table";
-import { Eye, EyeOff, Merge, Plus } from "lucide-react";
+import { Eye, EyeOff, Link2, Merge, Plus } from "lucide-react";
 import { toast } from "sonner";
 
 import { crearCliente, type EstadoAccion } from "@/server/actions/clientes";
@@ -179,6 +179,12 @@ export function ClientesTable({
           <Link href="/admin/clientes/fusionar">
             <Merge className="h-4 w-4" />
             Fusionar
+          </Link>
+        </Button>
+        <Button variant="outline" asChild>
+          <Link href="/admin/clientes/vinculos">
+            <Link2 className="h-4 w-4" />
+            Vínculos
           </Link>
         </Button>
         <Button

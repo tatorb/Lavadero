@@ -64,6 +64,13 @@ enum TipoRelacion {
   DESCONOCIDO
 }
 
+// Qué son entre sí dos clientes vinculados (comparten autos y nivel efectivo)
+enum TipoVinculo {
+  PAREJA
+  FAMILIAR
+  AMIGO
+}
+
 enum EstadoPago {
   PAGADO
   PARCIAL
@@ -176,9 +183,10 @@ model Cliente {
   importBatchId   String?
 
   // Vínculo pareja/familiar (1 a 1 simétrico, mantenido en ambas filas por transacción)
-  vinculadoConId String?  @unique
-  vinculadoCon   Cliente? @relation("Vinculo", fields: [vinculadoConId], references: [id])
-  vinculadoDe    Cliente? @relation("Vinculo")
+  vinculadoConId String?      @unique
+  vinculadoCon   Cliente?     @relation("Vinculo", fields: [vinculadoConId], references: [id])
+  vinculadoDe    Cliente?     @relation("Vinculo")
+  vinculoTipo    TipoVinculo? // qué son entre sí; simétrico, se guarda en ambas filas
 
   // Gamificación: caché derivada del ledger PuntosMovimiento
   puntosTotal  Int       @default(0)

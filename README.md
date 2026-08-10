@@ -143,6 +143,25 @@ La pestaña **Revisar** lista las filas que no parecen personas (un vehículo, u
 importe, un texto cortado) y permite archivarlas: dejan de aparecer en listados
 y selectores sin perder los lavados que tienen cargados.
 
+### Vínculos familiares
+
+Mucha gente quedó anotada por su relación con otro cliente ("Esposa Luis",
+"Nuri esposa Jorge Filipini", "Andres hno Mauri"). **Gestión → Clientes →
+Vínculos** las detecta, resuelve a quién apuntan y carga el vínculo
+pareja/familiar que la app ya usaba: los dos comparten los autos y toman el
+mejor nivel de los dos para los descuentos.
+
+El parser (`src/lib/clientes/vinculos.ts`) lee las tres formas en que se
+anotaban (`Esposa Luis`, `Sergio esposa`, `Nuri esposa Jorge Filipini`) y
+resuelve abreviaturas inequívocas ("Agos" → Agostina). Separa lo que encontró
+exacto de lo que tuvo que interpretar: en esos casos pide verificar el titular
+antes de cargar, porque la lectura puede ser otra ("Andres Mauri hno" es el
+hermano de Mauri, no de Andrés). Los que no tienen a quién apuntar quedan en
+**Sin titular**, para elegirlo a mano.
+
+El vínculo es de a dos: si dos personas apuntan al mismo titular, la pantalla
+lo avisa y hay que resolver cuál va.
+
 ## Fuera de esta etapa
 
 Pagos, notificaciones (email/SMS/WhatsApp), OTP por teléfono, recuperación de contraseña, canje real de descuentos en el cobro, bonus por racha, drag & drop del calendario, reportes y RLS de Postgres.

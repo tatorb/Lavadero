@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
-import type { Prisma } from "@prisma/client";
+import type { Prisma, TipoVinculo } from "@prisma/client";
 
 import { requireStaff } from "@/lib/auth-helpers";
 import { prisma } from "@/lib/db";
@@ -68,8 +68,15 @@ export async function editarCliente(
   return { ok: true };
 }
 
-/** Vincula dos clientes (pareja/familiar) de forma simétrica. */
-export async function vincularClientes(clienteId: string, otroId: string): Promise<EstadoAccion> {
+/**
+ * Vincula dos clientes (pareja/familiar) de forma simétrica. `tipo` describe
+ * qué son entre sí y se guarda en las dos filas.
+ */
+export async function vincularClientes(
+  clienteId: string,
+  otroId: string,
+  tipo?: TipoVinculo
+): Promise<EstadoAccion> {
   const user = await requireStaff();
   if (clienteId === otroId) return { error: "No se puede vincular un cliente consigo mismo" };
 
@@ -82,11 +89,18 @@ export async function vincularClientes(clienteId: string, otroId: string): Promi
     return { error: "Alguno de los dos ya está vinculado a otro cliente" };
 
   await prisma.$transaction([
-    prisma.cliente.update({ where: { id: a.id }, data: { vinculadoConId: b.id } }),
-    prisma.cliente.update({ where: { id: b.id }, data: { vinculadoConId: a.id } }),
+    prisma.cliente.update({
+      where: { id: a.id },
+      data: { vinculadoConId: b.id, vinculoTipo: tipo ?? null },
+    }),
+    prisma.cliente.update({
+      where: { id: b.id },
+      data: { vinculadoConId: a.id, vinculoTipo: tipo ?? null },
+    }),
   ]);
   revalidatePath(`/admin/clientes/${clienteId}`);
   revalidatePath(`/admin/clientes/${otroId}`);
+  revalidatePath("/admin/clientes/vinculos");
   return { ok: true };
 }
 
@@ -98,13 +112,17 @@ export async function desvincularCliente(clienteId: string): Promise<EstadoAccio
   if (!cliente?.vinculadoConId) return { error: "El cliente no está vinculado" };
 
   await prisma.$transaction([
-    prisma.cliente.update({ where: { id: cliente.id }, data: { vinculadoConId: null } }),
+    prisma.cliente.update({
+      where: { id: cliente.id },
+      data: { vinculadoConId: null, vinculoTipo: null },
+    }),
     prisma.cliente.update({
       where: { id: cliente.vinculadoConId },
-      data: { vinculadoConId: null },
+      data: { vinculadoConId: null, vinculoTipo: null },
     }),
   ]);
   revalidatePath(`/admin/clientes/${clienteId}`);
+  revalidatePath("/admin/clientes/vinculos");
   return { ok: true };
 }
 
@@ -268,8 +286,10 @@ export async function fusionarClientes(
     // Las notas del duplicado se anexan en vez de perderse
     if (principal.detalles && duplicado.detalles && principal.detalles !== duplicado.detalles)
       datos.detalles = `${principal.detalles}\n${duplicado.detalles}`;
-    if (vinculoAHeredar && !principal.vinculadoConId)
+    if (vinculoAHeredar && !principal.vinculadoConId) {
       datos.vinculadoCon = { connect: { id: vinculoAHeredar } };
+      datos.vinculoTipo = duplicado.vinculoTipo;
+    }
 
     if (Object.keys(datos).length > 0) {
       await tx.cliente.update({ where: { id: principal.id }, data: datos });
@@ -277,7 +297,7 @@ export async function fusionarClientes(
     if (vinculoAHeredar && !principal.vinculadoConId) {
       await tx.cliente.update({
         where: { id: vinculoAHeredar },
-        data: { vinculadoConId: principal.id },
+        data: { vinculadoConId: principal.id, vinculoTipo: duplicado.vinculoTipo },
       });
     }
 

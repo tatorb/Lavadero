@@ -3,7 +3,7 @@
 import * as React from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { AlertTriangle, ArrowLeft, Archive, Check, Merge, Search, X } from "lucide-react";
+import { AlertTriangle, Archive, ArrowLeft, Check, Merge, X } from "lucide-react";
 import { toast } from "sonner";
 
 import type { Confianza, ParDuplicado } from "@/lib/clientes/duplicados";
@@ -24,8 +24,8 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { EstadoVacio } from "@/components/ui/estado-vacio";
-import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { BuscadorCliente, type ItemBuscable } from "@/components/admin/buscador-cliente";
 
 export interface ClienteFicha {
   id: string;
@@ -287,78 +287,6 @@ function ParSugerido({
   );
 }
 
-/** Buscador de un cliente por nombre, teléfono o email. */
-function BuscadorCliente({
-  clientes,
-  seleccionado,
-  onSeleccionar,
-  placeholder,
-}: {
-  clientes: ClienteFicha[];
-  seleccionado: ClienteFicha | null;
-  onSeleccionar: (c: ClienteFicha | null) => void;
-  placeholder: string;
-}) {
-  const [busqueda, setBusqueda] = React.useState("");
-
-  if (seleccionado) {
-    return (
-      <div className="flex items-center gap-2 rounded-xl border border-primary bg-primary/5 p-3">
-        <div className="min-w-0 flex-1">
-          <p className="truncate font-medium">{seleccionado.nombre}</p>
-          <p className="text-xs text-muted-foreground">
-            {seleccionado.lavados} lavados · {seleccionado.puntos} pts
-          </p>
-        </div>
-        <Button variant="ghost" size="icon" onClick={() => onSeleccionar(null)}>
-          <X className="h-4 w-4" />
-        </Button>
-      </div>
-    );
-  }
-
-  const termino = busqueda.trim().toLowerCase();
-  const resultados = termino
-    ? clientes
-        .filter((c) =>
-          [c.nombre, c.telefono, c.email]
-            .filter(Boolean)
-            .some((v) => v!.toLowerCase().includes(termino))
-        )
-        .slice(0, 8)
-    : [];
-
-  return (
-    <div className="space-y-2">
-      <div className="relative">
-        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-        <Input
-          value={busqueda}
-          onChange={(e) => setBusqueda(e.target.value)}
-          placeholder={placeholder}
-          className="pl-9"
-        />
-      </div>
-      {resultados.map((c) => (
-        <button
-          key={c.id}
-          type="button"
-          onClick={() => {
-            onSeleccionar(c);
-            setBusqueda("");
-          }}
-          className="flex w-full items-center justify-between gap-2 rounded-lg border p-2 text-left text-sm transition active:scale-[0.99] hover:bg-accent"
-        >
-          <span className="truncate">{c.nombre}</span>
-          <span className="shrink-0 text-xs text-muted-foreground">
-            {c.lavados} lavados
-          </span>
-        </button>
-      ))}
-    </div>
-  );
-}
-
 export function FusionarClientes({
   clientes,
   pares,
@@ -376,12 +304,19 @@ export function FusionarClientes({
   const [confianzas, setConfianzas] = React.useState<Set<Confianza>>(
     new Set<Confianza>(["alta", "media"])
   );
-  const [manualA, setManualA] = React.useState<ClienteFicha | null>(null);
-  const [manualB, setManualB] = React.useState<ClienteFicha | null>(null);
+  const [manualA, setManualA] = React.useState<ItemBuscable | null>(null);
+  const [manualB, setManualB] = React.useState<ItemBuscable | null>(null);
   const [confirmandoManual, setConfirmandoManual] = React.useState(false);
   const [archivando, setArchivando] = React.useState<string | null>(null);
 
   const refrescar = () => router.refresh();
+
+  const opciones: ItemBuscable[] = clientes.map((c) => ({
+    id: c.id,
+    nombre: c.nombre,
+    detalle: `${c.lavados} lavados · ${c.puntos} pts`,
+    alias: [c.telefono, c.email],
+  }));
 
   const visibles = pares.filter(
     (p) =>
@@ -437,6 +372,15 @@ export function FusionarClientes({
             ))}
           </div>
 
+          <p className="text-xs text-muted-foreground">
+            Acá no aparecen los familiares anotados por su relación (&ldquo;Esposa
+            Luis&rdquo;): son otra persona, no un duplicado. Esos se cargan en{" "}
+            <Link href="/admin/clientes/vinculos" className="text-primary underline">
+              Vínculos
+            </Link>
+            .
+          </p>
+
           {visibles.length === 0 ? (
             <EstadoVacio
               titulo="Sin sugerencias"
@@ -466,7 +410,7 @@ export function FusionarClientes({
               <div className="space-y-2">
                 <p className="etiqueta text-muted-foreground">Cliente que queda</p>
                 <BuscadorCliente
-                  clientes={clientes.filter((c) => c.id !== manualB?.id)}
+                  items={opciones.filter((o) => o.id !== manualB?.id)}
                   seleccionado={manualA}
                   onSeleccionar={setManualA}
                   placeholder="Buscar el cliente principal…"
@@ -475,7 +419,7 @@ export function FusionarClientes({
               <div className="space-y-2">
                 <p className="etiqueta text-muted-foreground">Cliente que se absorbe</p>
                 <BuscadorCliente
-                  clientes={clientes.filter((c) => c.id !== manualA?.id)}
+                  items={opciones.filter((o) => o.id !== manualA?.id)}
                   seleccionado={manualB}
                   onSeleccionar={setManualB}
                   placeholder="Buscar el duplicado…"

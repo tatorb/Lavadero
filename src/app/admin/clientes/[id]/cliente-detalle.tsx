@@ -69,6 +69,7 @@ import {
 } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
+import { TIPO_VINCULO_LABEL, type TipoVinculo } from "@/lib/clientes/vinculos";
 import { ClienteForm } from "../clientes-table";
 import { CuentaTab, type MovimientoCuentaItem } from "./cuenta-tab";
 import { ESTADO_TURNO_BADGE } from "@/components/turnos/estado";
@@ -211,6 +212,7 @@ export function ClienteDetalle({
     mejorRacha: number;
     ultimaVisita: string | null;
     vinculadoCon: { id: string; nombre: string } | null;
+    vinculoTipo: TipoVinculo | null;
   };
   autos: AutoItem[];
   lavados: Array<{
@@ -436,12 +438,17 @@ export function ClienteDetalle({
           <CardContent>
             {cliente.vinculadoCon ? (
               <div className="flex items-center justify-between gap-2">
-                <Link
-                  href={`/admin/clientes/${cliente.vinculadoCon.id}`}
-                  className="font-medium text-primary hover:underline"
-                >
-                  {cliente.vinculadoCon.nombre}
-                </Link>
+                <div className="flex flex-wrap items-center gap-2">
+                  <Link
+                    href={`/admin/clientes/${cliente.vinculadoCon.id}`}
+                    className="font-medium text-primary hover:underline"
+                  >
+                    {cliente.vinculadoCon.nombre}
+                  </Link>
+                  {cliente.vinculoTipo && (
+                    <Badge variant="info">{TIPO_VINCULO_LABEL[cliente.vinculoTipo]}</Badge>
+                  )}
+                </div>
                 <Button
                   variant="ghost"
                   size="sm"

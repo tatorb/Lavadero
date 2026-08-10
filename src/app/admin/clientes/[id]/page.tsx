@@ -77,6 +77,7 @@ export default async function ClienteDetallePage({
         tipoRelacion: cliente.tipoRelacion,
         origen: cliente.origen,
         activo: cliente.activo,
+        vinculoTipo: cliente.vinculoTipo,
         nombreOriginal: cliente.nombreOriginal,
         visitasAnotadas: cliente.visitasAnotadas,
         detalles: cliente.detalles,
