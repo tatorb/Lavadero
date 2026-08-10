@@ -28,6 +28,8 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { DataTable } from "@/components/admin/data-table";
+import { type ItemBuscable } from "@/components/admin/buscador-cliente";
+import { CamposAuto, CamposVinculo } from "./cliente-extras";
 
 interface ClienteRow {
   id: string;
@@ -39,6 +41,7 @@ interface ClienteRow {
   puntos: number;
   conCuenta: boolean;
   activo: boolean;
+  vinculado: boolean;
 }
 
 export function ClienteForm({
@@ -46,6 +49,7 @@ export function ClienteForm({
   defaults,
   submitLabel,
   onDone,
+  candidatosVinculo,
 }: {
   action: (prev: EstadoAccion, formData: FormData) => Promise<EstadoAccion>;
   defaults?: Partial<{
@@ -59,6 +63,11 @@ export function ClienteForm({
   }>;
   submitLabel: string;
   onDone: (id?: string) => void;
+  /**
+   * Solo en el alta: habilita cargar el auto y el vínculo en el mismo paso.
+   * Al editar no van, porque la ficha del cliente ya los maneja.
+   */
+  candidatosVinculo?: ItemBuscable[];
 }) {
   const [state, formAction, pending] = React.useActionState(
     async (prev: EstadoAccion, formData: FormData) => {
@@ -121,6 +130,12 @@ export function ClienteForm({
         <Label htmlFor="detalles">Detalles</Label>
         <Textarea id="detalles" name="detalles" defaultValue={defaults?.detalles ?? ""} />
       </div>
+      {candidatosVinculo && (
+        <>
+          <CamposAuto />
+          <CamposVinculo candidatos={candidatosVinculo} />
+        </>
+      )}
       {state?.error && <p className="text-sm font-medium text-destructive">{state.error}</p>}
       <Button type="submit" className="w-full" disabled={pending}>
         {pending ? "Guardando…" : submitLabel}
@@ -138,6 +153,19 @@ export function ClientesTable({
 }) {
   const router = useRouter();
   const [creando, setCreando] = React.useState(false);
+
+  const candidatos: ItemBuscable[] = React.useMemo(
+    () =>
+      clientes
+        .filter((c) => c.activo)
+        .map((c) => ({
+          id: c.id,
+          nombre: c.nombre,
+          detalle: c.vinculado ? "ya vinculado" : `${c.lavados} lavados`,
+          alias: [c.telefono, c.email],
+        })),
+    [clientes]
+  );
 
   const columns: ColumnDef<ClienteRow>[] = [
     {
@@ -214,6 +242,7 @@ export function ClientesTable({
             <ClienteForm
               action={crearCliente}
               submitLabel="Crear cliente"
+              candidatosVinculo={candidatos}
               onDone={(id) => {
                 setCreando(false);
                 if (id) router.push(`/admin/clientes/${id}`);

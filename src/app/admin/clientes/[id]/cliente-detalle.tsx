@@ -22,6 +22,7 @@ import { toast } from "sonner";
 
 import {
   ESTADO_PAGO_LABEL,
+  TIPOS_VEHICULO,
   TIPO_VEHICULO_LABEL,
   formatARS,
   formatFecha,
@@ -102,19 +103,6 @@ const BADGE_PAGO: Record<string, "success" | "warning" | "info" | "muted"> = {
   BONIFICADO: "info",
   SIN_DATO: "muted",
 };
-
-const TIPOS_VEHICULO = [
-  ["AUTO", "Auto"],
-  ["SUV", "SUV"],
-  ["PICKUP", "Pickup"],
-  ["PICKUP_GRANDE", "Pickup grande"],
-  ["UTILITARIO", "Utilitario"],
-  ["UTILITARIO_GRANDE", "Utilitario grande"],
-  ["MOTO", "Moto"],
-  ["MOTORHOME", "Motorhome"],
-  ["UTV", "UTV"],
-  ["OTRO", "Otro"],
-] as const;
 
 function AutoForm({
   action,

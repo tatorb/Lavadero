@@ -125,6 +125,17 @@ precios por tipo de vehículo, el usuario `admin@elbosquecito.com`
 los clientes a partir de los lavados reales. Los lotes aplicados se ven y se
 deshacen también desde **Gestión → Importaciones**.
 
+### Alta de cliente completa
+
+**Nuevo cliente** carga en un solo paso el cliente, su auto y el vínculo con la
+pareja o familiar, todo en una transacción. El auto es opcional pero va
+desplegado: sin auto no se le puede registrar un lavado, así que lo normal es
+cargarlo ahí. El vínculo permite apuntar a un cliente ya cargado o crear a la
+pareja en el mismo momento, que es el caso del mostrador cuando llegan los dos.
+
+Al editar un cliente esas secciones no aparecen: la ficha ya tiene sus propias
+pestañas de autos y de vínculo.
+
 ### Limpieza de duplicados
 
 El registro se llevaba a mano, así que la misma persona quedó cargada varias

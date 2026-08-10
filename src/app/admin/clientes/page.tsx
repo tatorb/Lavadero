@@ -42,6 +42,7 @@ export default async function ClientesPage({
           puntos: c.puntosTotal,
           conCuenta: !!c.passwordHash,
           activo: c.activo,
+          vinculado: !!c.vinculadoConId,
         }))}
       />
     </div>

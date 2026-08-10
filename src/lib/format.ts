@@ -71,6 +71,9 @@ export const TIPO_VEHICULO_LABEL: Record<string, string> = {
   OTRO: "Otro",
 };
 
+/** Los tipos de vehículo en orden, para poblar los selects. */
+export const TIPOS_VEHICULO = Object.entries(TIPO_VEHICULO_LABEL);
+
 export const ESTADO_PAGO_LABEL: Record<string, string> = {
   PAGADO: "Pagado",
   PARCIAL: "Pago parcial",

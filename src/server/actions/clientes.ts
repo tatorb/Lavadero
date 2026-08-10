@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
-import type { Prisma, TipoVinculo } from "@prisma/client";
+import type { Prisma, TipoVehiculo, TipoVinculo } from "@prisma/client";
 
 import { requireStaff } from "@/lib/auth-helpers";
 import { prisma } from "@/lib/db";
@@ -25,6 +25,16 @@ const clienteSchema = z.object({
   detalles: z.string().optional(),
 });
 
+const limpio = (v: FormDataEntryValue | null) => {
+  const s = typeof v === "string" ? v.trim() : "";
+  return s.length > 0 ? s : null;
+};
+
+/**
+ * Alta de cliente con todo lo que lo acompaña: el auto con el que llega y la
+ * pareja o familiar con quien comparte. Cargarlos en el mismo paso evita que
+ * el cliente quede a medias cuando hay alguien esperando en el mostrador.
+ */
 export async function crearCliente(
   _prev: EstadoAccion,
   formData: FormData
@@ -41,9 +51,78 @@ export async function crearCliente(
     if (existente) return { error: "Ya existe un cliente con ese email" };
   }
 
-  const cliente = await prisma.cliente.create({
-    data: { ...parsed.data, email, lavaderoId: user.lavaderoId },
+  // --- Auto (opcional): si viene la marca o el modelo, van los dos ---
+  const marca = limpio(formData.get("autoMarca"));
+  const modelo = limpio(formData.get("autoModelo"));
+  if ((marca && !modelo) || (!marca && modelo)) {
+    return { error: "Para cargar el auto necesito la marca y el modelo" };
+  }
+  const patente = limpio(formData.get("autoPatente"))?.toUpperCase().replace(/\s/g, "") ?? null;
+  if (patente && (await patenteDuplicada(user.lavaderoId, patente))) {
+    return { error: "Ya existe un auto con esa patente" };
+  }
+  const auto = marca && modelo ? {
+    marca,
+    modelo,
+    patente,
+    tipo: (limpio(formData.get("autoTipo")) ?? "AUTO") as TipoVehiculo,
+    color: limpio(formData.get("autoColor")),
+  } : null;
+
+  // --- Vínculo (opcional): con alguien ya cargado, o creándolo acá mismo ---
+  const vinculoTipo = (limpio(formData.get("vinculoTipo")) ?? "PAREJA") as TipoVinculo;
+  const vinculoConId = limpio(formData.get("vinculoConId"));
+  const vinculoNombre = limpio(formData.get("vinculoNombre"));
+
+  if (vinculoConId) {
+    const otro = await prisma.cliente.findFirst({
+      where: { id: vinculoConId, lavaderoId: user.lavaderoId },
+      select: { vinculadoConId: true },
+    });
+    if (!otro) return { error: "El cliente a vincular no existe" };
+    if (otro.vinculadoConId) return { error: "Ese cliente ya está vinculado con otro" };
+  }
+
+  const cliente = await prisma.$transaction(async (tx) => {
+    const creado = await tx.cliente.create({
+      data: { ...parsed.data, email, lavaderoId: user.lavaderoId },
+    });
+
+    if (auto) {
+      await tx.auto.create({
+        data: { ...auto, clienteId: creado.id, lavaderoId: user.lavaderoId },
+      });
+    }
+
+    if (vinculoConId) {
+      await tx.cliente.update({
+        where: { id: vinculoConId },
+        data: { vinculadoConId: creado.id, vinculoTipo },
+      });
+      await tx.cliente.update({
+        where: { id: creado.id },
+        data: { vinculadoConId: vinculoConId, vinculoTipo },
+      });
+    } else if (vinculoNombre) {
+      // La pareja tampoco estaba cargada: la creamos y los vinculamos
+      const pareja = await tx.cliente.create({
+        data: {
+          nombre: vinculoNombre,
+          apellido: limpio(formData.get("vinculoApellido")),
+          lavaderoId: user.lavaderoId,
+          vinculadoConId: creado.id,
+          vinculoTipo,
+        },
+      });
+      await tx.cliente.update({
+        where: { id: creado.id },
+        data: { vinculadoConId: pareja.id, vinculoTipo },
+      });
+    }
+
+    return creado;
   });
+
   revalidatePath("/admin/clientes");
   return { ok: true, id: cliente.id };
 }
