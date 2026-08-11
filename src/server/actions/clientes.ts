@@ -7,6 +7,7 @@ import type { Prisma, TipoVehiculo, TipoVinculo } from "@prisma/client";
 
 import { requireStaff } from "@/lib/auth-helpers";
 import { prisma } from "@/lib/db";
+import { normalizarNombre } from "@/lib/clientes/duplicados";
 import { recalcularGamificacion } from "@/lib/gamificacion/recalcular";
 
 export type EstadoAccion = { error?: string; ok?: boolean; id?: string } | undefined;
@@ -411,6 +412,144 @@ export async function archivarCliente(
 
   revalidatePath("/admin/clientes");
   revalidatePath(`/admin/clientes/${clienteId}`);
+  return { ok: true };
+}
+
+export interface ResumenEliminacion {
+  nombre: string;
+  lavados: number;
+  turnos: number;
+  autos: number;
+  puntos: number;
+  movimientosCuenta: number;
+  /** Se despegan del cliente pero NO se borran: la caja no se toca */
+  movimientosCaja: number;
+  /** Plata cobrada que deja de sumar en los reportes */
+  importeCobrado: number;
+  vinculadoCon: string | null;
+  /** Sin historial: se puede borrar sin perder nada */
+  limpio: boolean;
+}
+
+/** Qué se pierde al eliminar. La pantalla lo muestra antes de confirmar. */
+export async function previsualizarEliminacion(
+  clienteId: string
+): Promise<{ error?: string; resumen?: ResumenEliminacion }> {
+  const user = await requireStaff(["ADMIN"]);
+  const cliente = await prisma.cliente.findFirst({
+    where: { id: clienteId, lavaderoId: user.lavaderoId },
+    include: {
+      vinculadoCon: { select: { nombre: true, apellido: true } },
+      _count: {
+        select: {
+          lavados: true,
+          turnos: true,
+          autos: true,
+          movimientos: true,
+          movimientosCuenta: true,
+          movimientosCaja: true,
+        },
+      },
+    },
+  });
+  if (!cliente) return { error: "Cliente no encontrado" };
+
+  const cobrado = await prisma.lavado.aggregate({
+    where: { clienteId },
+    _sum: { importeCobrado: true },
+  });
+
+  const c = cliente._count;
+  return {
+    resumen: {
+      nombre: nombreDe(cliente),
+      lavados: c.lavados,
+      turnos: c.turnos,
+      autos: c.autos,
+      puntos: cliente.puntosTotal,
+      movimientosCuenta: c.movimientosCuenta,
+      movimientosCaja: c.movimientosCaja,
+      importeCobrado: cobrado._sum.importeCobrado?.toNumber() ?? 0,
+      vinculadoCon: cliente.vinculadoCon ? nombreDe(cliente.vinculadoCon) : null,
+      limpio: c.lavados === 0 && c.turnos === 0 && c.movimientosCuenta === 0,
+    },
+  };
+}
+
+/**
+ * Borra un cliente y todo lo que cuelga de él. Irreversible.
+ *
+ * Los movimientos de caja NO se borran: se despegan del cliente. Esa plata
+ * entró o salió de verdad y el arqueo tiene que seguir cerrando. Los lavados
+ * sí desaparecen, así que los ingresos del mes bajan — por eso, cuando el
+ * cliente tiene historial, hay que escribir su nombre para confirmar.
+ *
+ * Para las filas que solo molestan en los listados conviene `archivarCliente`,
+ * que las esconde sin perder nada.
+ */
+export async function eliminarCliente(
+  clienteId: string,
+  confirmacion?: string
+): Promise<EstadoAccion> {
+  const user = await requireStaff(["ADMIN"]);
+  const cliente = await prisma.cliente.findFirst({
+    where: { id: clienteId, lavaderoId: user.lavaderoId },
+    include: { _count: { select: { lavados: true, turnos: true, movimientosCuenta: true } } },
+  });
+  if (!cliente) return { error: "Cliente no encontrado" };
+
+  const limpio =
+    cliente._count.lavados === 0 &&
+    cliente._count.turnos === 0 &&
+    cliente._count.movimientosCuenta === 0;
+
+  if (!limpio) {
+    const esperado = normalizarNombre(nombreDe(cliente));
+    if (!confirmacion || normalizarNombre(confirmacion) !== esperado) {
+      return { error: "Escribí el nombre del cliente tal cual para confirmar" };
+    }
+  }
+
+  const lavados = await prisma.lavado.findMany({
+    where: { clienteId },
+    select: { id: true },
+  });
+  const lavadoIds = lavados.map((l) => l.id);
+
+  await prisma.$transaction(async (tx) => {
+    // El vínculo es único en las dos filas: hay que soltarlo antes de borrar
+    if (cliente.vinculadoConId) {
+      await tx.cliente.update({
+        where: { id: cliente.vinculadoConId },
+        data: { vinculadoConId: null, vinculoTipo: null },
+      });
+      await tx.cliente.update({
+        where: { id: cliente.id },
+        data: { vinculadoConId: null, vinculoTipo: null },
+      });
+    }
+
+    // La caja se conserva: solo pierde la referencia al cliente y al lavado
+    await tx.movimientoCaja.updateMany({
+      where: {
+        lavaderoId: user.lavaderoId,
+        OR: [{ clienteId }, ...(lavadoIds.length ? [{ lavadoId: { in: lavadoIds } }] : [])],
+      },
+      data: { clienteId: null, lavadoId: null },
+    });
+
+    await tx.movimientoCuenta.deleteMany({ where: { clienteId } });
+    await tx.puntosMovimiento.deleteMany({ where: { clienteId } });
+    // Pago y LavadoAddon caen por cascada con el lavado
+    await tx.lavado.deleteMany({ where: { clienteId } });
+    await tx.turno.deleteMany({ where: { clienteId } });
+    await tx.auto.deleteMany({ where: { clienteId } });
+    await tx.cliente.delete({ where: { id: clienteId } });
+  });
+
+  revalidatePath("/admin/clientes");
+  revalidatePath("/admin/lavados");
+  revalidatePath("/admin/caja");
   return { ok: true };
 }
 

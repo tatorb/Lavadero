@@ -136,6 +136,20 @@ pareja en el mismo momento, que es el caso del mostrador cuando llegan los dos.
 Al editar un cliente esas secciones no aparecen: la ficha ya tiene sus propias
 pestañas de autos y de vínculo.
 
+### Archivar y eliminar
+
+Para sacar a alguien de los listados sin perder nada está **Archivar**: el
+cliente deja de aparecer en las tablas y en los selectores de lavado y turno,
+pero sus lavados siguen contando en la caja. Es reversible.
+
+**Eliminar** (solo ADMIN) lo borra de verdad, con sus autos, lavados, turnos,
+puntos y cuenta corriente. Antes de confirmar muestra qué se pierde, incluido
+el dinero cobrado que deja de sumar en los reportes, y si el cliente tiene
+historial hay que escribir su nombre para habilitar el botón.
+
+Los **movimientos de caja no se borran**: se despegan del cliente y del lavado.
+Esa plata entró o salió de verdad y el arqueo tiene que seguir cerrando.
+
 ### Limpieza de duplicados
 
 El registro se llevaba a mano, así que la misma persona quedó cargada varias

@@ -73,6 +73,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { TIPO_VINCULO_LABEL, type TipoVinculo } from "@/lib/clientes/vinculos";
 import { ClienteForm } from "../clientes-table";
 import { CuentaTab, type MovimientoCuentaItem } from "./cuenta-tab";
+import { EliminarCliente } from "./eliminar-cliente";
 import { ESTADO_TURNO_BADGE } from "@/components/turnos/estado";
 
 interface AutoItem {
@@ -319,6 +320,7 @@ export function ClienteDetalle({
           <Archive className="h-4 w-4" />
           {cliente.activo ? "Archivar" : "Reactivar"}
         </Button>
+        {cuenta.esAdmin && <EliminarCliente clienteId={cliente.id} />}
         <Dialog open={editando} onOpenChange={setEditando}>
           <DialogTrigger asChild>
             <Button variant="outline" className="flex-1 sm:flex-none">
