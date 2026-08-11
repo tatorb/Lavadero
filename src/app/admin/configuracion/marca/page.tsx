@@ -6,7 +6,7 @@ import { MarcaForm } from "./marca-form";
 export const metadata = { title: "Marca — Gestión" };
 
 export default async function MarcaPage() {
-  const user = await requireStaff();
+  const user = await requireStaff(["ADMIN"]);
   const lavadero = await prisma.lavadero.findUniqueOrThrow({
     where: { id: user.lavaderoId },
     select: {

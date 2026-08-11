@@ -24,6 +24,7 @@ import { Separator } from "@/components/ui/separator";
 import { LogoLavadero } from "@/components/marca/logo-lavadero";
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 
+// `soloDueno` esconde la sección al operativo: no la ve ni la puede abrir
 const NAV = [
   { href: "/admin/turnos", label: "Turnos", icon: CalendarDays },
   { href: "/admin/clientes", label: "Clientes", icon: Users },
@@ -31,7 +32,7 @@ const NAV = [
   { href: "/admin/caja", label: "Caja", icon: Wallet },
   { href: "/admin/servicios", label: "Servicios", icon: SprayCan },
   { href: "/admin/configuracion/franjas", label: "Franjas horarias", icon: Settings },
-  { href: "/admin/configuracion/marca", label: "Marca", icon: Palette },
+  { href: "/admin/configuracion/marca", label: "Marca", icon: Palette, soloDueno: true },
   { href: "/admin/configuracion/importaciones", label: "Importaciones", icon: Upload },
 ];
 
@@ -67,7 +68,7 @@ function NavContenido({
       </div>
       <Separator />
       <nav className="flex-1 space-y-1 p-3">
-        {NAV.map((item) => {
+        {NAV.filter((item) => !item.soloDueno || usuario.rol === "ADMIN").map((item) => {
           const activo = pathname.startsWith(item.href);
           return (
             <Link
