@@ -21,6 +21,29 @@ export async function requireStaff(roles: Rol[] = ["ADMIN", "OPERATIVO"]) {
   return user as typeof user & { lavaderoId: string };
 }
 
+/**
+ * Igual que `requireStaff` pero sin redirigir: devuelve el error para que la
+ * server action lo muestre.
+ *
+ * En una server action, `redirect("/login")` manda al login a alguien que tiene
+ * la sesión perfectamente válida y solo le falta el rol — parece que se le
+ * venció la sesión y pierde lo que estaba haciendo. Para las acciones sensibles
+ * conviene decirle que no tiene permiso y dejarlo donde está.
+ */
+export async function permisoStaff(roles: Rol[]) {
+  const session = await auth();
+  const user = session?.user;
+  if (!user || user.tipo !== "staff" || !user.rol) {
+    return { error: "Necesitás iniciar sesión" as const };
+  }
+  if (!roles.includes(user.rol) || !user.lavaderoId) {
+    return {
+      error: "Solo el dueño del lavadero puede hacer esto" as const,
+    };
+  }
+  return { user: user as typeof user & { lavaderoId: string } };
+}
+
 export async function requireSuperAdmin() {
   const session = await auth();
   const user = session?.user;

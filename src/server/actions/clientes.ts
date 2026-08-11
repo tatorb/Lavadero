@@ -5,7 +5,7 @@ import { z } from "zod";
 
 import type { Prisma, TipoVehiculo, TipoVinculo } from "@prisma/client";
 
-import { requireStaff } from "@/lib/auth-helpers";
+import { permisoStaff, requireStaff } from "@/lib/auth-helpers";
 import { prisma } from "@/lib/db";
 import { normalizarNombre } from "@/lib/clientes/duplicados";
 import { recalcularGamificacion } from "@/lib/gamificacion/recalcular";
@@ -235,7 +235,9 @@ export async function previsualizarFusion(
   principalId: string,
   duplicadoId: string
 ): Promise<{ error?: string; resumen?: ResumenFusion }> {
-  const user = await requireStaff(["ADMIN"]);
+  const permiso = await permisoStaff(["ADMIN"]);
+  if ("error" in permiso) return { error: permiso.error };
+  const { user } = permiso;
   if (principalId === duplicadoId) return { error: "Elegí dos clientes distintos" };
 
   const [principal, duplicado] = await Promise.all([
@@ -307,7 +309,9 @@ export async function fusionarClientes(
   principalId: string,
   duplicadoId: string
 ): Promise<EstadoAccion> {
-  const user = await requireStaff(["ADMIN"]);
+  const permiso = await permisoStaff(["ADMIN"]);
+  if ("error" in permiso) return { error: permiso.error };
+  const { user } = permiso;
   if (principalId === duplicadoId) return { error: "Elegí dos clientes distintos" };
 
   const [principal, duplicado] = await Promise.all([
@@ -403,7 +407,9 @@ export async function archivarCliente(
   clienteId: string,
   archivar: boolean
 ): Promise<EstadoAccion> {
-  const user = await requireStaff(["ADMIN"]);
+  const permiso = await permisoStaff(["ADMIN"]);
+  if ("error" in permiso) return { error: permiso.error };
+  const { user } = permiso;
   const { count } = await prisma.cliente.updateMany({
     where: { id: clienteId, lavaderoId: user.lavaderoId },
     data: { activo: !archivar },
@@ -435,7 +441,9 @@ export interface ResumenEliminacion {
 export async function previsualizarEliminacion(
   clienteId: string
 ): Promise<{ error?: string; resumen?: ResumenEliminacion }> {
-  const user = await requireStaff(["ADMIN"]);
+  const permiso = await permisoStaff(["ADMIN"]);
+  if ("error" in permiso) return { error: permiso.error };
+  const { user } = permiso;
   const cliente = await prisma.cliente.findFirst({
     where: { id: clienteId, lavaderoId: user.lavaderoId },
     include: {
@@ -491,7 +499,9 @@ export async function eliminarCliente(
   clienteId: string,
   confirmacion?: string
 ): Promise<EstadoAccion> {
-  const user = await requireStaff(["ADMIN"]);
+  const permiso = await permisoStaff(["ADMIN"]);
+  if ("error" in permiso) return { error: permiso.error };
+  const { user } = permiso;
   const cliente = await prisma.cliente.findFirst({
     where: { id: clienteId, lavaderoId: user.lavaderoId },
     include: { _count: { select: { lavados: true, turnos: true, movimientosCuenta: true } } },
