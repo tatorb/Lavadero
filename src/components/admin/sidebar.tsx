@@ -5,8 +5,8 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   CalendarDays,
+  LayoutGrid,
   LogOut,
-  Menu,
   Palette,
   Settings,
   SprayCan,
@@ -22,10 +22,12 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { LogoLavadero } from "@/components/marca/logo-lavadero";
-import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
+import { AdminBottomNav } from "@/components/admin/bottom-nav";
 
 // `soloDueno` esconde la sección al operativo: no la ve ni la puede abrir
 const NAV = [
+  { href: "/admin", label: "Inicio", icon: LayoutGrid, exacto: true },
   { href: "/admin/turnos", label: "Turnos", icon: CalendarDays },
   { href: "/admin/clientes", label: "Clientes", icon: Users },
   { href: "/admin/lavados", label: "Lavados", icon: Waves },
@@ -69,7 +71,9 @@ function NavContenido({
       <Separator />
       <nav className="flex-1 space-y-1 p-3">
         {NAV.filter((item) => !item.soloDueno || usuario.rol === "ADMIN").map((item) => {
-          const activo = pathname.startsWith(item.href);
+          const activo = item.exacto
+            ? pathname === item.href
+            : pathname.startsWith(item.href);
           return (
             <Link
               key={item.href}
@@ -136,8 +140,12 @@ export function AdminSidebar({
   );
 }
 
-/** Header sticky con hamburguesa + drawer — solo visible en mobile (< lg). */
-export function AdminMobileHeader({
+/**
+ * Cáscara móvil: header con la marca arriba y la barra de navegación abajo,
+ * compartiendo el drawer de "Más". El menú pasó al pulgar, así que el header
+ * ya no lleva hamburguesa.
+ */
+export function AdminMobileShell({
   usuario,
   lavaderoNombre,
   logoUrl,
@@ -151,18 +159,15 @@ export function AdminMobileHeader({
   const [abierto, setAbierto] = React.useState(false);
 
   return (
-    <header className="sticky top-0 z-40 flex items-center gap-3 border-b bg-background/95 px-4 py-3 backdrop-blur lg:hidden">
+    <>
+      <header className="sticky top-0 z-40 flex items-center gap-2 border-b bg-background/95 px-4 py-3 backdrop-blur lg:hidden">
+        <LogoLavadero logoUrl={logoUrl} nombre={lavaderoNombre} size={32} />
+        <p className="truncate text-sm font-semibold">{lavaderoNombre}</p>
+      </header>
+
+      <AdminBottomNav pendientes={pendientes} onAbrirMenu={() => setAbierto(true)} />
+
       <Sheet open={abierto} onOpenChange={setAbierto}>
-        <SheetTrigger asChild>
-          <Button variant="outline" size="icon" aria-label="Abrir menú" className="relative">
-            <Menu className="h-5 w-5" />
-            {pendientes > 0 && (
-              <span className="absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-primary px-1 text-[0.625rem] font-semibold text-primary-foreground">
-                {pendientes}
-              </span>
-            )}
-          </Button>
-        </SheetTrigger>
         <SheetContent side="left">
           <SheetTitle className="sr-only">Menú de navegación</SheetTitle>
           <NavContenido
@@ -174,10 +179,6 @@ export function AdminMobileHeader({
           />
         </SheetContent>
       </Sheet>
-      <div className="flex min-w-0 items-center gap-2">
-        <LogoLavadero logoUrl={logoUrl} nombre={lavaderoNombre} size={32} />
-        <p className="truncate text-sm font-semibold">{lavaderoNombre}</p>
-      </div>
-    </header>
+    </>
   );
 }

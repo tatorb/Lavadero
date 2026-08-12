@@ -114,6 +114,7 @@ export async function crearLavado(input: z.infer<typeof crearLavadoSchema>): Pro
   });
 
   revalidatePath("/admin/lavados");
+  revalidatePath("/admin");
   revalidatePath("/admin/turnos");
   return { ok: true, id: lavado.id };
 }
@@ -132,6 +133,7 @@ export async function iniciarLavado(id: string): Promise<EstadoAccion> {
   });
   revalidatePath(`/admin/lavados/${id}`);
   revalidatePath("/admin/lavados");
+  revalidatePath("/admin");
   return { ok: true };
 }
 
@@ -157,6 +159,7 @@ export async function finalizarLavado(id: string): Promise<EstadoAccion> {
 
   revalidatePath(`/admin/lavados/${id}`);
   revalidatePath("/admin/lavados");
+  revalidatePath("/admin");
   revalidatePath(`/admin/clientes/${lavado.clienteId}`);
   return { ok: true };
 }
@@ -177,6 +180,7 @@ export async function entregarLavado(id: string): Promise<EstadoAccion> {
   if (count === 0) return { error: "El lavado no está finalizado o ya fue entregado" };
   revalidatePath(`/admin/lavados/${id}`);
   revalidatePath("/admin/lavados");
+  revalidatePath("/admin");
   return { ok: true };
 }
 
@@ -190,6 +194,7 @@ export async function cancelarLavado(id: string): Promise<EstadoAccion> {
   if (count === 0) return { error: "El lavado no se puede cancelar" };
   revalidatePath(`/admin/lavados/${id}`);
   revalidatePath("/admin/lavados");
+  revalidatePath("/admin");
   return { ok: true };
 }
 
@@ -321,6 +326,7 @@ export async function registrarCobro(
 
   revalidatePath(`/admin/lavados/${lavadoId}`);
   revalidatePath("/admin/lavados");
+  revalidatePath("/admin");
   revalidatePath(`/admin/clientes/${lavado.clienteId}`);
   revalidatePath("/admin/caja");
   return { ok: true };
@@ -337,5 +343,22 @@ export async function editarDetallesLavado(
   });
   if (count === 0) return { error: "Lavado no encontrado" };
   revalidatePath(`/admin/lavados/${id}`);
+  return { ok: true };
+}
+
+/**
+ * Cierra el lavado desde el tablero: registra el cobro y marca la entrega en
+ * un solo paso. Son el mismo momento en el mostrador — el auto se entrega
+ * cuando se paga — y separarlos dejaba lavados entregados sin cobrar.
+ */
+export async function cerrarLavado(
+  lavadoId: string,
+  input: z.infer<typeof cobroSchema>
+): Promise<EstadoAccion> {
+  const cobro = await registrarCobro(lavadoId, input);
+  if (cobro?.error) return cobro;
+  const entrega = await entregarLavado(lavadoId);
+  if (entrega?.error) return entrega;
+  revalidatePath("/admin");
   return { ok: true };
 }

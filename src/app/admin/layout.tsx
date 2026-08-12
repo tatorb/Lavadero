@@ -1,6 +1,6 @@
 import { requireStaff } from "@/lib/auth-helpers";
 import { prisma } from "@/lib/db";
-import { AdminMobileHeader, AdminSidebar } from "@/components/admin/sidebar";
+import { AdminMobileShell, AdminSidebar } from "@/components/admin/sidebar";
 import { EstilosMarca } from "@/components/marca/estilos-marca";
 
 export const metadata = { title: "Gestión — Lavadero" };
@@ -50,13 +50,13 @@ export default async function AdminLayout({ children }: { children: React.ReactN
         logoUrl={logoUrl}
         pendientes={pendientes}
       />
-      <AdminMobileHeader
+      <AdminMobileShell
         usuario={usuario}
         lavaderoNombre={nombre}
         logoUrl={logoUrl}
         pendientes={pendientes}
       />
-      <main className="flex-1 overflow-x-hidden bg-muted/30 p-4 sm:p-6 lg:p-8">
+      <main className="flex-1 overflow-x-hidden bg-muted/30 p-4 pb-24 sm:p-6 sm:pb-24 lg:p-8 lg:pb-8">
         {children}
       </main>
     </div>
