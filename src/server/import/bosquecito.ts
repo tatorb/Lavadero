@@ -151,9 +151,12 @@ export async function importarRegistroBosquecito(
       autoId: autoIds.get(l.autoKey)!,
       servicioId: servicio.id,
       llegadaAt: llegada,
+      // Del registro solo salía la fecha: estos tiempos son estimados y no
+      // deben ensuciar las métricas de demora
       inicioAt: llegada,
       finAt: fin,
       entregadoAt: fin,
+      tiemposReales: false,
       detalles: obs.length ? obs.join(". ") : null,
       precioFinal:
         l.importeCobrado != null && l.importeCobrado > 0

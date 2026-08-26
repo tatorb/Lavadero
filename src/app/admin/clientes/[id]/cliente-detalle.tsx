@@ -74,6 +74,7 @@ import { TIPO_VINCULO_LABEL, type TipoVinculo } from "@/lib/clientes/vinculos";
 import { ClienteForm } from "../clientes-table";
 import { CuentaTab, type MovimientoCuentaItem } from "./cuenta-tab";
 import { EliminarCliente } from "./eliminar-cliente";
+import { PerfilTab, type Habitos } from "./perfil-tab";
 import { ESTADO_TURNO_BADGE } from "@/components/turnos/estado";
 
 interface AutoItem {
@@ -182,6 +183,8 @@ export function ClienteDetalle({
   candidatosVinculo,
   cuenta,
   resumen,
+  habitos,
+  timezone,
 }: {
   cliente: {
     id: string;
@@ -202,6 +205,9 @@ export function ClienteDetalle({
     ultimaVisita: string | null;
     vinculadoCon: { id: string; nombre: string } | null;
     vinculoTipo: TipoVinculo | null;
+    perfil: string | null;
+    queValora: string | null;
+    preferencias: string | null;
   };
   autos: AutoItem[];
   lavados: Array<{
@@ -237,6 +243,8 @@ export function ClienteDetalle({
     puntosParaSiguiente: number;
   };
   candidatosVinculo: Array<{ id: string; nombre: string }>;
+  habitos: Habitos;
+  timezone: string;
   cuenta: {
     saldo: number;
     movimientos: MovimientoCuentaItem[];
@@ -512,7 +520,7 @@ export function ClienteDetalle({
               ["lavados", `Lavados (${lavados.length})`],
               ["turnos", `Turnos (${turnos.length})`],
               ["cuenta", "Cuenta"],
-              ["info", "Detalles"],
+              ["perfil", "Perfil"],
             ].map(([valor, label]) => (
               <TabsTrigger
                 key={valor}
@@ -730,57 +738,39 @@ export function ClienteDetalle({
           />
         </TabsContent>
 
-        <TabsContent value="info" className="space-y-3">
-          <Card>
-            <CardContent className="grid gap-x-6 gap-y-3 pt-6 text-sm sm:grid-cols-2">
-              <div>
-                <p className="text-xs text-muted-foreground">Relación</p>
-                <p className="font-medium">{RELACION_LABEL[cliente.tipoRelacion]}</p>
-              </div>
-              <div>
-                <p className="text-xs text-muted-foreground">¿Cómo llegó?</p>
-                <p className="font-medium">{cliente.origen ?? "Sin dato"}</p>
-              </div>
-              <div>
-                <p className="text-xs text-muted-foreground">Teléfono</p>
-                <p className="font-medium">{cliente.telefono ?? "Sin dato"}</p>
-              </div>
-              <div>
-                <p className="text-xs text-muted-foreground">Email</p>
-                <p className="font-medium">{cliente.email ?? "Sin dato"}</p>
-              </div>
-              {cliente.nombreOriginal &&
-                cliente.nombreOriginal !== cliente.nombre && (
-                  <div>
-                    <p className="text-xs text-muted-foreground">
-                      Nombre en el registro original
-                    </p>
-                    <p className="font-medium">{cliente.nombreOriginal}</p>
-                  </div>
-                )}
-              {cliente.visitasAnotadas != null && (
-                <div>
-                  <p className="text-xs text-muted-foreground">
-                    Visitas anotadas a mano (control)
-                  </p>
-                  <p className="font-medium">
-                    {cliente.visitasAnotadas} anotadas · {resumen.totalLavados}{" "}
-                    reales
-                  </p>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm">Observaciones</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="whitespace-pre-wrap text-sm">
-                {cliente.detalles || "Sin observaciones cargadas."}
-              </p>
-            </CardContent>
-          </Card>
+        <TabsContent value="perfil">
+          <PerfilTab
+            clienteId={cliente.id}
+            timezone={timezone}
+            ficha={{
+              relacion: RELACION_LABEL[cliente.tipoRelacion],
+              origen: cliente.origen,
+              telefono: cliente.telefono,
+              email: cliente.email,
+              nombreOriginal: cliente.nombreOriginal,
+              nombre: cliente.nombre,
+              visitasAnotadas: cliente.visitasAnotadas,
+              totalLavados: resumen.totalLavados,
+              totalGastado: resumen.totalGastado,
+              vinculadoCon: cliente.vinculadoCon?.nombre ?? null,
+              vinculoTipo: cliente.vinculoTipo
+                ? TIPO_VINCULO_LABEL[cliente.vinculoTipo]
+                : null,
+            }}
+            datos={{
+              perfil: cliente.perfil,
+              queValora: cliente.queValora,
+              preferencias: cliente.preferencias,
+              detalles: cliente.detalles,
+            }}
+            autos={autos.map((a) => ({
+              id: a.id,
+              label: `${a.marca} ${a.modelo}${a.patente ? ` · ${a.patente}` : ""}`,
+              tipo: TIPO_VEHICULO_LABEL[a.tipo] ?? a.tipo,
+              lavados: a.cantidadLavados ?? 0,
+            }))}
+            habitos={habitos}
+          />
         </TabsContent>
       </Tabs>
     </div>

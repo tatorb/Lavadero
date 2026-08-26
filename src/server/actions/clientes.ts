@@ -24,6 +24,10 @@ const clienteSchema = z.object({
   tipoRelacion: z.enum(["CLIENTE", "AMIGO", "FAMILIAR", "DESCONOCIDO"]).optional(),
   origen: z.string().optional(),
   detalles: z.string().optional(),
+  // Perfil cualitativo
+  perfil: z.string().optional(),
+  queValora: z.string().optional(),
+  preferencias: z.string().optional(),
 });
 
 const limpio = (v: FormDataEntryValue | null) => {
@@ -148,6 +152,29 @@ export async function editarCliente(
   return { ok: true };
 }
 
+const CAMPOS_PERFIL = ["perfil", "queValora", "preferencias", "detalles"] as const;
+
+/**
+ * Guarda un campo del perfil cualitativo. Se editan de a uno porque se
+ * completan de a poco, a medida que en el mostrador se conoce al cliente.
+ */
+export async function guardarPerfilCliente(
+  clienteId: string,
+  campo: (typeof CAMPOS_PERFIL)[number],
+  valor: string
+): Promise<EstadoAccion> {
+  const user = await requireStaff();
+  if (!CAMPOS_PERFIL.includes(campo)) return { error: "Campo inválido" };
+
+  const { count } = await prisma.cliente.updateMany({
+    where: { id: clienteId, lavaderoId: user.lavaderoId },
+    data: { [campo]: valor.trim() || null },
+  });
+  if (count === 0) return { error: "Cliente no encontrado" };
+  revalidatePath(`/admin/clientes/${clienteId}`);
+  return { ok: true };
+}
+
 /**
  * Vincula dos clientes (pareja/familiar) de forma simétrica. `tipo` describe
  * qué son entre sí y se guarda en las dos filas.
@@ -209,7 +236,15 @@ export async function desvincularCliente(clienteId: string): Promise<EstadoAccio
 // ===== Fusión y archivado =====
 
 /** Campos de texto que se completan desde el duplicado si el principal los tiene vacíos. */
-const CAMPOS_HEREDABLES = ["telefono", "detalles", "origen", "nombreOriginal"] as const;
+const CAMPOS_HEREDABLES = [
+  "telefono",
+  "detalles",
+  "origen",
+  "nombreOriginal",
+  "perfil",
+  "queValora",
+  "preferencias",
+] as const;
 
 export interface ResumenFusion {
   principal: string;

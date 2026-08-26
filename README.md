@@ -168,6 +168,27 @@ La pestaña **Revisar** lista las filas que no parecen personas (un vehículo, u
 importe, un texto cortado) y permite archivarlas: dejan de aparecer en listados
 y selectores sin perder los lavados que tienen cargados.
 
+### Perfil del cliente
+
+La pestaña **Perfil** de cada cliente reúne su ficha, sus autos con la cantidad
+de lavados de cada uno, los hábitos que se deducen del historial (servicio que
+más pide, gasto promedio, cada cuántos días viene) y cuatro campos
+cualitativos que se editan en el lugar: **quién es**, **qué valora**,
+**preferencias y manías** y **observaciones**. Se completan de a poco, a medida
+que en el mostrador se conoce al cliente.
+
+### Tiempos
+
+**Gestión → Tiempos** muestra cuánto tarda un auto en el lavadero: espera
+(llegada → inicio), lavado (inicio → fin), entrega (fin → entrega) y total,
+con el desglose por servicio y por tipo de vehículo.
+
+Solo cuentan los lavados con tiempos medidos de verdad. Los importados del
+registro histórico y los cargados días después tienen horarios estimados y
+llevan `tiemposReales = false`: siguen contando para facturación y puntos, pero
+quedan fuera de los promedios, y la pantalla dice cuántos quedaron afuera. El
+motor de cálculo (`src/lib/metricas/duraciones.ts`) es puro y está testeado.
+
 ### Vínculos familiares
 
 Mucha gente quedó anotada por su relación con otro cliente ("Esposa Luis",

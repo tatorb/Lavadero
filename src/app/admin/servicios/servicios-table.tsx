@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { useRouter } from "next/navigation";
 import { type ColumnDef } from "@tanstack/react-table";
 import { Pencil, Plus } from "lucide-react";
 import { toast } from "sonner";
@@ -183,8 +184,13 @@ export function ServiciosTable({
   servicios: ServicioRow[];
   puedeEditar: boolean;
 }) {
+  const router = useRouter();
   const [editando, setEditando] = React.useState<ServicioRow | null>(null);
   const [creando, setCreando] = React.useState(false);
+
+  // revalidatePath limpia la caché del servidor, pero el cliente sigue
+  // mostrando el payload viejo hasta que se le pide refrescar
+  const refrescar = () => router.refresh();
 
   const columns: ColumnDef<ServicioRow>[] = [
     { accessorKey: "nombre", header: "Nombre" },
@@ -227,7 +233,10 @@ export function ServiciosTable({
         puedeEditar ? (
           <Switch
             checked={row.original.activo}
-            onCheckedChange={() => toggleServicioActivo(row.original.id)}
+            onCheckedChange={async () => {
+              await toggleServicioActivo(row.original.id);
+              refrescar();
+            }}
             onClick={(e) => e.stopPropagation()}
           />
         ) : (
@@ -263,7 +272,8 @@ export function ServiciosTable({
       <DataTable
         columns={columns}
         data={servicios}
-        searchPlaceholder="Buscar servicio…"
+        pageSize={100}
+      searchPlaceholder="Buscar servicio…"
         emptyMessage="Todavía no hay servicios cargados."
         toolbar={
           puedeEditar ? (
@@ -278,7 +288,12 @@ export function ServiciosTable({
                 <DialogHeader>
                   <DialogTitle>Nuevo servicio</DialogTitle>
                 </DialogHeader>
-                <ServicioForm onDone={() => setCreando(false)} />
+                <ServicioForm
+                  onDone={() => {
+                    setCreando(false);
+                    refrescar();
+                  }}
+                />
               </DialogContent>
             </Dialog>
           ) : undefined
@@ -290,7 +305,13 @@ export function ServiciosTable({
             <DialogTitle>Editar servicio</DialogTitle>
           </DialogHeader>
           {editando && (
-            <ServicioForm servicio={editando} onDone={() => setEditando(null)} />
+            <ServicioForm
+              servicio={editando}
+              onDone={() => {
+                setEditando(null);
+                refrescar();
+              }}
+            />
           )}
         </DialogContent>
       </Dialog>

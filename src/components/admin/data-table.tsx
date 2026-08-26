@@ -29,6 +29,8 @@ interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   searchPlaceholder?: string;
+  /** Filas por página. El catálogo de servicios entra entero y conviene verlo completo. */
+  pageSize?: number;
   /** Acciones extra a la derecha de la búsqueda (ej. botón "Nuevo") */
   toolbar?: React.ReactNode;
   onRowClick?: (row: TData) => void;
@@ -39,6 +41,7 @@ export function DataTable<TData, TValue>({
   columns,
   data,
   searchPlaceholder = "Buscar…",
+  pageSize = 15,
   toolbar,
   onRowClick,
   emptyMessage = "Sin resultados.",
@@ -57,7 +60,7 @@ export function DataTable<TData, TValue>({
     getFilteredRowModel: getFilteredRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     globalFilterFn: "includesString",
-    initialState: { pagination: { pageSize: 15 } },
+    initialState: { pagination: { pageSize } },
   });
 
   return (

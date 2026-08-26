@@ -178,6 +178,11 @@ model Cliente {
 
   tipoRelacion    TipoRelacion @default(CLIENTE) // cliente / amigo / familiar
   origen          String? // cómo llegó: de pasada, gomería, pauta, boca en boca…
+
+  // Perfil cualitativo: lo que el mostrador sabe del cliente y no entra en un campo duro
+  perfil        String? // quién es: taxista, viaja mucho, viene con los chicos…
+  queValora     String? // qué le importa del servicio: rapidez, interior impecable, precio
+  preferencias  String? // manías y pedidos fijos: sin aromatizante, no tocar el baúl…
   nombreOriginal  String? // texto tal cual estaba en el registro importado
   visitasAnotadas Int? // recurrencia anotada a mano en el histórico (solo control)
   importBatchId   String?
@@ -345,6 +350,10 @@ model Lavado {
 
   servicioOriginal String? // texto tal cual estaba en el registro importado
   importBatchId    String?
+
+  // false cuando los tiempos no se midieron (importación, carga retroactiva):
+  // el lavado cuenta para facturación pero queda fuera de las métricas de demora
+  tiemposReales Boolean @default(true)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

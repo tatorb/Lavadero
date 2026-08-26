@@ -61,6 +61,23 @@ const servicioSchema = z.object({
 
 export type EstadoServicio = { error?: string; ok?: boolean } | undefined;
 
+/**
+ * Los servicios se leen desde varias pantallas: el alta de llegada, la tabla
+ * de lavados, el calendario y el tablero. Revalidar solo /admin/servicios
+ * dejaba un adicional recién creado sin aparecer en el registro de lavados.
+ */
+function revalidarServicios() {
+  for (const ruta of [
+    "/admin/servicios",
+    "/admin/nuevo",
+    "/admin/lavados",
+    "/admin/turnos",
+    "/admin",
+  ]) {
+    revalidatePath(ruta);
+  }
+}
+
 export async function crearServicio(
   _prev: EstadoServicio,
   formData: FormData
@@ -83,7 +100,7 @@ export async function crearServicio(
     },
   });
   await guardarPrecios(servicio.id, preciosPorTipo(formData));
-  revalidatePath("/admin/servicios");
+  revalidarServicios();
   return { ok: true };
 }
 
@@ -102,7 +119,7 @@ export async function editarServicio(
   });
   if (count === 0) return { error: "Servicio no encontrado" };
   await guardarPrecios(id, preciosPorTipo(formData));
-  revalidatePath("/admin/servicios");
+  revalidarServicios();
   return { ok: true };
 }
 
@@ -116,5 +133,5 @@ export async function toggleServicioActivo(id: string) {
     where: { id: servicio.id },
     data: { activo: !servicio.activo },
   });
-  revalidatePath("/admin/servicios");
+  revalidarServicios();
 }

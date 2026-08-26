@@ -129,7 +129,11 @@ export async function iniciarLavado(id: string): Promise<EstadoAccion> {
   const esRetroactivo = Date.now() - lavado.llegadaAt.getTime() > 12 * 60 * 60 * 1000;
   await prisma.lavado.update({
     where: { id: lavado.id },
-    data: { inicioAt: esRetroactivo ? lavado.llegadaAt : new Date() },
+    data: {
+      inicioAt: esRetroactivo ? lavado.llegadaAt : new Date(),
+      // Un lavado cargado días después no tiene tiempos medidos
+      ...(esRetroactivo ? { tiemposReales: false } : {}),
+    },
   });
   revalidatePath(`/admin/lavados/${id}`);
   revalidatePath("/admin/lavados");
@@ -156,6 +160,12 @@ export async function finalizarLavado(id: string): Promise<EstadoAccion> {
     ? new Date(lavado.llegadaAt.getTime() + 45 * 60 * 1000)
     : new Date();
   await prisma.$transaction((tx) => otorgarPuntosLavado(tx, lavado.id, finAt));
+  if (esRetroactivo) {
+    await prisma.lavado.update({
+      where: { id: lavado.id },
+      data: { tiemposReales: false },
+    });
+  }
 
   revalidatePath(`/admin/lavados/${id}`);
   revalidatePath("/admin/lavados");

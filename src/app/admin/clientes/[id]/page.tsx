@@ -37,7 +37,7 @@ export default async function ClienteDetallePage({
   });
   if (!cliente) notFound();
 
-  const [niveles, candidatos] = await Promise.all([
+  const [niveles, candidatos, lavadero] = await Promise.all([
     prisma.nivel.findMany({
       where: { lavaderoId: user.lavaderoId, activo: true },
       orderBy: { puntosMin: "asc" },
@@ -52,6 +52,10 @@ export default async function ClienteDetallePage({
       select: { id: true, nombre: true, apellido: true },
       orderBy: { nombre: "asc" },
     }),
+    prisma.lavadero.findUnique({
+      where: { id: user.lavaderoId },
+      select: { timezone: true },
+    }),
   ]);
 
   const estadoNivel = calcularNivel(cliente.puntosTotal, niveles);
@@ -65,6 +69,28 @@ export default async function ClienteDetallePage({
   for (const l of cliente.lavados) {
     lavadosPorAuto.set(l.autoId, (lavadosPorAuto.get(l.autoId) ?? 0) + 1);
   }
+
+  // Hábitos: lo que se deduce del historial sin que nadie lo cargue a mano
+  const porServicio = new Map<string, number>();
+  for (const l of cliente.lavados) {
+    porServicio.set(l.servicio.nombre, (porServicio.get(l.servicio.nombre) ?? 0) + 1);
+  }
+  const favorito = [...porServicio.entries()].sort((a, b) => b[1] - a[1])[0] ?? null;
+
+  const cobrados = cliente.lavados.filter((l) => (l.importeCobrado?.toNumber() ?? 0) > 0);
+  const gastoPromedio = cobrados.length
+    ? Math.round(totalGastado / cobrados.length)
+    : null;
+
+  // Los lavados vienen del más nuevo al más viejo
+  const ultimaVisita = cliente.lavados.at(0)?.llegadaAt ?? null;
+  const cadaCuantosDias =
+    cliente.lavados.length > 1 && primeraVisita && ultimaVisita
+      ? Math.round(
+          (ultimaVisita.getTime() - primeraVisita.getTime()) /
+            (1000 * 60 * 60 * 24 * (cliente.lavados.length - 1))
+        )
+      : null;
 
   return (
     <ClienteDetalle
@@ -81,6 +107,9 @@ export default async function ClienteDetallePage({
         nombreOriginal: cliente.nombreOriginal,
         visitasAnotadas: cliente.visitasAnotadas,
         detalles: cliente.detalles,
+        perfil: cliente.perfil,
+        queValora: cliente.queValora,
+        preferencias: cliente.preferencias,
         conCuenta: !!cliente.passwordHash,
         puntosTotal: cliente.puntosTotal,
         rachaActual: cliente.rachaActual,
@@ -94,6 +123,15 @@ export default async function ClienteDetallePage({
                 .join(" "),
             }
           : null,
+      }}
+      timezone={lavadero?.timezone ?? "America/Argentina/Buenos_Aires"}
+      habitos={{
+        servicioFavorito: favorito?.[0] ?? null,
+        vecesServicioFavorito: favorito?.[1] ?? 0,
+        gastoPromedio,
+        cadaCuantosDias,
+        primeraVisitaISO: primeraVisita?.toISOString() ?? null,
+        ultimaVisitaISO: ultimaVisita?.toISOString() ?? null,
       }}
       autos={cliente.autos.map((a) => ({
         id: a.id,

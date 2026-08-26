@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   CalendarDays,
+  Timer,
   LayoutGrid,
   LogOut,
   Palette,
@@ -32,6 +33,7 @@ const NAV = [
   { href: "/admin/clientes", label: "Clientes", icon: Users },
   { href: "/admin/lavados", label: "Lavados", icon: Waves },
   { href: "/admin/caja", label: "Caja", icon: Wallet },
+  { href: "/admin/metricas", label: "Tiempos", icon: Timer },
   { href: "/admin/servicios", label: "Servicios", icon: SprayCan },
   { href: "/admin/configuracion/franjas", label: "Franjas horarias", icon: Settings },
   { href: "/admin/configuracion/marca", label: "Marca", icon: Palette, soloDueno: true },
